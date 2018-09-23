@@ -4,7 +4,14 @@ defmodule SHEx.HttpAdapters.Default do
   alias SHEx.HttpAdapter.RequestConfig
 
   @impl SHEx.HttpAdapter
-  def request(%RequestConfig{method: method, api_key: key, url: url, headers: headers, body: body, opts: opts}) do
+  def request(%RequestConfig{
+        method: method,
+        api_key: key,
+        url: url,
+        headers: headers,
+        body: body,
+        opts: opts
+      }) do
     case make_request(method, key, url, headers, body, opts) do
       {:ok, _} = result -> result
       error -> {:error, error}

@@ -21,7 +21,8 @@ defmodule SHEx.Endpoints.App.Jobs do
       |> Map.put(:body, request.body ++ params)
       |> make_request()
     else
-      {:invalid_params, params} -> {:error, {:invalid_params, {params, "valid params: #{inspect(@valid_update_params)}"}}}
+      {:invalid_params, params} ->
+        {:error, {:invalid_params, {params, "valid params: #{inspect(@valid_update_params)}"}}}
     end
   end
 
