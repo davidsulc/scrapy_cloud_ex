@@ -1,12 +1,14 @@
 defmodule SHEx.Endpoints.App.Jobs do
+  import SHEx.Endpoints.Guards
+
   alias SHEx.HttpAdapters.Default, as: DefaultAdapter
   alias SHEx.HttpAdapter.RequestConfig
 
   @base_url "https://app.scrapinghub.com/api"
 
   def delete(api_key, project_id, jobs, opts \\ [])
-      when is_binary(api_key)
-      when is_binary(project_id) or is_integer(project_id)
+      when is_api_key(api_key)
+      when is_project_id(project_id)
       when is_list(jobs)
       when is_list(opts) do
     http_client = get_http_client(opts)
@@ -20,8 +22,8 @@ defmodule SHEx.Endpoints.App.Jobs do
   end
 
   def stop(api_key, project_id, jobs, opts \\ [])
-      when is_binary(api_key)
-      when is_binary(project_id) or is_integer(project_id)
+      when is_api_key(api_key)
+      when is_project_id(project_id)
       when is_list(jobs)
       when is_list(opts) do
     http_client = get_http_client(opts)
