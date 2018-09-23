@@ -1,4 +1,4 @@
-defmodule ScrapingHubEx do
+defmodule SHEx do
   @moduledoc """
   Documentation for ScrapingHubEx.
   """
@@ -8,7 +8,7 @@ defmodule ScrapingHubEx do
 
   ## Examples
 
-      iex> ScrapingHubEx.hello()
+      iex> SHEx.hello()
       :world
 
   """
