@@ -1,16 +1,22 @@
 defmodule SHEx.HttpAdapters.Default do
   @behaviour SHEx.HttpAdapter
 
+  alias SHEx.HttpAdapter.RequestConfig
+
   @impl SHEx.HttpAdapter
-  def request(type, api_key, url, %{headers: headers, body: body}, opts) do
-    case make_request(type, api_key, url, headers, body, opts) do
+  def request(%RequestConfig{method: method, api_key: key, url: url, headers: headers, body: body, opts: opts}) do
+    case make_request(method, key, url, headers, body, opts) do
       {:ok, _} = result -> result
       error -> {:error, error}
     end
   end
 
   defp make_request(type, api_key, url, headers, body, opts) do
-    result = :hackney.request(type, url, headers, format_body(body), [{:basic_auth, {api_key, ""}} | opts])
+    result =
+      :hackney.request(type, url, headers, format_body(body), [
+        {:basic_auth, {api_key, ""}} | opts
+      ])
+
     with {:ok, status, _headers, client} <- result,
          {:ok, body} <- :hackney.body(client) do
       case Jason.decode(body) do
