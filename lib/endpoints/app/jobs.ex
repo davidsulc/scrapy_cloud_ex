@@ -1,11 +1,14 @@
 defmodule SHEx.Endpoints.App.Jobs do
   import SHEx.Endpoints.Guards
 
+  alias SHEx.Endpoints.App
   alias SHEx.HttpAdapters.Default, as: DefaultAdapter
   alias SHEx.HttpAdapter.RequestConfig
 
   @base_url "https://app.scrapinghub.com/api"
+  @valid_states ~w(pending running finished deleted)
   @valid_update_params [:add_tag, :remove_tag]
+  @valid_list_params [:job, :spider, :state, :has_tag, :lacks_tag]
 
   def run(api_key, project_id, spider_name, params \\ [], opts \\ [])
       when is_api_key(api_key)
@@ -34,13 +37,32 @@ defmodule SHEx.Endpoints.App.Jobs do
     end
   end
 
+  def list(api_key, project_id, params \\ [], opts \\ [])
+      when is_api_key(api_key)
+      when is_project_id(project_id)
+      when is_list(params)
+      when is_list(opts) do
+    with :ok <- validate_params(params, @valid_list_params ++ App.pagination_params()),
+         :ok <- params |> Keyword.get(:state) |> validate_state() do
+      query = [{:project, project_id} | params] |> URI.encode_query()
+
+      RequestConfig.new()
+      |> Map.put(:api_key, api_key)
+      |> Map.put(:opts, opts)
+      |> Map.put(:url, "#{@base_url}/jobs/list.json?#{query}")
+      |> make_request()
+    else
+      {:invalid_params, _} = error -> {:error, error}
+    end
+  end
+
   def update(api_key, project_id, job_or_jobs, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_project_id(project_id)
       when is_job_id(job_or_jobs) or is_list(job_or_jobs)
       when is_list(params)
       when is_list(opts) do
-    with :ok <- validate_update_params(params) do
+    with :ok <- validate_params(params, @valid_update_params) do
       request = prepare_basic_request(api_key, project_id, job_or_jobs, opts)
 
       request
@@ -48,8 +70,7 @@ defmodule SHEx.Endpoints.App.Jobs do
       |> Map.put(:body, request.body ++ params)
       |> make_request()
     else
-      {:invalid_params, params} ->
-        {:error, {:invalid_params, {params, "valid params: #{inspect(@valid_update_params)}"}}}
+      {:invalid_params, _} = error -> {:error, error}
     end
   end
 
@@ -130,12 +151,24 @@ defmodule SHEx.Endpoints.App.Jobs do
     list |> Keyword.put(:job_settings, settings)
   end
 
-  defp validate_update_params(params) do
+  defp validate_params(params, expected) do
     params
-    |> Enum.reject(fn {k, _} -> Enum.member?(@valid_update_params, k) end)
+    |> Enum.reject(fn {k, _} -> Enum.member?(expected, k) end)
     |> case do
-      [] -> :ok
-      invalid_params -> {:invalid_params, Keyword.keys(invalid_params)}
+      [] ->
+        :ok
+
+      invalid_params ->
+        {:invalid_params, {Keyword.keys(invalid_params), "valid params: #{inspect(expected)}"}}
     end
   end
+
+  defp validate_state(nil), do: :ok
+  defp validate_state(state) when state in @valid_states, do: :ok
+
+  defp validate_state(state),
+    do:
+      {:invalid_params,
+       {:invalid_state,
+        "state '#{state}' not among valid states: #{@valid_states |> Enum.join(", ")}"}}
 end
