@@ -42,6 +42,7 @@ defmodule SHEx.Endpoints.App.Jobs do
       when is_list(params)
       when is_list(opts) do
     with :ok <- Helpers.validate_params(params, @valid_list_params ++ App.pagination_params()),
+         # TODO convert state to string if given as atom
          :ok <- params |> Keyword.get(:state) |> validate_state() do
       query = [{:project, project_id} | params] |> URI.encode_query()
 
@@ -51,7 +52,7 @@ defmodule SHEx.Endpoints.App.Jobs do
       |> Map.put(:url, "#{@base_url}/jobs/list.json?#{query}")
       |> Helpers.make_request()
     else
-      {:invalid_params, _} = error -> {:error, error}
+      {:invalid_param, _} = error -> {:error, error}
     end
   end
 
@@ -69,7 +70,7 @@ defmodule SHEx.Endpoints.App.Jobs do
       |> Map.put(:body, request.body ++ params)
       |> Helpers.make_request()
     else
-      {:invalid_params, _} = error -> {:error, error}
+      {:invalid_param, _} = error -> {:error, error}
     end
   end
 
@@ -120,7 +121,7 @@ defmodule SHEx.Endpoints.App.Jobs do
     if function_exported?(Jason, :encode, 2) do
       format_job_settings(settings, &Jason.encode(&1, []))
     else
-      {:invalid_params,
+      {:invalid_param,
        {:unencoded_job_settings_without_encoder,
         "job_settings must be provided as a string-encoded JSON object, or a JSON encoder must be provided as an option (falling back to Jason unsuccessful)"}}
     end
@@ -130,7 +131,7 @@ defmodule SHEx.Endpoints.App.Jobs do
   defp format_job_settings(settings, encoder) when is_map(settings), do: encoder.(settings)
 
   defp format_job_settings(_settings, _encoder) do
-    {:invalid_params,
+    {:invalid_param,
      {:job_settings, "expected job_settings to be a string-encoded JSON object or a map"}}
   end
 
@@ -145,7 +146,7 @@ defmodule SHEx.Endpoints.App.Jobs do
 
   defp validate_state(state),
     do:
-      {:invalid_params,
+      {:invalid_param,
        {:invalid_state,
         "state '#{state}' not among valid states: #{@valid_states |> Enum.join(", ")}"}}
 end
