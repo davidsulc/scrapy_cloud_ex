@@ -26,13 +26,17 @@ defmodule SHEx.HttpAdapters.Default do
 
     with {:ok, status, _headers, client} <- result,
          {:ok, body} <- :hackney.body(client) do
-      case Jason.decode(body) do
-        {:error, error} -> {:json_error, error}
-        {:ok, decoded_body} -> format_api_result(status, decoded_body)
-      end
+      body |> decode_body(status)
     else
       {:error, error} ->
         {:request_error, error}
+    end
+  end
+
+  defp decode_body(body, status) do
+    case Jason.decode(body) do
+      {:error, error} -> {:json_error, error}
+      {:ok, decoded_body} -> format_api_result(status, decoded_body)
     end
   end
 
