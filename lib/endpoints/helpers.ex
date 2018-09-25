@@ -12,7 +12,7 @@ defmodule SHEx.Endpoints.Helpers do
         :ok
 
       invalid_params ->
-        {:invalid_params, {Keyword.keys(invalid_params), "valid params: #{inspect(expected)}"}}
+        {:invalid_param, {Keyword.keys(invalid_params), "valid params: #{inspect(expected)}"}}
     end
   end
 
