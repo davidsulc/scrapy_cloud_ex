@@ -6,6 +6,8 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   defstruct [
     :error,
     :pagination,
+    :nodata,
+    :meta,
     :format,
     csv_params: []
   ]
@@ -15,6 +17,8 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     |> struct(params)
     |> configure_format()
     |> validate_format()
+    |> validate_meta()
+    |> validate_nodata()
   end
 
   defp configure_format(params) do
@@ -98,5 +102,19 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
       error = {:invalid_param, {:csv_param, "required attribute 'fields' not provided"}}
       %{params | error: error}
     end
+  end
+
+  defp validate_meta(%{meta: nil} = params), do: params
+  defp validate_meta(%{meta: meta} = params) do
+    case Helpers.validate_params(meta, Storage.meta_params()) do
+      :ok -> params
+      {:invalid_param, error} -> %{params | error: {:invalid_param, {:meta, error}}}
+    end
+  end
+
+  defp validate_nodata(%{nodata: nil} = params), do: params
+  defp validate_nodata(%{nodata: nodata} = params) when is_boolean(nodata), do: params
+  defp validate_nodata(params) do
+    %{params | error: {:invalid_param, {:nodata, "expected a boolean value"}}}
   end
 end
