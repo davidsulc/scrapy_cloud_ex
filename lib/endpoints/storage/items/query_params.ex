@@ -8,7 +8,7 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     :pagination,
     :nodata,
     :meta,
-    :format,
+    format: :json,
     csv_params: []
   ]
 
@@ -22,16 +22,8 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   end
 
   defp configure_format(params) do
-    params
-    |> set_default_format()
-    |> process_csv_format()
+    params |> process_csv_format()
   end
-
-  defp set_default_format(%{format: nil} = params) do
-    %{params | format: :json}
-  end
-
-  defp set_default_format(params), do: params
 
   defp process_csv_format(%{format: format} = params) when is_list(format) do
     if Keyword.keyword?(format) do
