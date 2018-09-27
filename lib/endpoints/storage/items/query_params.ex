@@ -77,28 +77,28 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     end
   end
 
-  defp validate_item_index(%{item_index: nil} = params), do: params
-
-  defp validate_item_index(%{item_index: index} = params) when is_integer(index), do: params
-
-  defp validate_item_index(%{item_index: index} = params) when is_binary(index) do
-    if String.match?(index, ~r/^\d+$/) do
-      params
-    else
-      error =
-        "expected only digits, was given #{inspect(index)}"
-        |> Helpers.invalid_param_error(:item_index)
-
-      %{params | error: error}
+  defp validate_item_index(%{item_index: index} = params) do
+    case validate_optional_integer_form(index, :item_index) do
+      :ok -> params
+      {:invalid_param, _} = error -> %{params | error: error}
     end
   end
 
-  defp validate_item_index(%{item_index: index} = params) do
-    error =
-      "expected an integer (possibly represented as a string), was given #{inspect(index)}"
-      |> Helpers.invalid_param_error(:item_index)
+  defp validate_optional_integer_form(nil, _tag), do: :ok
 
-    %{params | error: error}
+  defp validate_optional_integer_form(value, _tag) when is_integer(value), do: :ok
+
+  defp validate_optional_integer_form(value, tag) when is_binary(value) do
+    if String.match?(value, ~r/^\d+$/) do
+      :ok
+    else
+      "expected only digits, was given #{inspect(value)}"
+      |> Helpers.invalid_param_error(tag)
+    end
+  end
+
+  defp validate_optional_integer_form(value, tag) do
+    value |> expected_integer_form(tag)
   end
 
   defp validate_field_name(%{field_name: nil} = params), do: params
@@ -157,5 +157,10 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   defp validate_nodata(%{nodata: nodata} = params) when is_boolean(nodata), do: params
   defp validate_nodata(params) do
     %{params | error: "expected a boolean value" |> Helpers.invalid_param_error(:nodata)}
+  end
+
+  defp expected_integer_form(value, tag) do
+    "expected an integer (possibly represented as a string), was given #{inspect(value)}"
+    |> Helpers.invalid_param_error(tag)
   end
 end
