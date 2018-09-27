@@ -7,11 +7,11 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     :error,
     :item_index,
     :field_name,
-    :pagination,
     :nodata,
     :meta,
     format: :json,
-    csv_params: []
+    csv_params: [],
+    pagination: []
   ]
 
   def from_keywords(params) when is_list(params) do
@@ -32,6 +32,7 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     |> validate_format()
     |> validate_meta()
     |> validate_nodata()
+    |> validate_pagination()
   end
 
   defp process_csv_format(%{format: format} = params) when is_list(format) do
@@ -111,8 +112,6 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     %{params | error: error}
   end
 
-  defp validate_format(%{error: error} = params) when error != nil, do: params
-
   defp validate_format(%{format: :csv} = params) do
     params
     |> validate_csv_params()
@@ -157,6 +156,62 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   defp validate_nodata(%{nodata: nodata} = params) when is_boolean(nodata), do: params
   defp validate_nodata(params) do
     %{params | error: "expected a boolean value" |> Helpers.invalid_param_error(:nodata)}
+  end
+
+  defp validate_pagination(params) do
+    params
+    |> validate_pagination_params()
+    |> validate_pagination_count()
+    |> validate_pagination_index()
+    |> validate_pagination_start()
+    |> validate_pagination_startafter()
+  end
+
+  defp validate_pagination_params(%{pagination: pagination} = params) do
+    case Helpers.validate_params(pagination, Storage.pagination_params()) do
+      :ok -> params
+      {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
+    end
+  end
+
+  defp validate_pagination_count(%{pagination: pagination} = params) do
+    case validate_optional_integer_form(Keyword.get(pagination, :count), :count) do
+      :ok -> params
+      {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
+    end
+  end
+
+  defp validate_pagination_index(%{pagination: pagination} = params) do
+    case validate_optional_integer_form(Keyword.get(pagination, :index), :index) do
+      :ok -> params
+      {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
+    end
+  end
+
+  defp validate_pagination_start(params), do: params |> validate_pagination_offset(:start)
+
+  defp validate_pagination_startafter(params), do: params |> validate_pagination_offset(:startafter)
+
+  defp validate_pagination_offset(%{pagination: pagination} = params, offset_name) do
+    with nil <- Keyword.get(pagination, offset_name) do
+      params
+    else
+      id ->
+        case id |> validate_full_form_id(offset_name) do
+          :ok -> params
+          {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
+        end
+    end
+  end
+
+  defp validate_full_form_id(id, tag) when not is_binary(id), do: "expected a string" |> Helpers.invalid_param_error(tag)
+  defp validate_full_form_id(id, tag) do
+    if id |> String.split("/") |> Enum.reject(& &1 == "") |> length() == 4 do
+      :ok
+    else
+      "expected a full id with exactly 4 parts"
+      |> Helpers.invalid_param_error(tag)
+    end
   end
 
   defp expected_integer_form(value, tag) do

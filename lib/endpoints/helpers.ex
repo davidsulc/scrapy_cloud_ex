@@ -17,7 +17,7 @@ defmodule SHEx.Endpoints.Helpers do
     end
   end
 
-  def invalid_param_error(error, tag) when is_atom(tag), do: {:invalid_param, {error, tag}}
+  def invalid_param_error(error, tag) when is_atom(tag) or is_list(tag), do: {:invalid_param, {tag, error}}
 
   def make_request(%RequestConfig{opts: opts} = config) do
     http_client = get_http_client(opts)
