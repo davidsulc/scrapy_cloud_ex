@@ -18,15 +18,20 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     __MODULE__
     |> struct(params)
     |> configure_format()
+    |> validate_params()
+  end
+
+  defp configure_format(params) do
+    params |> process_csv_format()
+  end
+
+  defp validate_params(params) do
+    params
     |> validate_item_index()
     |> validate_field_name()
     |> validate_format()
     |> validate_meta()
     |> validate_nodata()
-  end
-
-  defp configure_format(params) do
-    params |> process_csv_format()
   end
 
   defp process_csv_format(%{format: format} = params) when is_list(format) do
