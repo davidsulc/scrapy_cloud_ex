@@ -12,9 +12,12 @@ defmodule SHEx.Endpoints.Helpers do
         :ok
 
       invalid_params ->
-        {:invalid_param, {Keyword.keys(invalid_params), "valid params: #{inspect(expected |> Enum.sort())}"}}
+        "valid params: #{inspect(expected |> Enum.sort())}"
+        |> invalid_param_error(Keyword.keys(invalid_params))
     end
   end
+
+  def invalid_param_error(error, tag) when is_atom(tag), do: {:invalid_param, {error, tag}}
 
   def make_request(%RequestConfig{opts: opts} = config) do
     http_client = get_http_client(opts)

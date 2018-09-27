@@ -33,7 +33,10 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     if Keyword.keyword?(format) do
       params |> set_csv_attributes()
     else
-      error = {:invalid_param, {:format, "unexpected list value: #{inspect(format)}"}}
+      error =
+        "unexpected list value: #{inspect(format)}"
+        |> Helpers.invalid_param_error(:format)
+
       %{params | error: error}
     end
   end
@@ -60,11 +63,16 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
         if length(format) == 1 do
           %{params | format: :csv, csv_params: csv_params}
         else
-          error = {:invalid_param, {:format, "multiple values provided: #{inspect(format)}"}}
+          error =
+            "multiple values provided: #{inspect(format)}"
+            |> Helpers.invalid_param_error(:format)
+
           %{params | error: error}
         end
     end
   end
+
+  defp validate_item_index(%{item_index: nil} = params), do: params
 
   defp validate_item_index(%{item_index: index} = params) when is_integer(index), do: params
 
@@ -72,20 +80,29 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     if String.match?(index, ~r/^\d+$/) do
       params
     else
-      error = {:invalid_param, {:item_index, "expected an integer (possibly represented as a string)"}}
+      error =
+        "expected only digits, was given #{inspect(index)}"
+        |> Helpers.invalid_param_error(:item_index)
+
       %{params | error: error}
     end
   end
 
-  defp validate_item_index(params) do
-    error = {:invalid_param, {:item_index, "expected an integer (possibly represented as a string)"}}
+  defp validate_item_index(%{item_index: index} = params) do
+    error =
+      "expected an integer (possibly represented as a string), was given #{inspect(index)}"
+      |> Helpers.invalid_param_error(:item_index)
+
     %{params | error: error}
   end
 
   defp validate_field_name(%{field_name: nil} = params), do: params
   defp validate_field_name(%{field_name: name} = params) when is_binary(name), do: params
   defp validate_field_name(params) do
-    error = {:invalid_param, {:field_name, "expected a string"}}
+    error =
+      "expected a string"
+      |> Helpers.invalid_param_error(:field_name)
+
     %{params | error: error}
   end
 
@@ -106,11 +123,8 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
 
   defp validate_csv_params(%{csv_params: csv} = params) do
     case Helpers.validate_params(csv, Storage.csv_params()) do
-      :ok ->
-        params
-      {:invalid_param, error} ->
-        error = {:invalid_param, {:csv_param, error}}
-        %{params | error: error}
+      :ok -> params
+      {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:csv_param)}
     end
   end
 
@@ -118,7 +132,10 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     if Keyword.has_key?(csv, :fields) do
       params
     else
-      error = {:invalid_param, {:csv_param, "required attribute 'fields' not provided"}}
+      error =
+        "required attribute 'fields' not provided"
+        |> Helpers.invalid_param_error(:csv_param)
+
       %{params | error: error}
     end
   end
@@ -127,13 +144,13 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   defp validate_meta(%{meta: meta} = params) do
     case Helpers.validate_params(meta, Storage.meta_params()) do
       :ok -> params
-      {:invalid_param, error} -> %{params | error: {:invalid_param, {:meta, error}}}
+      {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:meta)}
     end
   end
 
   defp validate_nodata(%{nodata: nil} = params), do: params
   defp validate_nodata(%{nodata: nodata} = params) when is_boolean(nodata), do: params
   defp validate_nodata(params) do
-    %{params | error: {:invalid_param, {:nodata, "expected a boolean value"}}}
+    %{params | error: "expected a boolean value" |> Helpers.invalid_param_error(:nodata)}
   end
 end

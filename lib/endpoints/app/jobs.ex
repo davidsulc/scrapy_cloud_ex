@@ -121,9 +121,8 @@ defmodule SHEx.Endpoints.App.Jobs do
     if function_exported?(Jason, :encode, 2) do
       format_job_settings(settings, &Jason.encode(&1, []))
     else
-      {:invalid_param,
-       {:unencoded_job_settings_without_encoder,
-        "job_settings must be provided as a string-encoded JSON object, or a JSON encoder must be provided as an option (falling back to Jason unsuccessful)"}}
+      "job_settings must be provided as a string-encoded JSON object, or a JSON encoder must be provided as an option (falling back to Jason unsuccessful)"
+      |> Helpers.invalid_param_error(:job_settings)
     end
   end
 
@@ -131,8 +130,8 @@ defmodule SHEx.Endpoints.App.Jobs do
   defp format_job_settings(settings, encoder) when is_map(settings), do: encoder.(settings)
 
   defp format_job_settings(_settings, _encoder) do
-    {:invalid_param,
-     {:job_settings, "expected job_settings to be a string-encoded JSON object or a map"}}
+    "expected job_settings to be a string-encoded JSON object or a map"
+    |> Helpers.invalid_param_error(:job_settings)
   end
 
   defp maybe_add_job_settings(list, []), do: list
@@ -144,9 +143,7 @@ defmodule SHEx.Endpoints.App.Jobs do
   defp validate_state(nil), do: :ok
   defp validate_state(state) when state in @valid_states, do: :ok
 
-  defp validate_state(state),
-    do:
-      {:invalid_param,
-       {:invalid_state,
-        "state '#{state}' not among valid states: #{@valid_states |> Enum.join(", ")}"}}
+  defp validate_state(state), do:
+    "state '#{state}' not among valid states: #{@valid_states |> Enum.join(", ")}"
+    |> Helpers.invalid_param_error(:state)
 end
