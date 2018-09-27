@@ -162,9 +162,10 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     params
     |> validate_pagination_params()
     |> validate_pagination_count()
-    |> validate_pagination_index()
     |> validate_pagination_start()
     |> validate_pagination_startafter()
+    |> process_pagination_index()
+    |> validate_pagination_index()
   end
 
   defp validate_pagination_params(%{pagination: pagination} = params) do
@@ -176,13 +177,6 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
 
   defp validate_pagination_count(%{pagination: pagination} = params) do
     case validate_optional_integer_form(Keyword.get(pagination, :count), :count) do
-      :ok -> params
-      {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
-    end
-  end
-
-  defp validate_pagination_index(%{pagination: pagination} = params) do
-    case validate_optional_integer_form(Keyword.get(pagination, :index), :index) do
       :ok -> params
       {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
     end
@@ -202,6 +196,39 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
           {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
         end
     end
+  end
+
+  defp process_pagination_index(%{pagination: pagination} = params) do
+    # the :index key could be given multiple times, so we collect all values into an array
+    # which we need to flatten, because it could already have been given as a list
+    index =
+      pagination
+      |> Keyword.get_values(:index)
+      |> List.flatten()
+
+    %{params | pagination: pagination |> Keyword.put(:index, index)}
+  end
+
+  defp validate_pagination_index(%{pagination: pagination} = params) do
+    pagination
+    |> Keyword.get(:index)
+    |> reduce_indexes_to_first_error()
+    |> case do
+      :ok -> params
+      {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
+    end
+  end
+
+  defp reduce_indexes_to_first_error(indexes) do
+    IO.inspect indexes
+    reducer = fn i, acc ->
+      case validate_optional_integer_form(i, :index) do
+        :ok -> {:cont, acc}
+        {:invalid_param, _} = error -> {:halt, error}
+      end
+    end
+
+    indexes |> Enum.reduce_while(:ok, reducer)
   end
 
   defp validate_full_form_id(id, tag) when not is_binary(id), do: "expected a string" |> Helpers.invalid_param_error(tag)
