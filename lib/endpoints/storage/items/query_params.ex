@@ -5,6 +5,8 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
 
   defstruct [
     :error,
+    :item_index,
+    :field_name,
     :pagination,
     :nodata,
     :meta,
@@ -16,6 +18,8 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     __MODULE__
     |> struct(params)
     |> configure_format()
+    |> validate_item_index()
+    |> validate_field_name()
     |> validate_format()
     |> validate_meta()
     |> validate_nodata()
@@ -60,6 +64,29 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
           %{params | error: error}
         end
     end
+  end
+
+  defp validate_item_index(%{item_index: index} = params) when is_integer(index), do: params
+
+  defp validate_item_index(%{item_index: index} = params) when is_binary(index) do
+    if String.match?(index, ~r/^\d+$/) do
+      params
+    else
+      error = {:invalid_param, {:item_index, "expected an integer (possibly represented as a string)"}}
+      %{params | error: error}
+    end
+  end
+
+  defp validate_item_index(params) do
+    error = {:invalid_param, {:item_index, "expected an integer (possibly represented as a string)"}}
+    %{params | error: error}
+  end
+
+  defp validate_field_name(%{field_name: nil} = params), do: params
+  defp validate_field_name(%{field_name: name} = params) when is_binary(name), do: params
+  defp validate_field_name(params) do
+    error = {:invalid_param, {:field_name, "expected a string"}}
+    %{params | error: error}
   end
 
   defp validate_format(%{error: error} = params) when error != nil, do: params
