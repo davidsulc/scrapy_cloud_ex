@@ -14,10 +14,22 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
 
   def from_keywords(params) when is_list(params) do
     __MODULE__
-    |> struct(params)
+    |> struct(params |> sanitize())
     |> configure_format()
     |> validate_params()
   end
+
+  defp sanitize(params) when is_list(params) do
+    params |> Enum.map(&sanitize_param/1)
+  end
+
+  defp sanitize_param({:no_data, v}), do: {:nodata, v} |> sanitize_param()
+
+  defp sanitize_param({:nodata, false}), do: {:nodata, 0}
+  defp sanitize_param({:nodata, true}), do: {:nodata, 1}
+  defp sanitize_param({:nodata, v}), do: {:nodata, v}
+
+  defp sanitize_param({_, _} = pair), do: pair
 
   defp configure_format(params) do
     params |> process_csv_format()
@@ -132,7 +144,7 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   end
 
   defp validate_nodata(%{nodata: nil} = params), do: params
-  defp validate_nodata(%{nodata: nodata} = params) when is_boolean(nodata), do: params
+  defp validate_nodata(%{nodata: nodata} = params) when nodata in [0, 1], do: params
   defp validate_nodata(params) do
     %{params | error: "expected a boolean value" |> Helpers.invalid_param_error(:nodata)}
   end
