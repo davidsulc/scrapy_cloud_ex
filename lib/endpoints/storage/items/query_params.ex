@@ -1,6 +1,18 @@
 defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   @moduledoc false
 
+  # parameter naming in the API is a bit inconsistent where multi-words variables are concerned
+  # (e.g. include_headers vs lineend) and often doesn't conform to the Elixir convention of
+  # snake_casing variables composed of multiple words, so this will allow us to accept both (e.g.)
+  # `line_end` and `lineend` and convert them to the name the API expects
+  @param_synonyms [
+    {:includeheaders, :include_headers},
+    {:line_end, :lineend},
+    {:no_data, :nodata},
+    {:start_after, :startafter}
+  ]
+  @param_synonyms_available @param_synonyms |> Keyword.keys()
+
   alias SHEx.Endpoints.{Helpers, Storage}
 
   defstruct [
@@ -41,7 +53,10 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     params |> Enum.map(&sanitize_param/1)
   end
 
-  defp sanitize_param({:no_data, v}), do: {:nodata, v} |> sanitize_param()
+  defp sanitize_param({k, v}) when k in @param_synonyms_available do
+    {Keyword.get(@param_synonyms, k), v}
+    |> sanitize_param()
+  end
 
   defp sanitize_param({:nodata, false}), do: {:nodata, 0}
   defp sanitize_param({:nodata, true}), do: {:nodata, 1}
