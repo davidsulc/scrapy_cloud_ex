@@ -6,7 +6,7 @@ defmodule SHEx.Endpoints.Helpers do
 
   def validate_params(params, expected) do
     params
-    |> Enum.reject(fn {k, _} -> Enum.member?(expected, k) end)
+    |> Enum.reject(& param_valid?(expected, &1))
     |> case do
       [] ->
         :ok
@@ -23,6 +23,9 @@ defmodule SHEx.Endpoints.Helpers do
     http_client = get_http_client(opts)
     config |> http_client.request()
   end
+
+  defp param_valid?(valid, {k, _}), do: valid |> param_valid?(k)
+  defp param_valid?(valid, param), do: valid |> Enum.member?(param)
 
   defp get_http_client(opts) do
     opts |> Keyword.get(:http_adapter, DefaultAdapter)
