@@ -41,12 +41,16 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
 
   def to_query(%__MODULE__{error: error}), do: {:error, error}
 
-  # TODO
-  defp to_keyword_list({:pagination, _}), do: []
-  defp to_keyword_list({:csv_params, _}), do: []
+  defp to_keyword_list({group, params}) when group in [:pagination, :csv_params] do
+    params |> Enum.flat_map(&to_keyword_list/1)
+  end
+
   defp to_keyword_list({_, nil}), do: []
+
   defp to_keyword_list({k, v}) when is_list(v), do: v |> Enum.map(& {k, &1})
+
   defp to_keyword_list({_, v} = pair) when is_atom(v) or is_integer(v), do: pair
+
   defp to_keyword_list({_, _}), do: []
 
   defp sanitize(params) when is_list(params) do
