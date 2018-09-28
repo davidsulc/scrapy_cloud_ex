@@ -5,8 +5,6 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
 
   defstruct [
     :error,
-    :item_index,
-    :field_name,
     :nodata,
     :meta,
     format: :json,
@@ -27,8 +25,6 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
 
   defp validate_params(params) do
     params
-    |> validate_item_index()
-    |> validate_field_name()
     |> validate_format()
     |> validate_meta()
     |> validate_nodata()
@@ -78,13 +74,6 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     end
   end
 
-  defp validate_item_index(%{item_index: index} = params) do
-    case validate_optional_integer_form(index, :item_index) do
-      :ok -> params
-      {:invalid_param, _} = error -> %{params | error: error}
-    end
-  end
-
   defp validate_optional_integer_form(nil, _tag), do: :ok
 
   defp validate_optional_integer_form(value, _tag) when is_integer(value), do: :ok
@@ -100,16 +89,6 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
 
   defp validate_optional_integer_form(value, tag) do
     value |> expected_integer_form(tag)
-  end
-
-  defp validate_field_name(%{field_name: nil} = params), do: params
-  defp validate_field_name(%{field_name: name} = params) when is_binary(name), do: params
-  defp validate_field_name(params) do
-    error =
-      "expected a string"
-      |> Helpers.invalid_param_error(:field_name)
-
-    %{params | error: error}
   end
 
   defp validate_format(%{format: :csv} = params) do
