@@ -34,6 +34,7 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   def to_query(%__MODULE__{error: nil} = params) do
     params
     |> Map.from_struct()
+    |> Enum.to_list()
     |> Enum.map(&to_keyword_list/1)
     |> List.flatten()
     |> URI.encode_query()
@@ -42,14 +43,16 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   def to_query(%__MODULE__{error: error}), do: {:error, error}
 
   defp to_keyword_list({group, params}) when group in [:pagination, :csv_params] do
-    params |> Enum.flat_map(&to_keyword_list/1)
+    params
+    |> Enum.map(&to_keyword_list/1)
+    |> List.flatten()
   end
 
-  defp to_keyword_list({_, nil}), do: []
+  defp to_keyword_list({_, empty}) when empty == nil or empty == [], do: []
 
   defp to_keyword_list({k, v}) when is_list(v), do: v |> Enum.map(& {k, &1})
 
-  defp to_keyword_list({_, v} = pair) when is_atom(v) or is_integer(v), do: pair
+  defp to_keyword_list({_, v} = pair) when is_atom(v) or is_integer(v) or is_binary(v), do: pair
 
   defp to_keyword_list({_, _}), do: []
 
@@ -65,6 +68,8 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   defp sanitize_param({:nodata, false}), do: {:nodata, 0}
   defp sanitize_param({:nodata, true}), do: {:nodata, 1}
   defp sanitize_param({:nodata, v}), do: {:nodata, v}
+
+  defp sanitize_param({k, v}) when is_list(v), do: {k, sanitize(v)}
 
   defp sanitize_param({_, _} = pair), do: pair
 
@@ -248,7 +253,6 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   end
 
   defp reduce_indexes_to_first_error(indexes) do
-    IO.inspect indexes
     reducer = fn i, acc ->
       case validate_optional_integer_form(i, :index) do
         :ok -> {:cont, acc}
