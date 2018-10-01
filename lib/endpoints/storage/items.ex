@@ -13,7 +13,7 @@ defmodule SHEx.Endpoints.Storage.Items do
       when is_binary(composite_id) and composite_id != ""
       when is_list(params)
       when is_list(opts) do
-    with valid_params <- [:item_index, :field_name, :format, :meta, :nodata, :pagination],
+    with valid_params <- [:item_index, :field_name, :format, :meta, :nodata, :no_data, :pagination],
          :ok <- Helpers.validate_params(params, valid_params),
          %QueryParams{error: nil} = query_params <- params |> QueryParams.from_keywords() do
       if section_count(composite_id) < 4 do

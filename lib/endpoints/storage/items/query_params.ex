@@ -57,7 +57,11 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   defp to_keyword_list({_, _}), do: []
 
   defp sanitize(params) when is_list(params) do
-    params |> Enum.map(&sanitize_param/1)
+    if Keyword.keyword?(params) do
+      params |> Enum.map(&sanitize_param/1)
+    else
+      params
+    end
   end
 
   defp sanitize_param({k, v}) when k in @param_synonyms_available do
@@ -178,11 +182,16 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   end
 
   defp validate_meta(%{meta: nil} = params), do: params
-  defp validate_meta(%{meta: meta} = params) do
+
+  defp validate_meta(%{meta: meta} = params) when is_list(meta) do
     case Helpers.validate_params(meta, Storage.meta_params()) do
       :ok -> params
       {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:meta)}
     end
+  end
+
+  defp validate_meta(params) do
+    %{params | error: "expected a list" |> Helpers.invalid_param_error(:meta)}
   end
 
   defp validate_nodata(%{nodata: nil} = params), do: params
