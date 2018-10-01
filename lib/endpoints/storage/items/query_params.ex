@@ -1,6 +1,8 @@
 defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   @moduledoc false
 
+  require Logger
+
   # parameter naming in the API is a bit inconsistent where multi-words variables are concerned
   # (e.g. include_headers vs lineend) and often doesn't conform to the Elixir convention of
   # snake_casing variables composed of multiple words, so this will allow us to accept both (e.g.)
@@ -65,7 +67,9 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   end
 
   defp sanitize_param({k, v}) when k in @param_synonyms_available do
-    {Keyword.get(@param_synonyms, k), v}
+    replacement = Keyword.get(@param_synonyms, k)
+    Logger.warn("replacing '#{inspect(k)}' parameter with '#{inspect(replacement)}'")
+    {replacement, v}
     |> sanitize_param()
   end
 
