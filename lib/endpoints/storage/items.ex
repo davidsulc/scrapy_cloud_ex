@@ -16,9 +16,12 @@ defmodule SHEx.Endpoints.Storage.Items do
     with valid_params <- [:item_index, :field_name, :format, :meta, :nodata, :pagination],
          :ok <- Helpers.validate_params(params, valid_params),
          %QueryParams{error: nil} = query_params <- params |> QueryParams.from_keywords() do
+      if section_count(composite_id) < 4 do
+        query_params |> warn_if_no_pagination()
+      end
+
       query_string =
         query_params
-        |> warn_if_no_pagination()
         |> QueryParams.to_query()
 
       base_url = [@base_url, composite_id] |> merge_sections()
@@ -45,6 +48,8 @@ defmodule SHEx.Endpoints.Storage.Items do
     |> Map.put(:url, [@base_url, composite_id, "stats"] |> merge_sections())
     |> Helpers.make_request()
   end
+
+  defp section_count(id), do: id |> String.split("/") |> Enum.reject(& &1 == "") |> length()
 
   defp merge_sections(sections), do: sections |> Enum.join("/")
 
