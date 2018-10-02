@@ -21,8 +21,8 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
     :error,
     :nodata,
     :meta,
-    format: :json,
-    csv_params: [],
+    :format,
+    csv: [],
     pagination: []
   ]
 
@@ -36,8 +36,9 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
       :ok ->
         __MODULE__
         |> struct(sanitized_params)
-        |> configure_format()
+        |> warn_on_inconsistent_format()
         |> validate_params()
+        |> set_defaults()
 
       error ->
         {:error, error}
@@ -92,53 +93,6 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
 
   defp sanitize_param({_, _} = pair), do: pair
 
-  defp configure_format(params) do
-    params |> process_csv_format()
-  end
-
-  defp process_csv_format(%{format: format} = params) when is_list(format) do
-    if Keyword.keyword?(format) do
-      params |> set_csv_attributes()
-    else
-      error =
-        "unexpected list value: #{inspect(format)}"
-        |> Helpers.invalid_param_error(:format)
-
-      %{params | error: error}
-    end
-  end
-
-  defp process_csv_format(params), do: params
-
-  defp set_csv_attributes(%{format: format} = params) do
-    # we're determining the csv format this way so that a typo like
-    # format: [csv: [fields: ["auction", "id"]], sep: ","]
-    # instead of
-    # format: [csv: [fields: ["auction", "id"], sep: ","]]
-		# gets a better error message:
-    # {:invalid_param,
-    #    {:format,
-    #        "multiple values provided: [csv: [fields: [\"auction\", \"id\"]], sep: \",\"]"}}
-		# instead of
-		# {:invalid_param,
-    #    {:format,
-    #        "expected format '[csv: [fields: [\"auction\", \"id\"]], sep: \",\"]' to be one of:
-    #         [:json, :jl, :xml, :csv, :text]"}}
-    case Keyword.get(format, :csv) do
-      nil -> params
-      csv_params ->
-        if length(format) == 1 do
-          %{params | format: :csv, csv_params: csv_params}
-        else
-          error =
-            "multiple values provided: #{inspect(format)}"
-            |> Helpers.invalid_param_error(:format)
-
-          %{params | error: error}
-        end
-    end
-  end
-
   defp configure_pagination(params) do
     pagination_params =
       Storage.pagination_params()
@@ -167,6 +121,18 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
     items_only_in_a = a -- b
     a -- items_only_in_a
   end
+
+  defp warn_on_inconsistent_format(%QueryParams{format: format, csv: [_ | _]} = params) when format not in [:csv, nil] do
+    Logger.warn("CSV parameters provided, but requested format is #{inspect(format)}")
+    params
+  end
+
+  defp warn_on_inconsistent_format(%QueryParams{format: nil, csv: [_ | _]} = params) do
+    Logger.info("Setting `format` to :csv since `:csv` parameters were provided")
+    %{params | format: :csv}
+  end
+
+  defp warn_on_inconsistent_format(%QueryParams{} = params), do: params
 
   defp validate_params(params) do
     params
