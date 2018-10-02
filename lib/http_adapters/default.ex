@@ -26,18 +26,21 @@ defmodule ScrapingHubEx.HttpAdapters.Default do
 
     with {:ok, status, _headers, client} <- result,
          {:ok, body} <- :hackney.body(client) do
-      body |> decode_body(status)
+      body
+      |> decode_body(opts)
+      |> case do
+        {:error, error} -> {:decoder_error, error}
+        {:ok, decoded_body} -> format_api_result(status, decoded_body)
+      end
     else
-      {:error, error} ->
-        {:request_error, error}
+      {:error, error} -> {:request_error, error}
     end
   end
 
-  defp decode_body(body, status) do
-    case Jason.decode(body) do
-      {:error, error} -> {:json_error, error}
-      {:ok, decoded_body} -> format_api_result(status, decoded_body)
-    end
+  defp decode_body(body, opts) do
+    decoder = opts |> Keyword.get(:decoder, ScrapingHubEx.Decoders.Default)
+    format = opts |> Keyword.fetch!(:decoder_format)
+    decoder.decode(body, format)
   end
 
   defp format_api_result(200, body), do: {:ok, body}

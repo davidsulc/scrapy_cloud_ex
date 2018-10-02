@@ -28,7 +28,7 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items do
       |> Map.put(:api_key, api_key)
       |> Map.put(:url, "#{base_url}?#{query_string}")
       |> Map.put(:headers, Keyword.get(opts, :headers, []))
-      |> Map.put(:opts, opts)
+      |> Map.put(:opts, opts |> set_default_opts(query_params))
       |> Helpers.make_request()
     else
       %QueryParams{error: error} -> {:error, error}
@@ -68,4 +68,9 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items do
   end
 
   defp empty_pagination?(%QueryParams{}), do: true
+
+  defp set_default_opts(opts, %QueryParams{format: format}) do
+    decoder_format = opts |> Keyword.get(:decoder_format, format)
+    opts |> Keyword.put(:decoder_format, decoder_format)
+  end
 end
