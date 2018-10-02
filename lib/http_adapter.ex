@@ -1,5 +1,5 @@
-defmodule SHEx.HttpAdapter do
-  alias SHEx.HttpAdapter.RequestConfig
+defmodule ScrapingHubEx.HttpAdapter do
+  alias ScrapingHubEx.HttpAdapter.RequestConfig
 
   @type error :: :request_error | :api_error | :json_error
 

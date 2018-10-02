@@ -1,10 +1,10 @@
-defmodule SHEx.Endpoints.Storage.Items do
+defmodule ScrapingHubEx.Endpoints.Storage.Items do
   require Logger
-  import SHEx.Endpoints.Guards
+  import ScrapingHubEx.Endpoints.Guards
 
-  alias SHEx.Endpoints.Helpers
-  alias SHEx.Endpoints.Storage.Items.QueryParams
-  alias SHEx.HttpAdapter.RequestConfig
+  alias ScrapingHubEx.Endpoints.Helpers
+  alias ScrapingHubEx.Endpoints.Storage.Items.QueryParams
+  alias ScrapingHubEx.HttpAdapter.RequestConfig
 
   @base_url "https://storage.scrapinghub.com/items"
 

@@ -1,5 +1,5 @@
-defmodule SHEx.Endpoints.Storage do
-  alias SHEx.Endpoints.Helpers
+defmodule ScrapingHubEx.Endpoints.Storage do
+  alias ScrapingHubEx.Endpoints.Helpers
 
   def pagination_params(), do: [:count, :index, :start, :startafter]
 

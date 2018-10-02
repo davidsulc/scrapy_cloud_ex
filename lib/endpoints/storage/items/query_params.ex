@@ -1,4 +1,4 @@
-defmodule SHEx.Endpoints.Storage.Items.QueryParams do
+defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
   @moduledoc false
 
   require Logger
@@ -15,7 +15,7 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   ]
   @param_synonyms_available @param_synonyms |> Keyword.keys()
 
-  alias SHEx.Endpoints.{Helpers, Storage}
+  alias ScrapingHubEx.Endpoints.{Helpers, Storage}
 
   defstruct [
     :error,

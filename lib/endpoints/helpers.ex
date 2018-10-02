@@ -1,8 +1,8 @@
-defmodule SHEx.Endpoints.Helpers do
+defmodule ScrapingHubEx.Endpoints.Helpers do
   @moduledoc false
 
-  alias SHEx.HttpAdapter.RequestConfig
-  alias SHEx.HttpAdapters.Default, as: DefaultAdapter
+  alias ScrapingHubEx.HttpAdapter.RequestConfig
+  alias ScrapingHubEx.HttpAdapters.Default, as: DefaultAdapter
 
   def validate_params(params, expected) do
     params

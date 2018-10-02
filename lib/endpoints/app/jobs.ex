@@ -1,8 +1,8 @@
-defmodule SHEx.Endpoints.App.Jobs do
-  import SHEx.Endpoints.Guards
+defmodule ScrapingHubEx.Endpoints.App.Jobs do
+  import ScrapingHubEx.Endpoints.Guards
 
-  alias SHEx.Endpoints.{App, Helpers}
-  alias SHEx.HttpAdapter.RequestConfig
+  alias ScrapingHubEx.Endpoints.{App, Helpers}
+  alias ScrapingHubEx.HttpAdapter.RequestConfig
 
   @base_url "https://app.scrapinghub.com/api"
   @valid_states ~w(pending running finished deleted)

@@ -1,4 +1,4 @@
-defmodule SHEx.HttpAdapter.RequestConfig do
+defmodule ScrapingHubEx.HttpAdapter.RequestConfig do
   defstruct [
     :api_key,
     :url,

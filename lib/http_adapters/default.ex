@@ -1,9 +1,9 @@
-defmodule SHEx.HttpAdapters.Default do
-  @behaviour SHEx.HttpAdapter
+defmodule ScrapingHubEx.HttpAdapters.Default do
+  @behaviour ScrapingHubEx.HttpAdapter
 
-  alias SHEx.HttpAdapter.RequestConfig
+  alias ScrapingHubEx.HttpAdapter.RequestConfig
 
-  @impl SHEx.HttpAdapter
+  @impl ScrapingHubEx.HttpAdapter
   def request(%RequestConfig{
         method: method,
         api_key: key,
