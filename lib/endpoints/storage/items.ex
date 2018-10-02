@@ -47,7 +47,7 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items do
     |> Helpers.make_request()
   end
 
-  defp section_count(id), do: id |> String.split("/") |> Enum.reject(& &1 == "") |> length()
+  defp section_count(id), do: id |> String.split("/") |> Enum.reject(&(&1 == "")) |> length()
 
   defp merge_sections(sections), do: sections |> Enum.join("/")
 
@@ -55,6 +55,7 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items do
     if empty_pagination?(params) do
       Logger.warn("#{__MODULE__}.get/4 called without pagination params or index")
     end
+
     params
   end
 
@@ -62,6 +63,7 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items do
     case Keyword.get(pagination_params, :index) do
       [] ->
         Keyword.delete(pagination_params, :index) == []
+
       _ ->
         false
     end

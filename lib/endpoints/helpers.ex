@@ -8,7 +8,7 @@ defmodule ScrapingHubEx.Endpoints.Helpers do
 
   def validate_params(params, expected) do
     params
-    |> Enum.reject(& param_valid?(expected, &1))
+    |> Enum.reject(&param_valid?(expected, &1))
     |> case do
       [] ->
         :ok
@@ -19,7 +19,8 @@ defmodule ScrapingHubEx.Endpoints.Helpers do
     end
   end
 
-  def invalid_param_error(error, tag) when is_atom(tag) or is_list(tag), do: {:invalid_param, {tag, error}}
+  def invalid_param_error(error, tag) when is_atom(tag) or is_list(tag),
+    do: {:invalid_param, {tag, error}}
 
   def make_request(%RequestConfig{opts: opts} = config) do
     Logger.debug("making request: #{inspect(config)}")

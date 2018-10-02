@@ -69,7 +69,7 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
 
   defp to_keyword_list({_, empty}) when empty == nil or empty == [], do: []
 
-  defp to_keyword_list({k, v}) when is_list(v), do: v |> Enum.map(& {k, &1})
+  defp to_keyword_list({k, v}) when is_list(v), do: v |> Enum.map(&{k, &1})
 
   defp to_keyword_list({_, v} = pair) when is_atom(v) or is_integer(v) or is_binary(v), do: pair
 
@@ -86,6 +86,7 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
   defp sanitize_param({k, v}) when k in @param_synonyms_available do
     replacement = Keyword.get(@param_synonyms, k)
     Logger.warn("replacing '#{inspect(k)}' parameter with '#{inspect(replacement)}'")
+
     {replacement, v}
     |> sanitize_param()
   end
@@ -125,17 +126,24 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
 
   defp get_params(params, keys) do
     keys
-    |> Enum.map(& {&1, Keyword.get(params, &1)})
+    |> Enum.map(&{&1, Keyword.get(params, &1)})
     |> Enum.reject(fn {_, v} -> v == nil end)
   end
 
   defp warn_on_unscoped_params(scoped, unscoped, scope_name) do
     if length(unscoped) > 0 do
-      Logger.warn("pagination values `#{inspect(unscoped)}` should be provided within the `#{scope_name}` parameter")
+      Logger.warn(
+        "pagination values `#{inspect(unscoped)}` should be provided within the `#{scope_name}` parameter"
+      )
 
       common_params = intersection(Keyword.keys(unscoped), Keyword.keys(scoped))
+
       if length(common_params) > 0 do
-        Logger.warn("top-level #{scope_name} params `#{inspect(common_params)}` will be overridden by values provided in `#{scope_name}` parameter")
+        Logger.warn(
+          "top-level #{scope_name} params `#{inspect(common_params)}` will be overridden by values provided in `#{
+            scope_name
+          }` parameter"
+        )
       end
     end
   end
@@ -145,7 +153,8 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
     a -- items_only_in_a
   end
 
-  defp warn_on_inconsistent_format(%{format: format, csv: [_ | _]} = params) when format not in [:csv, nil] do
+  defp warn_on_inconsistent_format(%{format: format, csv: [_ | _]} = params)
+       when format not in [:csv, nil] do
     Logger.warn("CSV parameters provided, but requested format is #{inspect(format)}")
     params
   end
@@ -203,8 +212,11 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
 
   defp validate_csv_params(%{csv: csv} = params) do
     case Helpers.validate_params(csv, Storage.csv_params()) do
-      :ok -> params
-      {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:csv_param)}
+      :ok ->
+        params
+
+      {:invalid_param, error} ->
+        %{params | error: error |> Helpers.invalid_param_error(:csv_param)}
     end
   end
 
@@ -235,6 +247,7 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
 
   defp validate_nodata(%{nodata: nil} = params), do: params
   defp validate_nodata(%{nodata: nodata} = params) when nodata in [0, 1], do: params
+
   defp validate_nodata(params) do
     %{params | error: "expected a boolean value" |> Helpers.invalid_param_error(:nodata)}
   end
@@ -251,21 +264,28 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
 
   defp validate_pagination_params(%{pagination: pagination} = params) do
     case Helpers.validate_params(pagination, Storage.pagination_params()) do
-      :ok -> params
-      {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
+      :ok ->
+        params
+
+      {:invalid_param, error} ->
+        %{params | error: error |> Helpers.invalid_param_error(:pagination)}
     end
   end
 
   defp validate_pagination_count(%{pagination: pagination} = params) do
     case validate_optional_integer_form(Keyword.get(pagination, :count), :count) do
-      :ok -> params
-      {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
+      :ok ->
+        params
+
+      {:invalid_param, error} ->
+        %{params | error: error |> Helpers.invalid_param_error(:pagination)}
     end
   end
 
   defp validate_pagination_start(params), do: params |> validate_pagination_offset(:start)
 
-  defp validate_pagination_startafter(params), do: params |> validate_pagination_offset(:startafter)
+  defp validate_pagination_startafter(params),
+    do: params |> validate_pagination_offset(:startafter)
 
   defp validate_pagination_offset(%{pagination: pagination} = params, offset_name) do
     with nil <- Keyword.get(pagination, offset_name) do
@@ -273,8 +293,11 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
     else
       id ->
         case id |> validate_full_form_id(offset_name) do
-          :ok -> params
-          {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
+          :ok ->
+            params
+
+          {:invalid_param, error} ->
+            %{params | error: error |> Helpers.invalid_param_error(:pagination)}
         end
     end
   end
@@ -295,8 +318,11 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
     |> Keyword.get(:index)
     |> reduce_indexes_to_first_error()
     |> case do
-      :ok -> params
-      {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:pagination)}
+      :ok ->
+        params
+
+      {:invalid_param, error} ->
+        %{params | error: error |> Helpers.invalid_param_error(:pagination)}
     end
   end
 
@@ -311,9 +337,11 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
     indexes |> Enum.reduce_while(:ok, reducer)
   end
 
-  defp validate_full_form_id(id, tag) when not is_binary(id), do: "expected a string" |> Helpers.invalid_param_error(tag)
+  defp validate_full_form_id(id, tag) when not is_binary(id),
+    do: "expected a string" |> Helpers.invalid_param_error(tag)
+
   defp validate_full_form_id(id, tag) do
-    if id |> String.split("/") |> Enum.reject(& &1 == "") |> length() == 4 do
+    if id |> String.split("/") |> Enum.reject(&(&1 == "")) |> length() == 4 do
       :ok
     else
       "expected a full id with exactly 4 parts"

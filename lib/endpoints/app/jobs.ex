@@ -143,7 +143,8 @@ defmodule ScrapingHubEx.Endpoints.App.Jobs do
   defp validate_state(nil), do: :ok
   defp validate_state(state) when state in @valid_states, do: :ok
 
-  defp validate_state(state), do:
-    "state '#{state}' not among valid states: #{@valid_states |> Enum.join(", ")}"
-    |> Helpers.invalid_param_error(:state)
+  defp validate_state(state),
+    do:
+      "state '#{state}' not among valid states: #{@valid_states |> Enum.join(", ")}"
+      |> Helpers.invalid_param_error(:state)
 end
