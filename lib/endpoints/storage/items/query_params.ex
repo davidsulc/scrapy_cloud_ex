@@ -27,10 +27,21 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
   ]
 
   def from_keywords(params) when is_list(params) do
-    __MODULE__
-    |> struct(params |> sanitize())
-    |> configure_format()
-    |> validate_params()
+    sanitized_params =
+      params
+      |> sanitize()
+      |> configure_pagination()
+
+    case Helpers.validate_params(sanitized_params, [:format, :meta, :nodata, :pagination]) do
+      :ok ->
+        __MODULE__
+        |> struct(sanitized_params)
+        |> configure_format()
+        |> validate_params()
+
+      error ->
+        {:error, error}
+    end
   end
 
   def to_query(%__MODULE__{error: nil} = params) do
@@ -85,14 +96,6 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
     params |> process_csv_format()
   end
 
-  defp validate_params(params) do
-    params
-    |> validate_format()
-    |> validate_meta()
-    |> validate_nodata()
-    |> validate_pagination()
-  end
-
   defp process_csv_format(%{format: format} = params) when is_list(format) do
     if Keyword.keyword?(format) do
       params |> set_csv_attributes()
@@ -134,6 +137,43 @@ defmodule SHEx.Endpoints.Storage.Items.QueryParams do
           %{params | error: error}
         end
     end
+  end
+
+  defp configure_pagination(params) do
+    pagination_params =
+      Storage.pagination_params()
+      |> Enum.map(& {&1, Keyword.get(params, &1)})
+      |> Enum.reject(fn {_, v} -> v == nil end)
+
+    pagination_list_params = Keyword.get(params, :pagination, [])
+
+    if length(pagination_params) > 0 do
+      Logger.warn("pagination values `#{inspect(pagination_params)}` should be provided within the `pagination` parameter")
+
+      common_params = intersection(Keyword.keys(pagination_params), Keyword.keys(pagination_list_params))
+      if length(common_params) > 0 do
+        Logger.warn("top-level pagination params `#{inspect(common_params)}` will be overridden by values provided in `pagination` parameter")
+      end
+    end
+
+    pagination = pagination_params |> Keyword.merge(pagination_list_params)
+
+    params
+    |> Enum.reject(fn {k, _} -> Enum.member?(Storage.pagination_params(), k) end)
+    |> Keyword.put(:pagination, pagination)
+  end
+
+  defp intersection(a, b) when is_list(a) and is_list(b) do
+    items_only_in_a = a -- b
+    a -- items_only_in_a
+  end
+
+  defp validate_params(params) do
+    params
+    |> validate_format()
+    |> validate_meta()
+    |> validate_nodata()
+    |> validate_pagination()
   end
 
   defp validate_optional_integer_form(nil, _tag), do: :ok
