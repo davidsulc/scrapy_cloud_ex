@@ -3,6 +3,8 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
 
   require Logger
 
+  @default_format :json
+
   # parameter naming in the API is a bit inconsistent where multi-words variables are concerned
   # (e.g. include_headers vs lineend) and often doesn't conform to the Elixir convention of
   # snake_casing variables composed of multiple words, so this will allow us to accept both (e.g.)
@@ -31,14 +33,15 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
       params
       |> sanitize()
       |> configure_pagination()
+      |> configure_csv()
 
-    case Helpers.validate_params(sanitized_params, [:format, :meta, :nodata, :pagination]) do
+    case Helpers.validate_params(sanitized_params, [:format, :meta, :nodata, :pagination, :csv]) do
       :ok ->
         __MODULE__
         |> struct(sanitized_params)
         |> warn_on_inconsistent_format()
-        |> validate_params()
         |> set_defaults()
+        |> validate_params()
 
       error ->
         {:error, error}
@@ -56,11 +59,13 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
 
   def to_query(%__MODULE__{error: error}), do: {:error, error}
 
-  defp to_keyword_list({group, params}) when group in [:pagination, :csv_params] do
+  defp to_keyword_list({group, params}) when group in [:pagination, :csv] do
     params
     |> Enum.map(&to_keyword_list/1)
     |> List.flatten()
   end
+
+  defp to_keyword_list({:fields, fields}), do: {:fields, fields |> Enum.join(",")}
 
   defp to_keyword_list({_, empty}) when empty == nil or empty == [], do: []
 
@@ -85,6 +90,10 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
     |> sanitize_param()
   end
 
+  defp sanitize_param({:include_headers, false}), do: {:include_headers, 0}
+  defp sanitize_param({:include_headers, true}), do: {:include_headers, 1}
+  defp sanitize_param({:include_headers, v}), do: {:include_headers, v}
+
   defp sanitize_param({:nodata, false}), do: {:nodata, 0}
   defp sanitize_param({:nodata, true}), do: {:nodata, 1}
   defp sanitize_param({:nodata, v}), do: {:nodata, v}
@@ -94,27 +103,41 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
   defp sanitize_param({_, _} = pair), do: pair
 
   defp configure_pagination(params) do
-    pagination_params =
-      Storage.pagination_params()
-      |> Enum.map(& {&1, Keyword.get(params, &1)})
-      |> Enum.reject(fn {_, v} -> v == nil end)
+    params |> configure_params(:pagination, Storage.pagination_params())
+  end
 
-    pagination_list_params = Keyword.get(params, :pagination, [])
+  defp configure_csv(params) do
+    params |> configure_params(:csv, Storage.csv_params())
+  end
 
-    if length(pagination_params) > 0 do
-      Logger.warn("pagination values `#{inspect(pagination_params)}` should be provided within the `pagination` parameter")
+  defp configure_params(params, scope_name, expected_scoped_params) do
+    unscoped = params |> get_params(expected_scoped_params)
+    scoped = Keyword.get(params, scope_name, [])
 
-      common_params = intersection(Keyword.keys(pagination_params), Keyword.keys(pagination_list_params))
-      if length(common_params) > 0 do
-        Logger.warn("top-level pagination params `#{inspect(common_params)}` will be overridden by values provided in `pagination` parameter")
-      end
-    end
+    warn_on_unscoped_params(scoped, unscoped, scope_name)
 
-    pagination = pagination_params |> Keyword.merge(pagination_list_params)
+    scoped_params = unscoped |> Keyword.merge(scoped)
 
     params
-    |> Enum.reject(fn {k, _} -> Enum.member?(Storage.pagination_params(), k) end)
-    |> Keyword.put(:pagination, pagination)
+    |> Enum.reject(fn {k, _} -> Enum.member?(expected_scoped_params, k) end)
+    |> Keyword.put(scope_name, scoped_params)
+  end
+
+  defp get_params(params, keys) do
+    keys
+    |> Enum.map(& {&1, Keyword.get(params, &1)})
+    |> Enum.reject(fn {_, v} -> v == nil end)
+  end
+
+  defp warn_on_unscoped_params(scoped, unscoped, scope_name) do
+    if length(unscoped) > 0 do
+      Logger.warn("pagination values `#{inspect(unscoped)}` should be provided within the `#{scope_name}` parameter")
+
+      common_params = intersection(Keyword.keys(unscoped), Keyword.keys(scoped))
+      if length(common_params) > 0 do
+        Logger.warn("top-level #{scope_name} params `#{inspect(common_params)}` will be overridden by values provided in `#{scope_name}` parameter")
+      end
+    end
   end
 
   defp intersection(a, b) when is_list(a) and is_list(b) do
@@ -122,17 +145,23 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
     a -- items_only_in_a
   end
 
-  defp warn_on_inconsistent_format(%QueryParams{format: format, csv: [_ | _]} = params) when format not in [:csv, nil] do
+  defp warn_on_inconsistent_format(%{format: format, csv: [_ | _]} = params) when format not in [:csv, nil] do
     Logger.warn("CSV parameters provided, but requested format is #{inspect(format)}")
     params
   end
 
-  defp warn_on_inconsistent_format(%QueryParams{format: nil, csv: [_ | _]} = params) do
+  defp warn_on_inconsistent_format(%{format: nil, csv: [_ | _]} = params) do
     Logger.info("Setting `format` to :csv since `:csv` parameters were provided")
     %{params | format: :csv}
   end
 
-  defp warn_on_inconsistent_format(%QueryParams{} = params), do: params
+  defp warn_on_inconsistent_format(params), do: params
+
+  defp set_defaults(%{format: nil} = params) do
+    %{params | format: @default_format}
+  end
+
+  defp set_defaults(%{} = params), do: params
 
   defp validate_params(params) do
     params
@@ -172,14 +201,14 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
     end
   end
 
-  defp validate_csv_params(%{csv_params: csv} = params) do
+  defp validate_csv_params(%{csv: csv} = params) do
     case Helpers.validate_params(csv, Storage.csv_params()) do
       :ok -> params
       {:invalid_param, error} -> %{params | error: error |> Helpers.invalid_param_error(:csv_param)}
     end
   end
 
-  defp check_fields_param_provided(%{csv_params: csv} = params) do
+  defp check_fields_param_provided(%{csv: csv} = params) do
     if Keyword.has_key?(csv, :fields) do
       params
     else

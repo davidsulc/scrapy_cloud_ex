@@ -1,6 +1,8 @@
 defmodule ScrapingHubEx.Endpoints.Helpers do
   @moduledoc false
 
+  require Logger
+
   alias ScrapingHubEx.HttpAdapter.RequestConfig
   alias ScrapingHubEx.HttpAdapters.Default, as: DefaultAdapter
 
@@ -20,6 +22,7 @@ defmodule ScrapingHubEx.Endpoints.Helpers do
   def invalid_param_error(error, tag) when is_atom(tag) or is_list(tag), do: {:invalid_param, {tag, error}}
 
   def make_request(%RequestConfig{opts: opts} = config) do
+    Logger.debug("making request: #{inspect(config)}")
     http_client = get_http_client(opts)
     config |> http_client.request()
   end
