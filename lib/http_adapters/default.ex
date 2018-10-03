@@ -38,10 +38,18 @@ defmodule ScrapingHubEx.HttpAdapters.Default do
   end
 
   defp decode_body(body, opts) do
-    decoder = opts |> Keyword.get(:decoder, ScrapingHubEx.Decoders.Default)
-    format = opts |> Keyword.fetch!(:decoder_format)
-    decoder.decode(body, format)
+    format = Keyword.fetch!(opts, :decoder_format)
+
+    decode =
+      opts
+      |> Keyword.get(:decoder, ScrapingHubEx.Decoders.Default)
+      |> get_decoder_fun()
+
+    decode.(body, format)
   end
+
+  defp get_decoder_fun(decoder_fun) when is_function(decoder_fun), do: decoder_fun
+  defp get_decoder_fun(decoder_module) when is_atom(decoder_module), do: &decoder_module.decode(&1, &2)
 
   defp format_api_result(200, body), do: {:ok, body}
   defp format_api_result(status, body), do: {:api_error, {status, body}}
