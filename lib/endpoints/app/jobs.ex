@@ -63,7 +63,7 @@ defmodule ScrapingHubEx.Endpoints.App.Jobs do
       when is_list(params)
       when is_list(opts) do
     with :ok <- Helpers.validate_params(params, @valid_update_params) do
-      request = prepare_basic_request(api_key, project_id, job_or_jobs, opts)
+      request = prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
 
       request
       |> Map.put(:url, "#{@base_url}/jobs/update.json")
@@ -79,7 +79,7 @@ defmodule ScrapingHubEx.Endpoints.App.Jobs do
       when is_id(project_id)
       when is_id(job_or_jobs) or is_list(job_or_jobs)
       when is_list(opts) do
-    prepare_basic_request(api_key, project_id, job_or_jobs, opts)
+    prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
     |> Map.put(:url, "#{@base_url}/jobs/delete.json")
     |> Helpers.make_request()
   end
@@ -89,12 +89,12 @@ defmodule ScrapingHubEx.Endpoints.App.Jobs do
       when is_id(project_id)
       when is_id(job_or_jobs) or is_list(job_or_jobs)
       when is_list(opts) do
-    prepare_basic_request(api_key, project_id, job_or_jobs, opts)
+    prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
     |> Map.put(:url, "#{@base_url}/jobs/stop.json")
     |> Helpers.make_request()
   end
 
-  defp prepare_basic_request(api_key, project_id, job_or_jobs, opts) do
+  defp prepare_basic_post_request(api_key, project_id, job_or_jobs, opts) do
     body =
       job_or_jobs
       |> format_jobs()
