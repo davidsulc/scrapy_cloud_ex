@@ -48,6 +48,23 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
     end
   end
 
+  def warn_if_no_pagination(%__MODULE__{} = params, function_name) do
+    if !has_pagination?(params) do
+      Logger.warn("#{function_name} called without pagination params or index")
+    end
+
+    params
+  end
+
+  def has_pagination?(%__MODULE__{pagination: pagination_params}) do
+    case Keyword.get(pagination_params, :index) do
+      [] -> Keyword.delete(pagination_params, :index) != []
+      _ -> true
+    end
+  end
+
+  def has_pagination?(%__MODULE__{}), do: false
+
   def to_query(%__MODULE__{error: nil} = params) do
     params
     |> Map.from_struct()

@@ -15,12 +15,10 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items do
       when is_list(opts) do
     with %QueryParams{error: nil} = query_params <- params |> QueryParams.from_keywords() do
       if section_count(composite_id) < 4 do
-        query_params |> warn_if_no_pagination()
+        query_params |> QueryParams.warn_if_no_pagination("#{__MODULE__}.get/4 ")
       end
 
-      query_string =
-        query_params
-        |> QueryParams.to_query()
+      query_string = query_params |> QueryParams.to_query()
 
       base_url = [@base_url, composite_id] |> merge_sections()
 
@@ -50,26 +48,6 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items do
   defp section_count(id), do: id |> String.split("/") |> Enum.reject(&(&1 == "")) |> length()
 
   defp merge_sections(sections), do: sections |> Enum.join("/")
-
-  defp warn_if_no_pagination(%QueryParams{} = params) do
-    if empty_pagination?(params) do
-      Logger.warn("#{__MODULE__}.get/4 called without pagination params or index")
-    end
-
-    params
-  end
-
-  defp empty_pagination?(%QueryParams{pagination: pagination_params}) do
-    case Keyword.get(pagination_params, :index) do
-      [] ->
-        Keyword.delete(pagination_params, :index) == []
-
-      _ ->
-        false
-    end
-  end
-
-  defp empty_pagination?(%QueryParams{}), do: true
 
   defp set_default_opts(opts, %QueryParams{format: format}) do
     decoder_format = opts |> Keyword.get(:decoder_format, format)
