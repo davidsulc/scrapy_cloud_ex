@@ -40,7 +40,7 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items do
       when is_list(opts) do
     RequestConfig.new()
     |> Map.put(:api_key, api_key)
-    |> Map.put(:opts, opts)
+    |> Map.put(:opts, opts |> Keyword.put(:decoder_format, :json))
     |> Map.put(:url, [@base_url, composite_id, "stats"] |> merge_sections())
     |> Helpers.make_request()
   end

@@ -1,4 +1,4 @@
-defmodule ScrapingHubEx.Endpoints.Storage.Logs do
+defmodule ScrapingHubEx.Endpoints.Storage.Requests do
   import ScrapingHubEx.Endpoints.Guards
 
   alias ScrapingHubEx.Endpoints.Helpers
@@ -27,6 +27,19 @@ defmodule ScrapingHubEx.Endpoints.Storage.Logs do
       error -> {:error, error}
     end
   end
+
+  def stats(api_key, composite_id, opts \\ [])
+      when is_api_key(api_key)
+      when is_binary(composite_id)
+      when is_list(opts) do
+    RequestConfig.new()
+    |> Map.put(:api_key, api_key)
+    |> Map.put(:opts, opts |> Keyword.put(:decoder_format, :json))
+    |> Map.put(:url, [@base_url, composite_id, "stats"] |> merge_sections())
+    |> Helpers.make_request()
+  end
+
+  defp merge_sections(sections), do: sections |> Enum.join("/")
 
   defp set_default_opts(opts, %QueryParams{format: format}) do
     decoder_format = opts |> Keyword.get(:decoder_format, format)
