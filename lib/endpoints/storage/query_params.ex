@@ -1,4 +1,4 @@
-defmodule ScrapingHubEx.Endpoints.Storage.Items.QueryParams do
+defmodule ScrapingHubEx.Endpoints.Storage.QueryParams do
   @moduledoc false
 
   require Logger

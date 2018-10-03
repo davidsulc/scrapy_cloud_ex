@@ -3,7 +3,7 @@ defmodule ScrapingHubEx.Endpoints.Storage.Items do
   import ScrapingHubEx.Endpoints.Guards
 
   alias ScrapingHubEx.Endpoints.Helpers
-  alias ScrapingHubEx.Endpoints.Storage.Items.QueryParams
+  alias ScrapingHubEx.Endpoints.Storage.QueryParams
   alias ScrapingHubEx.HttpAdapter.RequestConfig
 
   @base_url "https://storage.scrapinghub.com/items"
