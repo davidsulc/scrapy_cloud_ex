@@ -9,7 +9,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
   @default_format :json
 
   @param_synonyms [
-    {:p_count, :pcount},
+    {:p_count, :pcount}
   ]
 
   def list(api_key, project_id, params \\ [], opts \\ [])
@@ -44,7 +44,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
       |> Helpers.canonicalize_params(@param_synonyms)
 
     with :ok <- Helpers.validate_params(params, [:count, :p, :pcount, :meta, :format]),
-         :ok <- Helpers.validate_params(Keyword.get(params, :meta, []), [:_project | Storage.meta_params()]) do
+         meta = Keyword.get(params, :meta, []),
+         :ok <- Helpers.validate_params(meta, [:_project | Storage.meta_params()]) do
       base_url = [@base_url, "projects"] |> Enum.join("/")
 
       query_string =
