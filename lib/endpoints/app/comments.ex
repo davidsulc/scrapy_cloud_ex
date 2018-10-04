@@ -64,9 +64,9 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   end
 
   defp check_constraints(method, composite_id, params)
-      when is_atom(method)
-      when is_binary(composite_id) or is_integer(composite_id)
-      when is_list(params) do
+       when is_atom(method)
+       when is_binary(composite_id) or is_integer(composite_id)
+       when is_list(params) do
     do_check_constraints(method, section_count(composite_id), Keyword.has_key?(params, :text))
   end
 
@@ -112,5 +112,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   defp merge_sections(sections), do: sections |> Enum.join("/")
 
   defp section_count(composite) when is_integer(composite), do: 1
-  defp section_count(composite) when is_binary(composite), do: composite |> String.split("/") |> length()
+
+  defp section_count(composite) when is_binary(composite),
+    do: composite |> String.split("/") |> length()
 end

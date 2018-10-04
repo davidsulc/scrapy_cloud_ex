@@ -49,7 +49,9 @@ defmodule ScrapyCloudEx.HttpAdapters.Default do
   end
 
   defp get_decoder_fun(decoder_fun) when is_function(decoder_fun), do: decoder_fun
-  defp get_decoder_fun(decoder_module) when is_atom(decoder_module), do: &decoder_module.decode(&1, &2)
+
+  defp get_decoder_fun(decoder_module) when is_atom(decoder_module),
+    do: &decoder_module.decode(&1, &2)
 
   defp format_api_result(200, body), do: {:ok, body}
   defp format_api_result(status, body), do: {:api_error, {status, body}}
