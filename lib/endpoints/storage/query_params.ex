@@ -5,17 +5,12 @@ defmodule ScrapingHubEx.Endpoints.Storage.QueryParams do
 
   @default_format :json
 
-  # parameter naming in the API is a bit inconsistent where multi-words variables are concerned
-  # (e.g. include_headers vs lineend) and often doesn't conform to the Elixir convention of
-  # snake_casing variables composed of multiple words, so this will allow us to accept both (e.g.)
-  # `line_end` and `lineend` and convert them to the name the API expects
   @param_synonyms [
     {:includeheaders, :include_headers},
     {:line_end, :lineend},
     {:no_data, :nodata},
     {:start_after, :startafter}
   ]
-  @param_synonyms_available @param_synonyms |> Keyword.keys()
 
   alias ScrapingHubEx.Endpoints.{Helpers, Storage}
 
@@ -94,18 +89,12 @@ defmodule ScrapingHubEx.Endpoints.Storage.QueryParams do
 
   defp sanitize(params) when is_list(params) do
     if Keyword.keyword?(params) do
-      params |> Enum.map(&sanitize_param/1)
+      params
+      |> Helpers.canonicalize_params(@param_synonyms)
+      |> Enum.map(&sanitize_param/1)
     else
       params
     end
-  end
-
-  defp sanitize_param({k, v}) when k in @param_synonyms_available do
-    replacement = Keyword.get(@param_synonyms, k)
-    Logger.warn("replacing '#{inspect(k)}' parameter with '#{inspect(replacement)}'")
-
-    {replacement, v}
-    |> sanitize_param()
   end
 
   defp sanitize_param({:include_headers, false}), do: {:include_headers, 0}
