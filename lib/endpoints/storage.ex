@@ -1,5 +1,5 @@
-defmodule ScrapingHubEx.Endpoints.Storage do
-  alias ScrapingHubEx.Endpoints.Helpers
+defmodule ScrapyCloudEx.Endpoints.Storage do
+  alias ScrapyCloudEx.Endpoints.Helpers
 
   def pagination_params(), do: [:count, :index, :start, :startafter]
 

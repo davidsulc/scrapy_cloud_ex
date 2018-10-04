@@ -1,5 +1,5 @@
-defmodule ScrapingHubEx.Decoders.PassThrough do
-  alias ScrapingHubEx.Decoder
+defmodule ScrapyCloudEx.Decoders.PassThrough do
+  alias ScrapyCloudEx.Decoder
 
   @behaviour Decoder
 

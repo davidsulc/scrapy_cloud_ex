@@ -1,5 +1,5 @@
-defmodule ScrapingHubEx.HttpAdapter do
-  alias ScrapingHubEx.HttpAdapter.RequestConfig
+defmodule ScrapyCloudEx.HttpAdapter do
+  alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
   @type error :: :request_error | :api_error | :decoder_error
 
