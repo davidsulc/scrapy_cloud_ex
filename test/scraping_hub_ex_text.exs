@@ -1,4 +1,4 @@
-defmodule ScrapingHubExTest do
+defmodule ScrapingHubEx do
   use ExUnit.Case
   doctest ScrapingHubEx
 
