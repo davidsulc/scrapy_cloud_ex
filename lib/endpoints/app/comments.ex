@@ -31,7 +31,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   defp basic_comment_request(api_key, composite_id, params, opts, method) do
     with :ok <- Helpers.validate_params(params, [:text]),
-         true <- split_sections(composite_id) > 3 do
+         true <- method == :get || split_sections(composite_id) > 3 do
       RequestConfig.new()
       |> Map.put(:api_key, api_key)
       |> Map.put(:method, method)
