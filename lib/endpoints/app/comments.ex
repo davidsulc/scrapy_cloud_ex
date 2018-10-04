@@ -10,11 +10,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
       when is_list(opts) do
-    RequestConfig.new()
-    |> Map.put(:api_key, api_key)
-    |> Map.put(:opts, opts |> Keyword.put(:decoder_format, :json))
-    |> Map.put(:url, [@base_url, composite_id] |> Enum.join("/"))
-    |> Helpers.make_request()
+    basic_comment_request(api_key, composite_id, [], opts, :get)
   end
 
   def post(api_key, composite_id, params \\ [], opts \\ [])
@@ -22,11 +18,23 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
       when is_binary(composite_id) and composite_id != ""
       when is_list(params)
       when is_list(opts) do
+    basic_comment_request(api_key, composite_id, params, opts, :post)
+  end
+
+  def delete(api_key, composite_id, params \\ [], opts \\ [])
+      when is_api_key(api_key)
+      when is_binary(composite_id) and composite_id != ""
+      when is_list(params)
+      when is_list(opts) do
+    basic_comment_request(api_key, composite_id, params, opts, :delete)
+  end
+
+  defp basic_comment_request(api_key, composite_id, params, opts, method) do
     with :ok <- Helpers.validate_params(params, [:text]),
          true <- split_sections(composite_id) > 3 do
       RequestConfig.new()
       |> Map.put(:api_key, api_key)
-      |> Map.put(:method, :post)
+      |> Map.put(:method, method)
       |> Map.put(:body, params)
       |> Map.put(:opts, opts |> Keyword.put(:decoder_format, :json))
       |> Map.put(:url, [@base_url, composite_id] |> Enum.join("/"))
