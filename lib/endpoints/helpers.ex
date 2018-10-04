@@ -1,10 +1,10 @@
-defmodule ScrapingHubEx.Endpoints.Helpers do
+defmodule ScrapyCloudEx.Endpoints.Helpers do
   @moduledoc false
 
   require Logger
 
-  alias ScrapingHubEx.HttpAdapter.RequestConfig
-  alias ScrapingHubEx.HttpAdapters.Default, as: DefaultAdapter
+  alias ScrapyCloudEx.HttpAdapter.RequestConfig
+  alias ScrapyCloudEx.HttpAdapters.Default, as: DefaultAdapter
 
   # parameter naming in the API is a bit inconsistent where multi-words variables are concerned
   # (e.g. include_headers vs lineend) and often doesn't conform to the Elixir convention of

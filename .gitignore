@@ -20,5 +20,5 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-scraping_hub_ex-*.tar
+scrapy_cloud_ex-*.tar
 

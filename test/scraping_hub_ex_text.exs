@@ -1,8 +1,8 @@
-defmodule ScrapingHubEx do
+defmodule ScrapyCloudEx do
   use ExUnit.Case
-  doctest ScrapingHubEx
+  doctest ScrapyCloudEx
 
   test "greets the world" do
-    assert ScrapingHubEx.hello() == :world
+    assert ScrapyCloudEx.hello() == :world
   end
 end

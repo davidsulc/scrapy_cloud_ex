@@ -1,4 +1,4 @@
-defmodule ScrapingHubEx.HttpAdapter.RequestConfig do
+defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
   defstruct [
     :api_key,
     :url,

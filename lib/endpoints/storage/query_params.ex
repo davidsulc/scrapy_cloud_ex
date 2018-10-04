@@ -1,4 +1,4 @@
-defmodule ScrapingHubEx.Endpoints.Storage.QueryParams do
+defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
   @moduledoc false
 
   require Logger
@@ -12,7 +12,7 @@ defmodule ScrapingHubEx.Endpoints.Storage.QueryParams do
     {:start_after, :startafter}
   ]
 
-  alias ScrapingHubEx.Endpoints.{Helpers, Storage}
+  alias ScrapyCloudEx.Endpoints.{Helpers, Storage}
 
   defstruct [
     :error,

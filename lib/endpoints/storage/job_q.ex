@@ -1,8 +1,8 @@
-defmodule ScrapingHubEx.Endpoints.Storage.JobQ do
-  import ScrapingHubEx.Endpoints.Guards
+defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
+  import ScrapyCloudEx.Endpoints.Guards
 
-  alias ScrapingHubEx.Endpoints.Helpers
-  alias ScrapingHubEx.HttpAdapter.RequestConfig
+  alias ScrapyCloudEx.Endpoints.Helpers
+  alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
   @base_url "https://storage.scrapinghub.com/jobq"
 

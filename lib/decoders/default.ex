@@ -1,5 +1,5 @@
-defmodule ScrapingHubEx.Decoders.Default do
-  alias ScrapingHubEx.Decoder
+defmodule ScrapyCloudEx.Decoders.Default do
+  alias ScrapyCloudEx.Decoder
 
   @behaviour Decoder
 

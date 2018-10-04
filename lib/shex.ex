@@ -1,6 +1,6 @@
-defmodule ScrapingHubEx do
+defmodule ScrapyCloudEx do
   @moduledoc """
-  Documentation for ScrapingHubEx.
+  Documentation for ScrapyCloudEx.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule ScrapingHubEx do
 
   ## Examples
 
-      iex> ScrapingHubEx.hello()
+      iex> ScrapyCloudEx.hello()
       :world
 
   """

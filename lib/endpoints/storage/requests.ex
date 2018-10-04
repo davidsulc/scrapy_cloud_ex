@@ -1,9 +1,9 @@
-defmodule ScrapingHubEx.Endpoints.Storage.Requests do
-  import ScrapingHubEx.Endpoints.Guards
+defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
+  import ScrapyCloudEx.Endpoints.Guards
 
-  alias ScrapingHubEx.Endpoints.Helpers
-  alias ScrapingHubEx.Endpoints.Storage.QueryParams
-  alias ScrapingHubEx.HttpAdapter.RequestConfig
+  alias ScrapyCloudEx.Endpoints.Helpers
+  alias ScrapyCloudEx.Endpoints.Storage.QueryParams
+  alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
   @base_url "https://storage.scrapinghub.com/logs"
 

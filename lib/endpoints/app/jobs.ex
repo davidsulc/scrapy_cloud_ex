@@ -1,8 +1,8 @@
-defmodule ScrapingHubEx.Endpoints.App.Jobs do
-  import ScrapingHubEx.Endpoints.Guards
+defmodule ScrapyCloudEx.Endpoints.App.Jobs do
+  import ScrapyCloudEx.Endpoints.Guards
 
-  alias ScrapingHubEx.Endpoints.{App, Helpers}
-  alias ScrapingHubEx.HttpAdapter.RequestConfig
+  alias ScrapyCloudEx.Endpoints.{App, Helpers}
+  alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
   @base_url "https://app.scrapinghub.com/api"
   @valid_states ~w(pending running finished deleted)

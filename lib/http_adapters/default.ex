@@ -1,9 +1,9 @@
-defmodule ScrapingHubEx.HttpAdapters.Default do
-  @behaviour ScrapingHubEx.HttpAdapter
+defmodule ScrapyCloudEx.HttpAdapters.Default do
+  @behaviour ScrapyCloudEx.HttpAdapter
 
-  alias ScrapingHubEx.HttpAdapter.RequestConfig
+  alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
-  @impl ScrapingHubEx.HttpAdapter
+  @impl ScrapyCloudEx.HttpAdapter
   def request(%RequestConfig{
         method: method,
         api_key: key,
@@ -42,7 +42,7 @@ defmodule ScrapingHubEx.HttpAdapters.Default do
 
     decode =
       opts
-      |> Keyword.get(:decoder, ScrapingHubEx.Decoders.Default)
+      |> Keyword.get(:decoder, ScrapyCloudEx.Decoders.Default)
       |> get_decoder_fun()
 
     decode.(body, format)
