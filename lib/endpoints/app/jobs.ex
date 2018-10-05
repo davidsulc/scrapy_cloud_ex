@@ -15,7 +15,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_binary(spider_name)
       when is_list(params)
       when is_list(opts) do
-    with job_settings <- params |> Keyword.get(:job_settings),
+    with :ok <- Helpers.validate_params(params, [:add_tag, :priority, :units, :job_settings]),
+         job_settings <- params |> Keyword.get(:job_settings),
          json_encoder <- opts |> Keyword.get(:json_encoder),
          {:ok, job_settings} <- format_job_settings(job_settings, json_encoder) do
       body =
