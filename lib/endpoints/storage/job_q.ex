@@ -10,9 +10,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
 
   @param_synonyms [
     {:start_ts, :startts},
-    {:end_ts, :endts},
-    {:hastag, :has_tag},
-    {:lackstag, :lacks_tag}
+    {:end_ts, :endts}
   ]
 
   @valid_params [:spider, :state, :startts, :endts, :has_tag, :lacks_tag, :format]

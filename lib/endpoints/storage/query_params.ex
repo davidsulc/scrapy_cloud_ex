@@ -6,7 +6,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
   @default_format :json
 
   @param_synonyms [
-    {:includeheaders, :include_headers},
     {:line_end, :lineend},
     {:no_data, :nodata},
     {:start_after, :startafter}
