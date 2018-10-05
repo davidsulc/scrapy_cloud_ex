@@ -39,17 +39,12 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
     end
 
     test "puts the given params in the request body", %{opts: opts} do
-      params = [add_tag: "foo", priority: 1, units: 3]
+      params = [add_tag: "foo", priority: 1, units: 3, foo: :bar]
       %{body: body} = Jobs.run(@api_key, @project_id, @spider_name, params, opts)
 
       for {k, v} <- params do
         assert Keyword.get(body, k) == v
       end
-    end
-
-    test "rejects invalid params", %{opts: opts} do
-      error = Jobs.run(@api_key, @project_id, @spider_name, [foo: :bar], opts)
-      assert {:error, {:invalid_param, {:foo, _}}} = error
     end
 
     test "accepts job_settings as JSON string", %{opts: opts} do
