@@ -39,12 +39,20 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
     end
 
     test "puts the given params in the request body", %{opts: opts} do
-      params = [add_tag: "foo", priority: 1, units: 3, foo: :bar]
+      params = [add_tag: "foo", priority: 1, units: 3]
       %{body: body} = Jobs.run(@api_key, @project_id, @spider_name, params, opts)
 
       for {k, v} <- params do
         assert Keyword.get(body, k) == v
       end
+    end
+
+    # per the API 'Any other parameter will be treated as a spider argument.'
+    test "also forwards arbitrary params", %{opts: opts} do
+      params = [foo: :bar]
+      %{body: body} = Jobs.run(@api_key, @project_id, @spider_name, params, opts)
+
+      assert Keyword.get(body, :foo) == :bar
     end
 
     test "accepts job_settings as JSON string", %{opts: opts} do
