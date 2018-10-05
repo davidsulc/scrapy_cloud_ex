@@ -21,9 +21,9 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
       [] ->
         :ok
 
-      invalid_params ->
+      [{invalid_param, _} | _] ->
         "valid params: #{inspect(expected |> Enum.sort())}"
-        |> invalid_param_error(Keyword.keys(invalid_params))
+        |> invalid_param_error(invalid_param)
     end
   end
 
