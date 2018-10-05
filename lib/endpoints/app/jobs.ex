@@ -16,8 +16,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_list(params)
       when is_list(opts) do
     with :ok <- Helpers.validate_params(params, [:add_tag, :priority, :units, :job_settings]),
-         job_settings <- params |> Keyword.get(:job_settings),
-         json_encoder <- opts |> Keyword.get(:json_encoder),
+         job_settings = params |> Keyword.get(:job_settings),
+         json_encoder = opts |> Keyword.get(:json_encoder),
          {:ok, job_settings} <- format_job_settings(job_settings, json_encoder) do
       body =
         params
@@ -116,7 +116,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   defp format_job_settings(nil, _encoder), do: {:ok, []}
 
-  defp format_job_settings(settings, _encoder) when is_binary(settings), do: settings
+  defp format_job_settings(settings, _encoder) when is_binary(settings), do: {:ok, settings}
 
   defp format_job_settings(settings, _encoder = nil) when is_map(settings) do
     if function_exported?(Jason, :encode, 2) do
