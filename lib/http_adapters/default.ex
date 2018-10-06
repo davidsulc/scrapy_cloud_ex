@@ -39,13 +39,9 @@ defmodule ScrapyCloudEx.HttpAdapters.Default do
 
   defp decode_body(body, opts) do
     format = Keyword.fetch!(opts, :decoder_format)
+    decoder_fun = Keyword.fetch!(opts, :decoder) |> get_decoder_fun()
 
-    decode =
-      opts
-      |> Keyword.get(:decoder, ScrapyCloudEx.Decoders.Default)
-      |> get_decoder_fun()
-
-    decode.(body, format)
+    decoder_fun.(body, format)
   end
 
   defp get_decoder_fun(decoder_fun) when is_function(decoder_fun), do: decoder_fun

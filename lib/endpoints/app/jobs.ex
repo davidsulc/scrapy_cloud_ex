@@ -7,7 +7,6 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   @base_url "https://app.scrapinghub.com/api"
   @valid_states ~w(pending running finished deleted)
   @valid_update_params [:add_tag, :remove_tag]
-  @valid_list_params [:job, :spider, :state, :has_tag, :lacks_tag]
 
   def run(api_key, project_id, spider_name, params \\ [], opts \\ [])
       when is_api_key(api_key)
@@ -25,11 +24,11 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
         |> maybe_add_job_settings(job_settings)
 
       RequestConfig.new()
-      |> Map.put(:api_key, api_key)
-      |> Map.put(:method, :post)
-      |> Map.put(:body, body)
-      |> Map.put(:opts, opts)
-      |> Map.put(:url, "#{@base_url}/run.json")
+      |> RequestConfig.put(:api_key, api_key)
+      |> RequestConfig.put(:method, :post)
+      |> RequestConfig.put(:body, body)
+      |> RequestConfig.merge_opts(opts)
+      |> RequestConfig.put(:url, "#{@base_url}/run.json")
       |> Helpers.make_request()
     else
       error -> {:error, error}
@@ -41,18 +40,29 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_id(project_id)
       when is_list(params)
       when is_list(opts) do
-    with :ok <- Helpers.validate_params(params, @valid_list_params ++ App.pagination_params()),
-         # TODO convert state to string if given as atom
+    with valid_params = [:format | [:job, :spider, :state, :has_tag, :lacks_tag] ++ App.pagination_params()],
+         :ok <- Helpers.validate_params(params, valid_params),
+         true <- Keyword.get(params, :format) in [nil, :json, :jl],
+         format = Keyword.get(params, :format, :json),
          :ok <- params |> Keyword.get(:state) |> validate_state() do
+      params = params |> Keyword.delete(:format)
       query = [{:project, project_id} | params] |> URI.encode_query()
 
       RequestConfig.new()
-      |> Map.put(:api_key, api_key)
-      |> Map.put(:opts, opts)
-      |> Map.put(:url, "#{@base_url}/jobs/list.json?#{query}")
+      |> RequestConfig.put(:api_key, api_key)
+      |> RequestConfig.merge_opts(opts)
+      |> RequestConfig.put(:url, "#{@base_url}/jobs/list.#{format}?#{query}")
       |> Helpers.make_request()
     else
-      {:invalid_param, _} = error -> {:error, error}
+      false ->
+        error =
+          "expected format to be one of :json, :jl, but got `#{Keyword.get(params, :format)}`"
+          |> Helpers.invalid_param_error(:format)
+
+          {:error, error}
+
+      {:invalid_param, _} = error ->
+        {:error, error}
     end
   end
 
@@ -66,8 +76,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       request = prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
 
       request
-      |> Map.put(:url, "#{@base_url}/jobs/update.json")
-      |> Map.put(:body, request.body ++ params)
+      |> RequestConfig.put(:url, "#{@base_url}/jobs/update.json")
+      |> RequestConfig.put(:body, request.body ++ params)
       |> Helpers.make_request()
     else
       {:invalid_param, _} = error -> {:error, error}
@@ -80,7 +90,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_id(job_or_jobs) or is_list(job_or_jobs)
       when is_list(opts) do
     prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
-    |> Map.put(:url, "#{@base_url}/jobs/delete.json")
+    |> RequestConfig.put(:url, "#{@base_url}/jobs/delete.json")
     |> Helpers.make_request()
   end
 
@@ -90,7 +100,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_id(job_or_jobs) or is_list(job_or_jobs)
       when is_list(opts) do
     prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
-    |> Map.put(:url, "#{@base_url}/jobs/stop.json")
+    |> RequestConfig.put(:url, "#{@base_url}/jobs/stop.json")
     |> Helpers.make_request()
   end
 
@@ -101,10 +111,10 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       |> Keyword.put(:project, project_id)
 
     RequestConfig.new()
-    |> Map.put(:api_key, api_key)
-    |> Map.put(:method, :post)
-    |> Map.put(:body, body)
-    |> Map.put(:opts, opts)
+    |> RequestConfig.put(:api_key, api_key)
+    |> RequestConfig.put(:method, :post)
+    |> RequestConfig.put(:body, body)
+    |> RequestConfig.merge_opts(opts)
   end
 
   defp format_jobs(job_or_jobs) do
