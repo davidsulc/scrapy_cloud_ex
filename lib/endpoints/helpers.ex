@@ -14,7 +14,7 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
     params |> Enum.map(&canonicalize_param(&1, synonyms))
   end
 
-  def validate_params(params, expected) do
+  def validate_params(params, expected) when is_list(params) and is_list(expected) do
     params
     |> Enum.reject(&param_valid?(expected, &1))
     |> case do
