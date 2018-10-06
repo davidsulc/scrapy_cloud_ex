@@ -41,11 +41,11 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     with :ok <- Helpers.validate_params(params, [:text]),
          :ok <- check_constraints(method, composite_id, params) do
       RequestConfig.new()
-      |> Map.put(:api_key, api_key)
-      |> Map.put(:method, method)
-      |> Map.put(:body, params)
-      |> Map.put(:opts, opts |> Keyword.put(:decoder_format, :json))
-      |> Map.put(:url, [@base_url, composite_id] |> Enum.join("/"))
+      |> RequestConfig.put(:api_key, api_key)
+      |> RequestConfig.put(:method, method)
+      |> RequestConfig.put(:body, params)
+      |> RequestConfig.merge_opts(opts)
+      |> RequestConfig.put(:url, [@base_url, composite_id] |> Enum.join("/"))
       |> Helpers.make_request()
     else
       {:invalid_param, _} = error -> {:error, error}
@@ -57,9 +57,9 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
       when is_binary(project_id)
       when is_list(opts) do
     RequestConfig.new()
-    |> Map.put(:api_key, api_key)
-    |> Map.put(:opts, opts |> Keyword.put(:decoder_format, :json))
-    |> Map.put(:url, [@base_url, project_id, "stats"] |> merge_sections())
+    |> RequestConfig.put(:api_key, api_key)
+    |> RequestConfig.merge_opts(opts)
+    |> RequestConfig.put(:url, [@base_url, project_id, "stats"] |> merge_sections())
     |> Helpers.make_request()
   end
 
