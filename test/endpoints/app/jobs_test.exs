@@ -56,6 +56,14 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
       assert Keyword.get(body, :foo) == :bar
     end
 
+    test "accepts multiple add_tag params", %{opts: opts} do
+      params = [add_tag: "a", add_tag: "b", add_tag: "c"]
+      %{body: body} = Jobs.run(@api_key, @project_id, @spider_name, params, opts)
+      tags = Keyword.get_values(body, :add_tag)
+
+      assert tags == ~w(a b c)
+    end
+
     test "accepts job_settings as JSON string", %{opts: opts} do
       json = "{'foo': 'bar'}"
       params = [job_settings: json]
@@ -159,6 +167,22 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
       end
 
       assert Map.get(query, "format") == nil
+    end
+
+    test "accepts multiple has_tag params", %{opts: opts} do
+      params = [has_tag: "a", has_tag: "b", has_tag: "c"]
+      %{body: body} = Jobs.run(@api_key, @project_id, @spider_name, params, opts)
+      tags = Keyword.get_values(body, :has_tag)
+
+      assert tags == ~w(a b c)
+    end
+
+    test "accepts multiple lacks_tag params", %{opts: opts} do
+      params = [lacks_tag: "a", lacks_tag: "b", lacks_tag: "c"]
+      %{body: body} = Jobs.run(@api_key, @project_id, @spider_name, params, opts)
+      tags = Keyword.get_values(body, :lacks_tag)
+
+      assert tags == ~w(a b c)
     end
 
     test "forwards the given options", %{opts: opts} do
