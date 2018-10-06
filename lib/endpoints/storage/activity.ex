@@ -24,10 +24,10 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
       query_string = URI.encode_query(params)
 
       RequestConfig.new()
-      |> Map.put(:api_key, api_key)
-      |> Map.put(:url, "#{base_url}?#{query_string}")
-      |> Map.put(:headers, Keyword.get(opts, :headers, []))
-      |> Map.put(:opts, opts |> Keyword.put(:decoder_format, :json))
+      |> RequestConfig.put(:api_key, api_key)
+      |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
+      |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
+      |> RequestConfig.merge_opts(opts)
       |> Helpers.make_request()
     else
       error -> {:error, error}
@@ -54,10 +54,11 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
         |> URI.encode_query()
 
       RequestConfig.new()
-      |> Map.put(:api_key, api_key)
-      |> Map.put(:url, "#{base_url}?#{query_string}")
-      |> Map.put(:headers, Keyword.get(opts, :headers, []))
-      |> Map.put(:opts, opts |> Keyword.put(:decoder_format, Keyword.get(params, :format, :json)))
+      |> RequestConfig.put(:api_key, api_key)
+      |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
+      |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
+      |> RequestConfig.merge_opts([decoder_format: Keyword.get(params, :format, :json)])
+      |> RequestConfig.merge_opts(opts)
       |> Helpers.make_request()
     else
       error -> {:error, error}
