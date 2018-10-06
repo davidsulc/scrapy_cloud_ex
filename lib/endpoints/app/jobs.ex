@@ -76,8 +76,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       request = prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
 
       request
-      |> Map.put(:url, "#{@base_url}/jobs/update.json")
-      |> Map.put(:body, request.body ++ params)
+      |> RequestConfig.put(:url, "#{@base_url}/jobs/update.json")
+      |> RequestConfig.put(:body, request.body ++ params)
       |> Helpers.make_request()
     else
       {:invalid_param, _} = error -> {:error, error}
@@ -90,7 +90,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_id(job_or_jobs) or is_list(job_or_jobs)
       when is_list(opts) do
     prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
-    |> Map.put(:url, "#{@base_url}/jobs/delete.json")
+    |> RequestConfig.put(:url, "#{@base_url}/jobs/delete.json")
     |> Helpers.make_request()
   end
 
@@ -100,7 +100,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_id(job_or_jobs) or is_list(job_or_jobs)
       when is_list(opts) do
     prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
-    |> Map.put(:url, "#{@base_url}/jobs/stop.json")
+    |> RequestConfig.put(:url, "#{@base_url}/jobs/stop.json")
     |> Helpers.make_request()
   end
 
