@@ -271,4 +271,36 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
       assert Keyword.equal?(merged_opts, opts)
     end
   end
+
+  describe "stop/4" do
+    test "uses the proper API endpoint", %{opts: opts} do
+      %{url: url} = Jobs.stop(@api_key, @project_id, 123, opts)
+      assert String.starts_with?(url, "https://app.scrapinghub.com/api/jobs/stop.json")
+    end
+
+    test "contains the api key", %{opts: opts} do
+      assert %{api_key: @api_key} = Jobs.stop(@api_key, @project_id, 123, opts)
+    end
+
+    test "makes a POST request", %{opts: opts} do
+      assert %{method: :post} = Jobs.stop(@api_key, @project_id, 123, opts)
+    end
+
+    test "puts the project id and job id(s) in the request body", %{opts: opts} do
+      job_ids = [1, 2, 3]
+      %{body: body} = Jobs.stop(@api_key, @project_id, job_ids, opts)
+
+      jobs_ids_in_body = Keyword.get_values(body, :job)
+      assert jobs_ids_in_body -- job_ids == []
+      assert job_ids -- jobs_ids_in_body == []
+      assert Keyword.get(body, :project) == @project_id
+    end
+
+    test "forwards the given options", %{opts: opts} do
+      given_opts = [{:foo, :bar} | opts]
+      %{opts: opts} = Jobs.stop(@api_key, @project_id, [123], given_opts)
+      merged_opts = Keyword.merge(opts, given_opts)
+      assert Keyword.equal?(merged_opts, opts)
+    end
+  end
 end
