@@ -35,7 +35,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
     RequestConfig.new()
     |> RequestConfig.put(:api_key, api_key)
     |> RequestConfig.merge_opts(opts)
-    |> RequestConfig.put(:url, [@base_url, composite_id, "stats"] |> Enum.join("/")
+    |> RequestConfig.put(:url, [@base_url, composite_id, "stats"] |> Enum.join("/"))
     |> Helpers.make_request()
   end
 end
