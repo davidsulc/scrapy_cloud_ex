@@ -17,19 +17,14 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Logs do
       base_url = [@base_url, composite_id] |> Enum.join("/")
 
       RequestConfig.new()
-      |> Map.put(:api_key, api_key)
-      |> Map.put(:url, "#{base_url}?#{query_string}")
-      |> Map.put(:headers, Keyword.get(opts, :headers, []))
-      |> Map.put(:opts, opts |> set_default_opts(query_params))
+      |> RequestConfig.put(:api_key, api_key)
+      |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
+      |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
+      |> RequestConfig.merge_opts(opts)
       |> Helpers.make_request()
     else
       %QueryParams{error: error} -> {:error, error}
       error -> {:error, error}
     end
-  end
-
-  defp set_default_opts(opts, %QueryParams{format: format}) do
-    decoder_format = opts |> Keyword.get(:decoder_format, format)
-    opts |> Keyword.put(:decoder_format, decoder_format)
   end
 end
