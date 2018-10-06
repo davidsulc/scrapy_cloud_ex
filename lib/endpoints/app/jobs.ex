@@ -6,7 +6,6 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   @base_url "https://app.scrapinghub.com/api"
   @valid_states ~w(pending running finished deleted)
-  @valid_update_params [:add_tag, :remove_tag]
 
   def run(api_key, project_id, spider_name, params \\ [], opts \\ [])
       when is_api_key(api_key)
@@ -72,7 +71,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_id(job_or_jobs) or is_list(job_or_jobs)
       when is_list(params)
       when is_list(opts) do
-    with :ok <- Helpers.validate_params(params, @valid_update_params) do
+    with :ok <- Helpers.validate_params(params, [:add_tag, :remove_tag]) do
       request = prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
 
       request
