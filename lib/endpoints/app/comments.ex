@@ -10,7 +10,10 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
       when is_list(opts) do
-    basic_comment_request(api_key, composite_id, [], opts, :get)
+    case basic_comment_request(api_key, composite_id, [], opts, :get) do
+      %RequestConfig{} = request -> request |> Helpers.make_request()
+      error -> {:error, error}
+    end
   end
 
   def put(api_key, composite_id, params \\ [], opts \\ [])
@@ -18,7 +21,10 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
       when is_binary(composite_id) and composite_id != ""
       when is_list(params)
       when is_list(opts) do
-    basic_comment_request(api_key, composite_id, params, opts, :put)
+    case basic_comment_request(api_key, composite_id, params, opts, :put) do
+      %RequestConfig{} = request -> request |> Helpers.make_request()
+      error -> {:error, error}
+    end
   end
 
   def post(api_key, composite_id, params \\ [], opts \\ [])
@@ -26,7 +32,10 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
       when is_binary(composite_id) and composite_id != ""
       when is_list(params)
       when is_list(opts) do
-    basic_comment_request(api_key, composite_id, params, opts, :post)
+    case basic_comment_request(api_key, composite_id, params, opts, :post) do
+      %RequestConfig{} = request -> request |> Helpers.make_request()
+      error -> {:error, error}
+    end
   end
 
   def delete(api_key, composite_id, params \\ [], opts \\ [])
@@ -34,21 +43,9 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
       when is_binary(composite_id) and composite_id != ""
       when is_list(params)
       when is_list(opts) do
-    basic_comment_request(api_key, composite_id, params, opts, :delete)
-  end
-
-  defp basic_comment_request(api_key, composite_id, params, opts, method) do
-    with :ok <- Helpers.validate_params(params, [:text]),
-         :ok <- check_constraints(method, composite_id, params) do
-      RequestConfig.new()
-      |> RequestConfig.put(:api_key, api_key)
-      |> RequestConfig.put(:method, method)
-      |> RequestConfig.put(:body, params)
-      |> RequestConfig.merge_opts(opts)
-      |> RequestConfig.put(:url, [@base_url, composite_id] |> Enum.join("/"))
-      |> Helpers.make_request()
-    else
-      {:invalid_param, _} = error -> {:error, error}
+    case basic_comment_request(api_key, composite_id, params, opts, :delete) do
+      %RequestConfig{} = request -> request |> Helpers.make_request()
+      error -> {:error, error}
     end
   end
 
@@ -61,6 +58,20 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     |> RequestConfig.merge_opts(opts)
     |> RequestConfig.put(:url, [@base_url, project_id, "stats"] |> merge_sections())
     |> Helpers.make_request()
+  end
+
+  defp basic_comment_request(api_key, composite_id, params, opts, method) do
+    with :ok <- Helpers.validate_params(params, [:text]),
+         :ok <- check_constraints(method, composite_id, params) do
+      RequestConfig.new()
+      |> RequestConfig.put(:api_key, api_key)
+      |> RequestConfig.put(:method, method)
+      |> RequestConfig.put(:body, params)
+      |> RequestConfig.merge_opts(opts)
+      |> RequestConfig.put(:url, [@base_url, composite_id] |> Enum.join("/"))
+    else
+      {:invalid_param, _} = error -> {:error, error}
+    end
   end
 
   defp check_constraints(method, composite_id, params)
