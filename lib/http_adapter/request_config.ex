@@ -5,7 +5,10 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
     method: :get,
     headers: [],
     body: [],
-    opts: [decoder_format: :json]
+    opts: [
+      decoder: ScrapyCloudEx.Decoders.Default,
+      decoder_format: :json,
+    ]
   ]
 
   def new(), do: %__MODULE__{}
