@@ -17,10 +17,10 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
       base_url = [@base_url, composite_id] |> Enum.join("/")
 
       RequestConfig.new()
-      |> Map.put(:api_key, api_key)
-      |> Map.put(:url, "#{base_url}?#{query_string}")
-      |> Map.put(:headers, Keyword.get(opts, :headers, []))
-      |> Map.put(:opts, opts |> set_default_opts(query_params))
+      |> RequestConfig.put(:api_key, api_key)
+      |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
+      |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
+      |> RequestConfig.merge_opts(opts)
       |> Helpers.make_request()
     else
       %QueryParams{error: error} -> {:error, error}
@@ -33,16 +33,9 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
       when is_binary(composite_id)
       when is_list(opts) do
     RequestConfig.new()
-    |> Map.put(:api_key, api_key)
-    |> Map.put(:opts, opts |> Keyword.put(:decoder_format, :json))
-    |> Map.put(:url, [@base_url, composite_id, "stats"] |> merge_sections())
+    |> RequestConfig.put(:api_key, api_key)
+    |> RequestConfig.merge_opts(opts)
+    |> RequestConfig.put(:url, [@base_url, composite_id, "stats"] |> Enum.join("/")
     |> Helpers.make_request()
-  end
-
-  defp merge_sections(sections), do: sections |> Enum.join("/")
-
-  defp set_default_opts(opts, %QueryParams{format: format}) do
-    decoder_format = opts |> Keyword.get(:decoder_format, format)
-    opts |> Keyword.put(:decoder_format, decoder_format)
   end
 end
