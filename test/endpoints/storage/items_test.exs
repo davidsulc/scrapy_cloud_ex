@@ -3,10 +3,10 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ItemsTest do
 
   import ExUnit.CaptureLog
 
+  alias ScrapyCloudEx.Endpoints.Storage.Items
+
   @api_key "API_KEY"
   @params [pagination: [count: 3]]
-
-  alias ScrapyCloudEx.Endpoints.Storage.Items
 
   setup_all do
     opts = [http_adapter: Test.Support.HttpAdapters.Passthrough, decoder: & &1]
