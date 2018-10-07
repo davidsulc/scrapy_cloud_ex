@@ -97,6 +97,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   defp do_check_constraints(:put, _, false), do: required_text_param_not_provided()
 
+  defp do_check_constraints(:post, _count, false), do: required_text_param_not_provided()
+
   # comments/:project_id/:spider_id/:job_id/:item_no[/:field]
   defp do_check_constraints(:post, count, _) when count > 3, do: :ok
 

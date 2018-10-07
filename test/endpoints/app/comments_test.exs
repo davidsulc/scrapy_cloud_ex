@@ -86,4 +86,52 @@ defmodule ScrapyCloudEx.Endpoints.App.CommentsTest do
       assert Keyword.equal?(merged_opts, opts)
     end
   end
+
+  describe "post/4" do
+    test "uses the proper API endpoint", %{opts: opts} do
+      %{url: url} = Comments.post(@api_key, "1/2/3/4", [text: "text"], opts)
+      assert String.starts_with?(url, "https://app.scrapinghub.com/api/comments")
+    end
+
+    test "contains the api key", %{opts: opts} do
+      assert %{api_key: @api_key} = Comments.post(@api_key, "1/2/3/4", [text: "text"], opts)
+    end
+
+    test "makes a POST request", %{opts: opts} do
+      assert %{method: :post} = Comments.post(@api_key, "1/2/3/4", [text: "text"], opts)
+    end
+
+    test "requires a composite id with at least 3 sections", %{opts: opts} do
+      assert {:error, {:invalid_param, {:id, _}}} = Comments.post(@api_key, "1", [text: "text"], opts)
+      assert {:error, {:invalid_param, {:id, _}}} = Comments.post(@api_key, "1/2", [text: "text"], opts)
+
+      refute match? {:error, _}, Comments.post(@api_key, "1/2/3/4", [text: "text"], opts)
+      refute match? {:error, _}, Comments.post(@api_key, "1/2/3/4", [text: "text"], opts)
+      refute match? {:error, _}, Comments.post(@api_key, "1/2/3/4/field_name", [text: "text"], opts)
+    end
+
+    test "requires a `text` param", %{opts: opts} do
+      request = Comments.post(@api_key, "1/2/3/4", [], opts)
+      assert {:error, {:invalid_param, {:text, _}}} = request
+    end
+
+    test "adds the text param to the request body", %{opts: opts} do
+      text = "Comment text"
+      %{body: body} = Comments.post(@api_key, "1/2/3/4", [text: text], opts)
+
+      assert Keyword.get(body, :text) == text
+    end
+
+    test "rejects invalid params", %{opts: opts} do
+      request = Comments.post(@api_key, "1/2/3/4", [foo: :bar], opts)
+      assert {:error, {:invalid_param, {:foo, _}}} = request
+    end
+
+    test "forwards the given options", %{opts: opts} do
+      given_opts = [{:foo, :bar} | opts]
+      %{opts: opts} = Comments.post(@api_key, "1/2/3/4", [text: "text"], given_opts)
+      merged_opts = Keyword.merge(opts, given_opts)
+      assert Keyword.equal?(merged_opts, opts)
+    end
+  end
 end
