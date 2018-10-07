@@ -41,6 +41,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ItemsTest do
       end
 
       assert capture_log(fn -> Items.get(@api_key, "123", [], opts) end) |> contains_warning?.()
+      assert capture_log(fn -> Items.get(@api_key, "1/2/3/field_name", [], opts) end) |> contains_warning?.()
 
       pagination_possibilities = [
         [pagination: [count: 3]],

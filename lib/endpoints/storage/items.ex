@@ -14,11 +14,10 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
       when is_list(params)
       when is_list(opts) do
     with %QueryParams{error: nil} = query_params <- params |> QueryParams.from_keywords() do
-      if section_count(composite_id) < 4 do
-        query_params |> QueryParams.warn_if_no_pagination("#{__MODULE__}.get/4")
-      end
-
-      query_string = query_params |> QueryParams.to_query()
+      query_string =
+        query_params
+        |> warn_if_no_pagination(composite_id)
+        |> QueryParams.to_query()
 
       base_url = [@base_url, composite_id] |> merge_sections()
 
@@ -43,6 +42,29 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
     |> RequestConfig.merge_opts(opts)
     |> RequestConfig.put(:url, [@base_url, composite_id, "stats"] |> merge_sections())
     |> Helpers.make_request()
+  end
+
+  defp maps_to_single_item?(id) do
+    id
+    |> String.split("/")
+    |> List.last()
+    |> String.match?(~r"^\d+$")
+  end
+
+  defp warn_if_no_pagination(%QueryParams{} = query_params, id) when is_binary(id) do
+      case section_count(id) do
+        4 -> if !maps_to_single_item?(id), do: warn_if_no_pagination(query_params)
+
+        count when count < 4 -> warn_if_no_pagination(query_params)
+
+        _count -> :ok
+      end
+
+      query_params
+  end
+
+  defp warn_if_no_pagination(%QueryParams{} = query_params) do
+    query_params |> QueryParams.warn_if_no_pagination("#{__MODULE__}.get/4")
   end
 
   defp section_count(id), do: id |> String.split("/") |> Enum.reject(&(&1 == "")) |> length()
