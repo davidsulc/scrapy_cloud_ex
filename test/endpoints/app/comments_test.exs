@@ -183,4 +183,32 @@ defmodule ScrapyCloudEx.Endpoints.App.CommentsTest do
       assert Keyword.equal?(merged_opts, opts)
     end
   end
+
+  describe "stats/3" do
+    test "uses the proper API endpoint", %{opts: opts} do
+      %{url: url} = Comments.stats(@api_key, "PROJECT", opts)
+      assert url == "https://app.scrapinghub.com/api/comments/PROJECT/stats"
+    end
+
+    test "contains the api key", %{opts: opts} do
+      assert %{api_key: @api_key} = Comments.stats(@api_key, "1", opts)
+    end
+
+    test "makes a GET request", %{opts: opts} do
+      assert %{method: :get} = Comments.stats(@api_key, "1", opts)
+    end
+
+    test "puts the id in the URL", %{opts: opts} do
+      id = "123"
+      %{url: url} = Comments.stats(@api_key, id, opts)
+      assert String.contains?(url, id)
+    end
+
+    test "forwards the given options", %{opts: opts} do
+      given_opts = [{:foo, :bar} | opts]
+      %{opts: opts} = Comments.stats(@api_key, "1", given_opts)
+      merged_opts = Keyword.merge(opts, given_opts)
+      assert Keyword.equal?(merged_opts, opts)
+    end
+  end
 end
