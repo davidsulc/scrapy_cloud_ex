@@ -7,7 +7,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ItemsTest do
   @params [pagination: [count: 3]]
 
   alias ScrapyCloudEx.Endpoints.Storage.Items
-  # alias Test.Support.URI
 
   setup_all do
     opts = [http_adapter: Test.Support.HttpAdapters.Passthrough, decoder: & &1]
@@ -88,6 +87,34 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ItemsTest do
     test "forwards the given options", %{opts: opts} do
       given_opts = [{:foo, :bar} | opts]
       %{opts: opts} = Items.get(@api_key, "123", @params, given_opts)
+      merged_opts = Keyword.merge(opts, given_opts)
+      assert Keyword.equal?(merged_opts, opts)
+    end
+  end
+
+  describe "stats/3" do
+    test "uses the proper API endpoint", %{opts: opts} do
+      %{url: url} = Items.stats(@api_key, "1/2/3", opts)
+      assert url == "https://storage.scrapinghub.com/items/1/2/3/stats"
+    end
+
+    test "contains the api key", %{opts: opts} do
+      assert %{api_key: @api_key} = Items.stats(@api_key, "1/2/3", opts)
+    end
+
+    test "makes a GET request", %{opts: opts} do
+      assert %{method: :get} = Items.stats(@api_key, "1/2/3", opts)
+    end
+
+    test "puts the id in the URL", %{opts: opts} do
+      id = "1/2/3"
+      %{url: url} = Items.stats(@api_key, id, opts)
+      assert String.contains?(url, id)
+    end
+
+    test "forwards the given options", %{opts: opts} do
+      given_opts = [{:foo, :bar} | opts]
+      %{opts: opts} = Items.stats(@api_key, "1/2/3", given_opts)
       merged_opts = Keyword.merge(opts, given_opts)
       assert Keyword.equal?(merged_opts, opts)
     end
