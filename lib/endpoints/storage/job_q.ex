@@ -28,7 +28,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
       when is_binary(project_id) and project_id != ""
       when is_list(params)
       when is_list(opts) do
-    valid_params = @valid_params ++ [:format, :start, :stop, :key]
+    valid_params = @valid_params ++ [:format, :count, :start, :stop, :key]
     make_request(api_key, project_id, params |> set_default_format(), opts, valid_params, "list")
   end
 
