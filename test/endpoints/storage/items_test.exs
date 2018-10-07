@@ -70,14 +70,26 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ItemsTest do
       assert {:error, _} = Items.get(@api_key, "123", [format: :foo] ++ @params, opts)
     end
 
+    test "rejects invalid formats", %{opts: opts} do
+      error = Items.get(@api_key, "123", [format: :test] ++ @params, opts)
+      assert {:error, {:invalid_param, {:format, _}}} = error
+    end
+
+    test "accepts a meta param", %{opts: opts} do
+      request = Items.get(@api_key, "123", [meta: [:_key, :_ts]] ++ @params, opts)
+      refute match? {:error, _}, request
+    end
+
     test "rejects invalid params", %{opts: opts} do
       error = Items.get(@api_key, "123", [foo: :bar] ++ @params, opts)
       assert {:error, {:invalid_param, {:foo, _}}} = error
     end
 
-    test "rejects invalid formats", %{opts: opts} do
-      error = Items.get(@api_key, "123", [format: :test] ++ @params, opts)
-      assert {:error, {:invalid_param, {:format, _}}} = error
+    test "forwards the given options", %{opts: opts} do
+      given_opts = [{:foo, :bar} | opts]
+      %{opts: opts} = Items.get(@api_key, "123", @params, given_opts)
+      merged_opts = Keyword.merge(opts, given_opts)
+      assert Keyword.equal?(merged_opts, opts)
     end
   end
 end
