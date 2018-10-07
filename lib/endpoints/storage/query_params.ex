@@ -38,7 +38,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
         |> validate_params()
 
       error ->
-        {:error, error}
+        error
     end
   end
 

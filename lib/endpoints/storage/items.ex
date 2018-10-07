@@ -15,7 +15,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
       when is_list(opts) do
     with %QueryParams{error: nil} = query_params <- params |> QueryParams.from_keywords() do
       if section_count(composite_id) < 4 do
-        query_params |> QueryParams.warn_if_no_pagination("#{__MODULE__}.get/4 ")
+        query_params |> QueryParams.warn_if_no_pagination("#{__MODULE__}.get/4")
       end
 
       query_string = query_params |> QueryParams.to_query()
