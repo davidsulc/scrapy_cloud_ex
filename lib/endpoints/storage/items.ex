@@ -20,6 +20,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
         |> QueryParams.to_query()
 
       base_url = [@base_url, composite_id] |> merge_sections()
+      opts = opts |> Helpers.set_default_decoder_format(Keyword.get(params, :format))
 
       RequestConfig.new()
       |> RequestConfig.put(:api_key, api_key)
