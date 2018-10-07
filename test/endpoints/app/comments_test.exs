@@ -62,6 +62,12 @@ defmodule ScrapyCloudEx.Endpoints.App.CommentsTest do
       assert %{method: :put} = Comments.put(@api_key, "1", [text: "comment text"], opts)
     end
 
+    test "puts the id in the URL", %{opts: opts} do
+      id = "123"
+      %{url: url} = Comments.put(@api_key, id, [text: "text"], opts)
+      assert String.contains?(url, id)
+    end
+
     test "requires a `text` param", %{opts: opts} do
       request = Comments.put(@api_key, "1", [], opts)
       assert {:error, {:invalid_param, {:text, _}}} = request
@@ -101,11 +107,17 @@ defmodule ScrapyCloudEx.Endpoints.App.CommentsTest do
       assert %{method: :post} = Comments.post(@api_key, "1/2/3/4", [text: "text"], opts)
     end
 
+    test "puts the id in the URL", %{opts: opts} do
+      for id <- ~w(1/2/3/4 1/2/3/4/field_name) do
+        %{url: url} = Comments.post(@api_key, id, [text: "text"], opts)
+        assert String.contains?(url, id)
+      end
+    end
+
     test "requires a composite id with at least 3 sections", %{opts: opts} do
       assert {:error, {:invalid_param, {:id, _}}} = Comments.post(@api_key, "1", [text: "text"], opts)
       assert {:error, {:invalid_param, {:id, _}}} = Comments.post(@api_key, "1/2", [text: "text"], opts)
 
-      refute match? {:error, _}, Comments.post(@api_key, "1/2/3/4", [text: "text"], opts)
       refute match? {:error, _}, Comments.post(@api_key, "1/2/3/4", [text: "text"], opts)
       refute match? {:error, _}, Comments.post(@api_key, "1/2/3/4/field_name", [text: "text"], opts)
     end
@@ -147,6 +159,13 @@ defmodule ScrapyCloudEx.Endpoints.App.CommentsTest do
 
     test "makes a DELETE request", %{opts: opts} do
       assert %{method: :delete} = Comments.delete(@api_key, "1", opts)
+    end
+
+    test "puts the id in the URL", %{opts: opts} do
+      for id <- ~w(1 1/2/3/4 1/2/3/4/field_name) do
+        %{url: url} = Comments.delete(@api_key, id, opts)
+        assert String.contains?(url, id)
+      end
     end
 
     test "requires a composite id with exactly 1, or more than 3 sections", %{opts: opts} do
