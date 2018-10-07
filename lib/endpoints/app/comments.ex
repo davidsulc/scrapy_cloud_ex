@@ -70,7 +70,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
       |> RequestConfig.merge_opts(opts)
       |> RequestConfig.put(:url, [@base_url, composite_id] |> Enum.join("/"))
     else
-      {:invalid_param, _} = error -> {:error, error}
+      {:invalid_param, _} = error -> error
     end
   end
 
