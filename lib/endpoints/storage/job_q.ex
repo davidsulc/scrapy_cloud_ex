@@ -38,6 +38,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
     with :ok <- Helpers.validate_params(params, valid_params) do
       base_url = [@base_url, project_id, endpoint] |> Enum.join("/")
       query_string = URI.encode_query(params)
+      opts = opts |> Helpers.set_default_decoder_format(Keyword.get(params, :format))
 
       RequestConfig.new()
       |> RequestConfig.put(:api_key, api_key)

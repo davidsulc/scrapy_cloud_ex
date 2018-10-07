@@ -30,6 +30,15 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
   def invalid_param_error(error, tag) when is_atom(tag) or is_list(tag),
     do: {:invalid_param, {tag, error}}
 
+  def set_default_decoder_format(opts, nil), do: opts
+  def set_default_decoder_format(opts, decoder_format)
+      when is_list(opts) and is_atom(decoder_format) do
+    case Keyword.get(opts, :decoder_format) do
+      nil -> Keyword.put(opts, :decoder_format, decoder_format)
+      _ -> opts
+    end
+  end
+
   def make_request(%RequestConfig{opts: opts} = config) do
     Logger.debug("making request: #{inspect(config)}")
     http_client = get_http_client(opts)
