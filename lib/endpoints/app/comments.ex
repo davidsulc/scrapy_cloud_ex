@@ -38,12 +38,11 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     end
   end
 
-  def delete(api_key, composite_id, params \\ [], opts \\ [])
+  def delete(api_key, composite_id, opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
-      when is_list(params)
       when is_list(opts) do
-    case basic_comment_request(api_key, composite_id, params, opts, :delete) do
+    case basic_comment_request(api_key, composite_id, [], opts, :delete) do
       %RequestConfig{} = request -> request |> Helpers.make_request()
       error -> {:error, error}
     end

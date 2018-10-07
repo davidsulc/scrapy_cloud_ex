@@ -134,4 +134,34 @@ defmodule ScrapyCloudEx.Endpoints.App.CommentsTest do
       assert Keyword.equal?(merged_opts, opts)
     end
   end
+
+  describe "delete/3" do
+    test "uses the proper API endpoint", %{opts: opts} do
+      %{url: url} = Comments.delete(@api_key, "1", opts)
+      assert String.starts_with?(url, "https://app.scrapinghub.com/api/comments")
+    end
+
+    test "contains the api key", %{opts: opts} do
+      assert %{api_key: @api_key} = Comments.delete(@api_key, "1", opts)
+    end
+
+    test "makes a DELETE request", %{opts: opts} do
+      assert %{method: :delete} = Comments.delete(@api_key, "1", opts)
+    end
+
+    test "requires a composite id with exactly 1, or more than 3 sections", %{opts: opts} do
+      assert {:error, {:invalid_param, {:id, _}}} = Comments.delete(@api_key, "1/2", opts)
+
+      refute match? {:error, _}, Comments.delete(@api_key, "1", opts)
+      refute match? {:error, _}, Comments.delete(@api_key, "1/2/3/4", opts)
+      refute match? {:error, _}, Comments.delete(@api_key, "1/2/3/4/field_name", opts)
+    end
+
+    test "forwards the given options", %{opts: opts} do
+      given_opts = [{:foo, :bar} | opts]
+      %{opts: opts} = Comments.delete(@api_key, "1", given_opts)
+      merged_opts = Keyword.merge(opts, given_opts)
+      assert Keyword.equal?(merged_opts, opts)
+    end
+  end
 end
