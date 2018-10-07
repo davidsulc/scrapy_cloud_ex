@@ -8,8 +8,11 @@ defmodule ScrapyCloudEx.Endpoints.Storage do
   def meta_params(), do: [:_key, :_ts]
 
   @valid_formats [:json, :jl, :xml, :csv, :text]
+
   def validate_format(nil), do: :ok
+
   def validate_format(format) when format in @valid_formats, do: :ok
+
   def validate_format(format) do
     "expected format '#{inspect(format)}' to be one of: #{inspect(@valid_formats)}"
     |> Helpers.invalid_param_error(:format)

@@ -35,9 +35,9 @@ defmodule ScrapyCloudEx.Endpoints.App.CommentsTest do
       assert {:error, {:invalid_param, {:id, _}}} = Comments.get(@api_key, "1", opts)
       assert {:error, {:invalid_param, {:id, _}}} = Comments.get(@api_key, "1/2", opts)
 
-      refute match? {:error, _}, Comments.get(@api_key, "1/2/3", opts)
-      refute match? {:error, _}, Comments.get(@api_key, "1/2/3/4", opts)
-      refute match? {:error, _}, Comments.get(@api_key, "1/2/3/4/field_name", opts)
+      refute match?({:error, _}, Comments.get(@api_key, "1/2/3", opts))
+      refute match?({:error, _}, Comments.get(@api_key, "1/2/3/4", opts))
+      refute match?({:error, _}, Comments.get(@api_key, "1/2/3/4/field_name", opts))
     end
 
     test "forwards the given options", %{opts: opts} do
@@ -115,11 +115,16 @@ defmodule ScrapyCloudEx.Endpoints.App.CommentsTest do
     end
 
     test "requires a composite id with at least 3 sections", %{opts: opts} do
-      assert {:error, {:invalid_param, {:id, _}}} = Comments.post(@api_key, "1", [text: "text"], opts)
-      assert {:error, {:invalid_param, {:id, _}}} = Comments.post(@api_key, "1/2", [text: "text"], opts)
+      request = Comments.post(@api_key, "1", [text: "text"], opts)
+      assert {:error, {:invalid_param, {:id, _}}} = request
 
-      refute match? {:error, _}, Comments.post(@api_key, "1/2/3/4", [text: "text"], opts)
-      refute match? {:error, _}, Comments.post(@api_key, "1/2/3/4/field_name", [text: "text"], opts)
+      request = Comments.post(@api_key, "1/2", [text: "text"], opts)
+      assert {:error, {:invalid_param, {:id, _}}} = request
+
+      refute match?({:error, _}, Comments.post(@api_key, "1/2/3/4", [text: "text"], opts))
+
+      request = Comments.post(@api_key, "1/2/3/4/field_name", [text: "text"], opts)
+      refute match?({:error, _}, request)
     end
 
     test "requires a `text` param", %{opts: opts} do
@@ -171,9 +176,9 @@ defmodule ScrapyCloudEx.Endpoints.App.CommentsTest do
     test "requires a composite id with exactly 1, or more than 3 sections", %{opts: opts} do
       assert {:error, {:invalid_param, {:id, _}}} = Comments.delete(@api_key, "1/2", opts)
 
-      refute match? {:error, _}, Comments.delete(@api_key, "1", opts)
-      refute match? {:error, _}, Comments.delete(@api_key, "1/2/3/4", opts)
-      refute match? {:error, _}, Comments.delete(@api_key, "1/2/3/4/field_name", opts)
+      refute match?({:error, _}, Comments.delete(@api_key, "1", opts))
+      refute match?({:error, _}, Comments.delete(@api_key, "1/2/3/4", opts))
+      refute match?({:error, _}, Comments.delete(@api_key, "1/2/3/4/field_name", opts))
     end
 
     test "forwards the given options", %{opts: opts} do

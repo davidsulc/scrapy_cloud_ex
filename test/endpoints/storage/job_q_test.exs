@@ -32,9 +32,16 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQTest do
 
     test "puts params in the query string", %{opts: opts} do
       params = [
-        spider: "spidey", state: "finished", startts: "1397762393489", endts: "1397762399000",
-        has_tag: "tag_a", has_tag: "tag_b", lacks_tag: "tag_x", lacks_tag: "tag_y"
+        spider: "spidey",
+        state: "finished",
+        startts: "1397762393489",
+        endts: "1397762399000",
+        has_tag: "tag_a",
+        has_tag: "tag_b",
+        lacks_tag: "tag_x",
+        lacks_tag: "tag_y"
       ]
+
       %{url: url} = JobQ.count(@api_key, "1", params, opts)
       query_map = url |> URI.get_query()
 
@@ -82,10 +89,22 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQTest do
 
     test "puts params in the query string", %{opts: opts} do
       params = [
-        spider: "spidey", state: "finished", startts: "1397762393489", endts: "1397762399000",
-        count: "3", start: "5", stop: "1/2/3", key: "5/6/7", key: "7/8/9", key: "9/10/11",
-        has_tag: "tag_a", has_tag: "tag_b", lacks_tag: "tag_x", lacks_tag: "tag_y"
+        spider: "spidey",
+        state: "finished",
+        startts: "1397762393489",
+        endts: "1397762399000",
+        count: "3",
+        start: "5",
+        stop: "1/2/3",
+        key: "5/6/7",
+        key: "7/8/9",
+        key: "9/10/11",
+        has_tag: "tag_a",
+        has_tag: "tag_b",
+        lacks_tag: "tag_x",
+        lacks_tag: "tag_y"
       ]
+
       %{url: url} = JobQ.list(@api_key, "1", params, opts)
       query_map = url |> URI.get_query()
 

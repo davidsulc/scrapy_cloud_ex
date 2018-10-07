@@ -39,7 +39,9 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_id(project_id)
       when is_list(params)
       when is_list(opts) do
-    with valid_params = [:format | [:job, :spider, :state, :has_tag, :lacks_tag] ++ App.pagination_params()],
+    with valid_params = [
+           :format | [:job, :spider, :state, :has_tag, :lacks_tag] ++ App.pagination_params()
+         ],
          :ok <- Helpers.validate_params(params, valid_params),
          true <- Keyword.get(params, :format) in [nil, :json, :jl],
          format = Keyword.get(params, :format, :json),
@@ -59,7 +61,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
           "expected format to be one of :json, :jl, but got `#{Keyword.get(params, :format)}`"
           |> Helpers.invalid_param_error(:format)
 
-          {:error, error}
+        {:error, error}
 
       {:invalid_param, _} = error ->
         {:error, error}

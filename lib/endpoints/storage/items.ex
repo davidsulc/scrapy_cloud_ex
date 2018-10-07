@@ -53,15 +53,13 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
   end
 
   defp warn_if_no_pagination(%QueryParams{} = query_params, id) when is_binary(id) do
-      case section_count(id) do
-        4 -> if !maps_to_single_item?(id), do: warn_if_no_pagination(query_params)
+    case section_count(id) do
+      4 -> if !maps_to_single_item?(id), do: warn_if_no_pagination(query_params)
+      count when count < 4 -> warn_if_no_pagination(query_params)
+      _count -> :ok
+    end
 
-        count when count < 4 -> warn_if_no_pagination(query_params)
-
-        _count -> :ok
-      end
-
-      query_params
+    query_params
   end
 
   defp warn_if_no_pagination(%QueryParams{} = query_params) do

@@ -45,7 +45,10 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
       |> Helpers.make_request()
     else
       _ ->
-        error = "expected `id` param to have exactly 3 sections" |> Helpers.invalid_param_error(:id)
+        error =
+          "expected `id` param to have exactly 3 sections"
+          |> Helpers.invalid_param_error(:id)
+
         {:error, error}
     end
   end
@@ -53,7 +56,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
   defp warn_if_no_pagination(%QueryParams{} = query_params, id) when is_binary(id) do
     case id |> String.split("/") |> length() do
       count when count < 4 -> warn_if_no_pagination(query_params)
-
       _count -> :ok
     end
 

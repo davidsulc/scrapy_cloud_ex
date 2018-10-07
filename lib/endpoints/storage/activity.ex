@@ -57,7 +57,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
       |> RequestConfig.put(:api_key, api_key)
       |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
       |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
-      |> RequestConfig.merge_opts([decoder_format: Keyword.get(params, :format, :json)])
+      |> RequestConfig.merge_opts(decoder_format: Keyword.get(params, :format, :json))
       |> RequestConfig.merge_opts(opts)
       |> Helpers.make_request()
     else

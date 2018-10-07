@@ -142,7 +142,7 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
 
     test "validates the state", %{opts: opts} do
       for state <- ~w(pending running finished deleted) do
-        refute match? {:error, _}, Jobs.list(@api_key, @project_id, [state: state], opts)
+        refute match?({:error, _}, Jobs.list(@api_key, @project_id, [state: state], opts))
       end
 
       assert {:error, _} = Jobs.list(@api_key, @project_id, [state: :foo], opts)
@@ -150,8 +150,13 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
 
     test "puts the params (except for the format) in the query string", %{opts: opts} do
       params =
-        [job: 13, spider: "my_spider", state: "finished", has_tag: "has_this", lacks_tag: "lacks_this"]
-        ++ [format: :json, count: 3, offset: 4]
+        [
+          job: 13,
+          spider: "my_spider",
+          state: "finished",
+          has_tag: "has_this",
+          lacks_tag: "lacks_this"
+        ] ++ [format: :json, count: 3, offset: 4]
 
       %{url: url} = Jobs.list(@api_key, @project_id, params, opts)
       query = url |> URI.get_query()
@@ -223,7 +228,8 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
     end
 
     test "rejects invalid params", %{opts: opts} do
-      assert {:error, {:invalid_param, {:foo, _}}} = Jobs.update(@api_key, @project_id, [123], [foo: :bar], opts)
+      request = Jobs.update(@api_key, @project_id, [123], [foo: :bar], opts)
+      assert {:error, {:invalid_param, {:foo, _}}} = request
     end
 
     test "forwards the given options", %{opts: opts} do

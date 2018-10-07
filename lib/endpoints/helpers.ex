@@ -31,6 +31,7 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
     do: {:invalid_param, {tag, error}}
 
   def set_default_decoder_format(opts, nil), do: opts
+
   def set_default_decoder_format(opts, decoder_format)
       when is_list(opts) and is_atom(decoder_format) do
     case Keyword.get(opts, :decoder_format) do

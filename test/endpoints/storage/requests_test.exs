@@ -35,11 +35,14 @@ defmodule ScrapyCloudEx.Endpoints.Storage.RequestsTest do
 
     test "warns if no pagination params are given", %{opts: opts} do
       contains_warning? = fn log ->
-        warning_message = ~r".*\[warn\]\s+Elixir.ScrapyCloudEx.Endpoints.Storage.Requests.get/4 called without pagination params or index.*"
+        warning_message =
+          ~r".*\[warn\]\s+Elixir.ScrapyCloudEx.Endpoints.Storage.Requests.get/4 called without pagination params or index.*"
+
         String.match?(log, warning_message)
       end
 
-      assert capture_log(fn -> Requests.get(@api_key, "123", [], opts) end) |> contains_warning?.()
+      assert capture_log(fn -> Requests.get(@api_key, "123", [], opts) end)
+             |> contains_warning?.()
 
       pagination_possibilities = [
         [pagination: [count: 3]],
@@ -49,10 +52,12 @@ defmodule ScrapyCloudEx.Endpoints.Storage.RequestsTest do
       ]
 
       for params <- pagination_possibilities do
-        refute capture_log(fn -> Requests.get(@api_key, "123", params, opts) end) |> contains_warning?.()
+        refute capture_log(fn -> Requests.get(@api_key, "123", params, opts) end)
+               |> contains_warning?.()
       end
 
-      refute capture_log(fn -> Requests.get(@api_key, "1/2/3/4", [], opts) end) |> contains_warning?.()
+      refute capture_log(fn -> Requests.get(@api_key, "1/2/3/4", [], opts) end)
+             |> contains_warning?.()
     end
 
     test "accepts a format param", %{opts: opts} do
@@ -60,13 +65,13 @@ defmodule ScrapyCloudEx.Endpoints.Storage.RequestsTest do
 
       for format <- [:json, :jl, :xml, :text] do
         request = Requests.get(@api_key, "123", [format: format] ++ @params, opts)
-        refute match? {:error, _}, request
+        refute match?({:error, _}, request)
         assert decoder_format.(request) == format
       end
 
       csv_format_params = [format: :csv, csv: [fields: [:field_one, :field_two]]]
       request = Requests.get(@api_key, "123", csv_format_params ++ @params, opts)
-      refute match? {:error, _}, request
+      refute match?({:error, _}, request)
       assert decoder_format.(request) == :csv
 
       assert {:error, _} = Requests.get(@api_key, "123", [format: :foo] ++ @params, opts)
@@ -79,7 +84,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.RequestsTest do
 
     test "accepts a meta param", %{opts: opts} do
       request = Requests.get(@api_key, "123", [meta: [:_key, :_ts]] ++ @params, opts)
-      refute match? {:error, _}, request
+      refute match?({:error, _}, request)
     end
 
     test "rejects invalid params", %{opts: opts} do
@@ -119,7 +124,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.RequestsTest do
       assert {:error, {:invalid_param, {:id, _}}} = Requests.stats(@api_key, "1", opts)
       assert {:error, {:invalid_param, {:id, _}}} = Requests.stats(@api_key, "1/2", opts)
 
-      refute match? {:error, _}, Requests.stats(@api_key, "1/2/3", opts)
+      refute match?({:error, _}, Requests.stats(@api_key, "1/2/3", opts))
     end
 
     test "forwards the given options", %{opts: opts} do
