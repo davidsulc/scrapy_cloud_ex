@@ -6,17 +6,10 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
   @spider_name "SPIDER_NAME"
 
   alias ScrapyCloudEx.Endpoints.App.Jobs
-  alias Test.Support
-
-  defmodule TestHttpAdapter do
-    @behaviour ScrapyCloudEx.HttpAdapter
-
-    @impl ScrapyCloudEx.HttpAdapter
-    def request(request_config), do: request_config
-  end
+  alias Test.Support.URI
 
   setup_all do
-    opts = [http_adapter: TestHttpAdapter, decoder: & &1]
+    opts = [http_adapter: Test.Support.HttpAdapters.Passthrough, decoder: & &1]
     [opts: opts]
   end
 
@@ -140,7 +133,7 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
 
       project_id =
         url
-        |> Support.URI.get_query()
+        |> URI.get_query()
         |> Map.get("project")
 
       assert project_id == @project_id
@@ -160,7 +153,7 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
         ++ [format: :json, count: 3, offset: 4]
 
       %{url: url} = Jobs.list(@api_key, @project_id, params, opts)
-      query = url |> Support.URI.get_query()
+      query = url |> URI.get_query()
 
       for {k, v} <- params |> Keyword.delete(:format) do
         assert Map.get(query, Atom.to_string(k)) == "#{v}"

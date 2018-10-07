@@ -5,15 +5,8 @@ defmodule ScrapyCloudEx.Endpoints.App.CommentsTest do
 
   alias ScrapyCloudEx.Endpoints.App.Comments
 
-  defmodule TestHttpAdapter do
-    @behaviour ScrapyCloudEx.HttpAdapter
-
-    @impl ScrapyCloudEx.HttpAdapter
-    def request(request_config), do: request_config
-  end
-
   setup_all do
-    opts = [http_adapter: TestHttpAdapter, decoder: & &1]
+    opts = [http_adapter: Test.Support.HttpAdapters.Passthrough, decoder: & &1]
     [opts: opts]
   end
 

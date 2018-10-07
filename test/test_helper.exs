@@ -1,3 +1,6 @@
 ExUnit.start()
 
-Code.require_file("support/uri.ex", __DIR__)
+__DIR__
+|> Path.join("support/**/*.ex")
+|> Path.wildcard()
+|> Enum.each(&Code.require_file/1)
