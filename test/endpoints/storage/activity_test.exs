@@ -47,6 +47,13 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ActivityTest do
       end
     end
 
+    test "accepts json, jl, and xml formats", %{opts: opts} do
+      for format <- [:json, :jl, :xml] do
+        %{opts: opts} = Activity.list(@api_key, "123", [format: format], opts)
+        assert Keyword.get(opts, :decoder_format) == format
+      end
+    end
+
     test "forwards the given options", %{opts: opts} do
       given_opts = [{:foo, :bar} | opts]
       %{opts: opts} = Activity.list(@api_key, "123", [], given_opts)
@@ -93,6 +100,13 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ActivityTest do
         query_values = Map.get(query_map, "#{key}") |> List.wrap()
         assert given_values -- query_values == []
         assert query_values -- given_values == []
+      end
+    end
+
+    test "accepts json, jl, and xml formats", %{opts: opts} do
+      for format <- [:json, :jl, :xml] do
+        %{opts: opts} = Activity.projects(@api_key, [format: format], opts)
+        assert Keyword.get(opts, :decoder_format) == format
       end
     end
 
