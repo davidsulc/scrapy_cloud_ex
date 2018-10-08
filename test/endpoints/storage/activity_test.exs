@@ -54,4 +54,53 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ActivityTest do
       assert Keyword.equal?(merged_opts, opts)
     end
   end
+
+  describe "projects/3" do
+    test "uses the proper API endpoint", %{opts: opts} do
+      %{url: url} = Activity.projects(@api_key, [], opts)
+      assert String.starts_with?(url, "https://storage.scrapinghub.com/activity/projects")
+    end
+
+    test "contains the api key", %{opts: opts} do
+      assert %{api_key: @api_key} = Activity.projects(@api_key, [], opts)
+    end
+
+    test "makes a GET request", %{opts: opts} do
+      assert %{method: :get} = Activity.projects(@api_key, [], opts)
+    end
+
+    test "rejects invalid params", %{opts: opts} do
+      error = Activity.projects(@api_key, [foo: :bar], opts)
+      assert {:error, {:invalid_param, {:foo, _}}} = error
+    end
+
+    test "puts params in the query string", %{opts: opts} do
+      params = [
+        p: 1,
+        p: 2,
+        p: 3,
+        pcount: 10,
+        count: 15,
+        format: :xml,
+        meta: [:_ts, :_project]
+      ]
+
+      %{url: url} = Activity.projects(@api_key, params, opts)
+      query_map = url |> URI.get_query()
+
+      for key <- params |> Keyword.keys() do
+        given_values = Keyword.get_values(params, key) |> List.flatten() |> Enum.map(&"#{&1}")
+        query_values = Map.get(query_map, "#{key}") |> List.wrap()
+        assert given_values -- query_values == []
+        assert query_values -- given_values == []
+      end
+    end
+
+    test "forwards the given options", %{opts: opts} do
+      given_opts = [{:foo, :bar} | opts]
+      %{opts: opts} = Activity.projects(@api_key, [], given_opts)
+      merged_opts = Keyword.merge(opts, given_opts)
+      assert Keyword.equal?(merged_opts, opts)
+    end
+  end
 end
