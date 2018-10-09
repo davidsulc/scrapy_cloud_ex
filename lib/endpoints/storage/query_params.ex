@@ -50,15 +50,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     params
   end
 
-  def has_pagination?(%__MODULE__{pagination: pagination_params}) do
-    case Keyword.get(pagination_params, :index) do
-      [] -> Keyword.delete(pagination_params, :index) != []
-      _ -> true
-    end
-  end
-
-  def has_pagination?(%__MODULE__{}), do: false
-
   def to_query(%__MODULE__{error: nil} = params) do
     params
     |> Map.from_struct()
@@ -69,6 +60,15 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
   end
 
   def to_query(%__MODULE__{error: error}), do: {:error, error}
+
+  defp has_pagination?(%__MODULE__{pagination: pagination_params}) do
+    case Keyword.get(pagination_params, :index) do
+      [] -> Keyword.delete(pagination_params, :index) != []
+      _ -> true
+    end
+  end
+
+  defp has_pagination?(%__MODULE__{}), do: false
 
   defp to_keyword_list({group, params}) when group in [:pagination, :csv] do
     params
