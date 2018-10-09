@@ -135,6 +135,7 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
       project_id =
         url
         |> URI.get_query()
+        |> URI.query_to_map()
         |> Map.get("project")
 
       assert project_id == @project_id
@@ -159,13 +160,10 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
         ] ++ [format: :json, count: 3, offset: 4]
 
       %{url: url} = Jobs.list(@api_key, @project_id, params, opts)
-      query = url |> URI.get_query()
+      refute String.contains?(url, "format")
 
-      for {k, v} <- params |> Keyword.delete(:format) do
-        assert Map.get(query, Atom.to_string(k)) == "#{v}"
-      end
-
-      assert Map.get(query, "format") == nil
+      query_string = url |> URI.get_query()
+      assert URI.equivalent?(query_string, params |> Keyword.delete(:format))
     end
 
     test "accepts multiple has_tag params", %{opts: opts} do
