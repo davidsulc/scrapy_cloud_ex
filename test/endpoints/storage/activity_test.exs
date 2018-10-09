@@ -37,14 +37,9 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ActivityTest do
       ]
 
       %{url: url} = Activity.list(@api_key, "1", params, opts)
-      query_map = url |> URI.get_query()
 
-      for key <- params |> Keyword.keys() do
-        given_values = Keyword.get_values(params, key) |> Enum.map(&"#{&1}")
-        query_values = Map.get(query_map, "#{key}") |> List.wrap()
-        assert given_values -- query_values == []
-        assert query_values -- given_values == []
-      end
+      query_string = url |> URI.get_query()
+      assert URI.equivalent?(query_string, params)
     end
 
     test "accepts json, jl, and xml formats", %{opts: opts} do
@@ -93,14 +88,9 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ActivityTest do
       ]
 
       %{url: url} = Activity.projects(@api_key, params, opts)
-      query_map = url |> URI.get_query()
 
-      for key <- params |> Keyword.keys() do
-        given_values = Keyword.get_values(params, key) |> List.flatten() |> Enum.map(&"#{&1}")
-        query_values = Map.get(query_map, "#{key}") |> List.wrap()
-        assert given_values -- query_values == []
-        assert query_values -- given_values == []
-      end
+      query_string = url |> URI.get_query()
+      assert URI.equivalent?(query_string, params)
     end
 
     test "accepts json, jl, and xml formats", %{opts: opts} do

@@ -34,19 +34,14 @@ defmodule ScrapyCloudEx.Endpoints.Storage.LogsTest do
     test "puts params in the query string", %{opts: opts} do
       params = [
         format: :xml,
-        # pagination: [count: 3, start: "5/6/7/8"],
+        pagination: [count: 3, start: "5/6/7/8"],
         meta: [:_key, :_ts]
       ]
 
       %{url: url} = Logs.get(@api_key, @id, params, opts)
-      query_map = url |> URI.get_query()
 
-      for key <- params |> Keyword.keys() do
-        given_values = Keyword.get_values(params, key) |> List.flatten() |> Enum.map(&"#{&1}")
-        query_values = Map.get(query_map, "#{key}") |> List.wrap()
-        assert given_values -- query_values == []
-        assert query_values -- given_values == []
-      end
+      query_string = url |> URI.get_query()
+      assert URI.equivalent?(query_string, params)
     end
 
     test "accepts json, jl, xml, and csv formats", %{opts: opts} do
