@@ -75,8 +75,8 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
       assert Keyword.get(body, :job_settings) == json
     end
 
-    test "returns an error if job_settings are provided in the wrong format", %{opts: opts} do
-      params = [job_settings: [{:a, :b}]]
+    test "returns an error if job_settings are provided in the wrong type", %{opts: opts} do
+      params = [job_settings: [foo: :bar, a: :b]]
       error = Jobs.run(@api_key, @project_id, @spider_name, params, opts)
       assert {:error, {:invalid_param, {:job_settings, _}}} = error
     end

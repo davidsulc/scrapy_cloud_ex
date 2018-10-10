@@ -50,7 +50,9 @@ defmodule ScrapyCloudEx.Endpoints.Storage.LogsTest do
         assert Keyword.get(opts, :decoder_format) == format
       end
 
-      %{opts: opts} = Logs.get(@api_key, @id, [format: :csv, csv: [fields: ~w(level message)]], opts)
+      %{opts: opts} =
+        Logs.get(@api_key, @id, [format: :csv, csv: [fields: ~w(level message)]], opts)
+
       assert Keyword.get(opts, :decoder_format) == :csv
     end
 
