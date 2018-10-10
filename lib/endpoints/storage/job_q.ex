@@ -51,10 +51,5 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
     end
   end
 
-  defp set_default_format(params) do
-    case Keyword.get(params, :format) do
-      nil -> Keyword.put(params, :format, @default_format)
-      _ -> params
-    end
-  end
+  defp set_default_format(params), do: Keyword.put_new(params, :format, @default_format)
 end
