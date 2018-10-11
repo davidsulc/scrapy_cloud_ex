@@ -29,11 +29,11 @@ defmodule ScrapyCloudEx.HttpAdapters.Default do
       body
       |> decode_body(opts)
       |> case do
-        {:error, error} -> {:decoder_error, error}
+        {:error, %{data: message}} -> %{status: status, message: format_message(message)}
         {:ok, decoded_body} -> format_api_result(status, decoded_body)
       end
     else
-      {:error, error} -> {:request_error, error}
+      {:error, error} -> error
     end
   end
 
@@ -50,7 +50,12 @@ defmodule ScrapyCloudEx.HttpAdapters.Default do
     do: &decoder_module.decode(&1, &2)
 
   defp format_api_result(200, body), do: {:ok, body}
-  defp format_api_result(status, body), do: {:api_error, {status, body}}
+  defp format_api_result(status, %{message: message}), do: %{status: status, message: format_message(message)}
+  defp format_api_result(status, body), do: %{status: status, message: format_message(body)}
+
+  defp format_message(message) when is_binary(message), do: message |> String.trim()
+  defp format_message(%{"message" => message}), do: format_message(message)
+  defp format_message(message), do: message
 
   defp format_body([]), do: ""
   defp format_body(list) when is_list(list), do: {:form, list}
