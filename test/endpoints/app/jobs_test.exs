@@ -68,16 +68,28 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
       json = "{'foo': 'bar'}"
       params = [job_settings: %{a: :b}]
       encoder = fn _ -> {:ok, json} end
-      opts = [{:json_encoder, encoder} | opts]
+      opts = [{:encoder, encoder} | opts]
 
       %{body: body} = Jobs.run(@api_key, @project_id, @spider_name, params, opts)
 
       assert Keyword.get(body, :job_settings) == json
     end
 
+    test "returns an error if job_settings are provided in the wrong format", %{opts: opts} do
+      params = [job_settings: [{:a, :b}]]
+      error = Jobs.run(@api_key, @project_id, @spider_name, params, opts)
+      assert {:error, {:invalid_param, {:job_settings, _}}} = error
+    end
+
     test "returns an error if job_settings are provided without a JSON encoder", %{opts: opts} do
       params = [job_settings: %{a: :b}]
-      error = Jobs.run(@api_key, @project_id, @spider_name, params, [{:json_encoder, nil} | opts])
+      error = Jobs.run(@api_key, @project_id, @spider_name, params, [{:encoder, nil}, {:encoder_fallback, false} | opts])
+      assert {:error, {:invalid_param, {:job_settings, _}}} = error
+    end
+
+    test "if job_settings are provided without a JSON encoder, falls back to Jason", %{opts: opts} do
+      params = [job_settings: %{a: :b}]
+      error = Jobs.run(@api_key, @project_id, @spider_name, params, [{:encoder, nil} | opts])
       assert {:error, {:invalid_param, {:job_settings, _}}} = error
     end
 
