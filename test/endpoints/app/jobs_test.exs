@@ -88,9 +88,15 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
     end
 
     test "if job_settings are provided without a JSON encoder, falls back to Jason", %{opts: opts} do
-      params = [job_settings: %{a: :b}]
-      error = Jobs.run(@api_key, @project_id, @spider_name, params, [{:encoder, nil} | opts])
-      assert {:error, {:invalid_param, {:job_settings, _}}} = error
+      settings = %{"a" => "b"}
+      params = [job_settings: settings]
+      {:ok, request_settings} =
+        Jobs.run(@api_key, @project_id, @spider_name, params, [{:encoder, nil} | opts])
+        |> Map.from_struct()
+        |> get_in([:body, :job_settings])
+        |> Jason.decode()
+
+      assert request_settings == settings
     end
 
     test "forwards the given options", %{opts: opts} do
