@@ -136,7 +136,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   end
 
   defp get_default_encoder(opts) do
-    with true <- Keyword.get(opts, :encoder_fallback, :true),
+    with true <- Keyword.get(opts, :encoder_fallback, true),
          true <- function_exported?(Jason, :encode, 2) do
       &Jason.encode(&1, [])
     else

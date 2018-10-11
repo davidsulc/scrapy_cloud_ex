@@ -39,7 +39,8 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
     if is_tuple_list?(value) do
       config |> Map.put(key, value)
     else
-      raise ArgumentError, message: "value for key '#{key}' must be a list of tuples (such as a keyword list)"
+      raise ArgumentError,
+        message: "value for key '#{key}' must be a list of tuples (such as a keyword list)"
     end
   end
 

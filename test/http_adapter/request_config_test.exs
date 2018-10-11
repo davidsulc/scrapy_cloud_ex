@@ -39,6 +39,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfigTest do
       assert_raise ArgumentError, ~r/value for key 'api_key' must be a string/, fn ->
         config |> RC.put(:api_key, :foo)
       end
+
       assert %RC{} = RC.put(config, :api_key, "123asd")
     end
 
@@ -46,6 +47,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfigTest do
       assert_raise ArgumentError, ~r/value for key 'url' must be a string/, fn ->
         config |> RC.put(:url, :foo)
       end
+
       assert %RC{} = RC.put(config, :url, "www.example.com")
     end
 
@@ -66,7 +68,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfigTest do
         config |> RC.put(:headers, %{a: :b, foo: :bar})
       end
 
-      assert %RC{} = RC.put(config, :headers, [a: :b, foo: :bar])
+      assert %RC{} = RC.put(config, :headers, a: :b, foo: :bar)
       assert %RC{} = RC.put(config, :headers, [{"a", "b"}, {"foo", "bar"}])
     end
 
@@ -75,7 +77,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfigTest do
         config |> RC.put(:body, %{a: :b, foo: :bar})
       end
 
-      assert %RC{} = RC.put(config, :body, [a: :b, foo: :bar])
+      assert %RC{} = RC.put(config, :body, a: :b, foo: :bar)
       assert %RC{} = RC.put(config, :body, [{"a", "b"}, {"foo", "bar"}])
     end
 
