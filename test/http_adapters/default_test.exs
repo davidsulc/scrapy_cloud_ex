@@ -5,10 +5,18 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
 
   @adapter ScrapyCloudEx.HttpAdapters.Default
 
-  defp get_request() do
+  defp get_request(), do: build_request(:get)
+
+  defp post_request(), do: build_request(:post)
+
+  defp put_request(), do: build_request(:put)
+
+  defp delete_request(), do: build_request(:delete)
+
+  defp build_request(verb) when is_atom(verb) do
     RequestConfig.new()
-    |> RequestConfig.put(:url, "localhost:8080/get")
-    |> RequestConfig.put(:method, :get)
+    |> RequestConfig.put(:url, "localhost:8080/#{verb}")
+    |> RequestConfig.put(:method, verb)
   end
 
   defp extract_and_decode(request_config) do
@@ -61,6 +69,48 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
 
     test "add included headers" do
       get_request() |> test_included_headers()
+    end
+  end
+
+  describe "request/1: POST requests" do
+    test "are successful" do
+      post_request() |> test_success()
+    end
+
+    test "use HTTP Basic authentication" do
+      post_request() |> test_http_auth()
+    end
+
+    test "add included headers" do
+      post_request() |> test_included_headers()
+    end
+  end
+
+  describe "request/1: PUT requests" do
+    test "are successful" do
+      put_request() |> test_success()
+    end
+
+    test "use HTTP Basic authentication" do
+      put_request() |> test_http_auth()
+    end
+
+    test "add included headers" do
+      put_request() |> test_included_headers()
+    end
+  end
+
+  describe "request/1: DELETE requests" do
+    test "are successful" do
+      delete_request() |> test_success()
+    end
+
+    test "use HTTP Basic authentication" do
+      delete_request() |> test_http_auth()
+    end
+
+    test "add included headers" do
+      delete_request() |> test_included_headers()
     end
   end
 end
