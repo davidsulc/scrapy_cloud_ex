@@ -43,6 +43,7 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
   def make_request(%RequestConfig{opts: opts} = config) do
     Logger.debug("making request: #{inspect(config)}")
     http_client = get_http_client(opts)
+
     case http_client.request(config) do
       {:error, _} = error ->
         error
