@@ -58,6 +58,17 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
     assert response["headers"]["another"] == "header"
   end
 
+  defp test_included_body(request) do
+    response =
+      request
+      |> RequestConfig.put(:body, foo: :bar, another: :param)
+      |> @adapter.request()
+      |> extract_and_decode()
+
+    assert response["form"]["foo"] == "bar"
+    assert response["form"]["another"] == "param"
+  end
+
   describe "request/1: GET requests" do
     test "are successful" do
       get_request() |> test_success()
@@ -84,6 +95,10 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
     test "add included headers" do
       post_request() |> test_included_headers()
     end
+
+    test "add included body" do
+      post_request() |> test_included_body()
+    end
   end
 
   describe "request/1: PUT requests" do
@@ -97,6 +112,10 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
 
     test "add included headers" do
       put_request() |> test_included_headers()
+    end
+
+    test "add included body" do
+      put_request() |> test_included_body()
     end
   end
 
