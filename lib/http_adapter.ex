@@ -1,7 +1,6 @@
 defmodule ScrapyCloudEx.HttpAdapter do
-  alias ScrapyCloudEx.HttpAdapter.RequestConfig
+  alias ScrapyCloudEx.HttpAdapter.{RequestConfig, Response}
 
-  @type error :: :request_error | :api_error | :decoder_error
-
-  @callback request(%RequestConfig{}) :: {:ok, map} | {:error, {error, any}}
+  @callback request(%RequestConfig{}) :: {:ok, %Response{}} | {:error, any}
+  @callback handle_response(%Response{}, list) :: {:ok, any} | {:error, map}
 end

@@ -43,7 +43,14 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
   def make_request(%RequestConfig{opts: opts} = config) do
     Logger.debug("making request: #{inspect(config)}")
     http_client = get_http_client(opts)
-    config |> http_client.request()
+    case http_client.request(config) do
+      {:error, _} = error ->
+        error
+
+      {:ok, response} ->
+        Logger.debug("received response: #{inspect(response)}")
+        http_client.handle_response(response, opts)
+    end
   end
 
   defp canonicalize_param({k, v} = pair, param_synonyms) do
