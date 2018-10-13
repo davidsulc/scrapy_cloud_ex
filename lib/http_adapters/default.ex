@@ -1,6 +1,8 @@
 defmodule ScrapyCloudEx.HttpAdapters.Default do
   @behaviour ScrapyCloudEx.HttpAdapter
 
+  require Logger
+
   alias ScrapyCloudEx.HttpAdapter.{RequestConfig, Response}
 
   @impl ScrapyCloudEx.HttpAdapter
@@ -19,9 +21,13 @@ defmodule ScrapyCloudEx.HttpAdapters.Default do
   end
 
   @impl ScrapyCloudEx.HttpAdapter
-  def handle_response(%Response{status: status, body: body}, opts) do
+  def handle_response(%Response{status: status, headers: headers, body: body}, opts) do
+    format = get_format(headers)
+    Logger.debug("decode format set to #{format}")
+    decoder_fun = Keyword.fetch!(opts, :decoder) |> get_decoder_fun()
+
     body
-    |> decode_body(opts)
+    |> decode_body(decoder_fun, format)
     |> case do
       {:ok, decoded_body} -> format_api_result(status, decoded_body)
       {:error, message} -> format_response_error(status, message)
@@ -42,10 +48,15 @@ defmodule ScrapyCloudEx.HttpAdapters.Default do
     end
   end
 
-  defp decode_body(body, opts) do
-    format = Keyword.fetch!(opts, :decoder_format)
-    decoder_fun = Keyword.fetch!(opts, :decoder) |> get_decoder_fun()
+  defp get_format([]), do: raise "no content-type header found in reply"
+  defp get_format([{"Content-Type", "application/x-jsonlines"<>_} | _]), do: :jl
+  defp get_format([{"Content-Type", "text/plain"<>_} | _]), do: :jl
+  defp get_format([{"Content-Type", "application/json"<>_} | _]), do: :json
+  defp get_format([{"Content-Type", "application/xml"<>_} | _]), do: :xml
+  defp get_format([{"Content-Type", "text/csv"<>_} | _]), do: :csv
+  defp get_format([_ | t]), do: get_format(t)
 
+  defp decode_body(body, decoder_fun, format) do
     body
     |> decoder_fun.(format)
     |> case do
