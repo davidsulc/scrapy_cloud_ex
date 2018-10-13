@@ -1,33 +1,40 @@
-defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
-  use ExUnit.Case, async: true
+defmodule ScrapyCloudEx.HttpAdapters.DefaultTest.CommonTests do
+  import ExUnit.Assertions
 
   alias ScrapyCloudEx.HttpAdapter.{RequestConfig, Response}
 
   @adapter ScrapyCloudEx.HttpAdapters.Default
-  @decoder_opts [decoder: ScrapyCloudEx.Decoders.Default]
 
-  defp build_request(verb) when is_atom(verb) do
+  def build_request(verb) when is_atom(verb) do
     RequestConfig.new()
     |> RequestConfig.put(:url, "localhost:8080/#{verb}")
     |> RequestConfig.put(:method, verb)
   end
 
-  defp extract_and_decode(request_config) do
-    request_config
-    |> extract_ok()
-    |> decode_response()
-    |> extract_ok()
+  def extract_ok({:ok, response}), do: response
+
+  def common_request_tests(request_key) do
+    module = __MODULE__
+    quote bind_quoted: [module: module, request_key: request_key] do
+      test "are successful", %{request_key => request} do
+        module.test_success(request)
+      end
+
+      test "use HTTP Basic authentication", %{request_key => request} do
+        module.test_http_auth(request)
+      end
+
+      test "add included headers", %{request_key => request} do
+        module.test_included_headers(request)
+      end
+    end
   end
 
-  defp extract_ok({:ok, response}), do: response
-
-  defp decode_response(%Response{body: body}), do: Jason.decode(body)
-
-  defp test_success(request) do
+  def test_success(request) do
     assert {:ok, _} = @adapter.request(request)
   end
 
-  defp test_http_auth(request) do
+  def test_http_auth(request) do
     key = "API_KEY"
     base_64_auth = "#{key}:" |> Base.encode64()
 
@@ -40,7 +47,7 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
     assert response["headers"]["authorization"] == "Basic #{base_64_auth}"
   end
 
-  defp test_included_headers(request) do
+  def test_included_headers(request) do
     response =
       request
       |> RequestConfig.put(:headers, [{"x-foo", "bar"}, {:another, :header}])
@@ -51,7 +58,7 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
     assert response["headers"]["another"] == "header"
   end
 
-  defp test_included_body(request) do
+  def test_included_body(request) do
     response =
       request
       |> RequestConfig.put(:body, [foo: :bar, another: :param])
@@ -61,6 +68,27 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
     assert response["form"]["foo"] == "bar"
     assert response["form"]["another"] == "param"
   end
+
+  defp extract_and_decode(request_config) do
+    request_config
+    |> extract_ok()
+    |> decode_response()
+    |> extract_ok()
+  end
+
+  defp decode_response(%Response{body: body}), do: Jason.decode(body)
+end
+
+defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
+  use ExUnit.Case, async: true
+
+  import ScrapyCloudEx.HttpAdapters.DefaultTest.CommonTests,
+      only: [build_request: 1, common_request_tests: 1, test_included_body: 1, extract_ok: 1]
+
+  alias ScrapyCloudEx.HttpAdapter.Response
+
+  @adapter ScrapyCloudEx.HttpAdapters.Default
+  @decoder_opts [decoder: ScrapyCloudEx.Decoders.Default]
 
   setup_all do
     response = %Response{
@@ -75,31 +103,11 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
   end
 
   describe "request/1: GET requests" do
-    test "are successful", %{get_request: request} do
-      test_success(request)
-    end
-
-    test "use HTTP Basic authentication", %{get_request: request} do
-      test_http_auth(request)
-    end
-
-    test "add included headers", %{get_request: request} do
-      test_included_headers(request)
-    end
+    common_request_tests(:get_request)
   end
 
   describe "request/1: POST requests" do
-    test "are successful", %{post_request: request} do
-      test_success(request)
-    end
-
-    test "use HTTP Basic authentication", %{post_request: request} do
-      test_http_auth(request)
-    end
-
-    test "add included headers", %{post_request: request} do
-      test_included_headers(request)
-    end
+    common_request_tests(:post_request)
 
     test "add included body", %{post_request: request} do
       test_included_body(request)
@@ -107,17 +115,7 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
   end
 
   describe "request/1: PUT requests" do
-    test "are successful", %{put_request: request} do
-      test_success(request)
-    end
-
-    test "use HTTP Basic authentication", %{put_request: request} do
-      test_http_auth(request)
-    end
-
-    test "add included headers", %{put_request: request} do
-      test_included_headers(request)
-    end
+    common_request_tests(:put_request)
 
     test "add included body", %{put_request: request} do
       test_included_body(request)
@@ -125,17 +123,7 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
   end
 
   describe "request/1: DELETE requests" do
-    test "are successful", %{put_request: request} do
-      test_success(request)
-    end
-
-    test "use HTTP Basic authentication", %{put_request: request} do
-      test_http_auth(request)
-    end
-
-    test "add included headers", %{put_request: request} do
-      test_included_headers(request)
-    end
+    common_request_tests(:delete_request)
   end
 
   describe "handle_response/2" do
