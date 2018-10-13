@@ -4,7 +4,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfigTest do
   alias ScrapyCloudEx.HttpAdapter.RequestConfig, as: RC
 
   defp has_default_opts?(%RC{opts: opts}) do
-    Keyword.get(opts, :decoder) != nil && Keyword.get(opts, :decoder_format) != nil
+    Keyword.get(opts, :decoder) != nil
   end
 
   setup_all do
@@ -15,7 +15,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfigTest do
     assert %{method: :get} = config
   end
 
-  test "has default decoder and decoder_format options", %{config: config} do
+  test "has default decoder option", %{config: config} do
     assert has_default_opts?(config)
   end
 
@@ -26,11 +26,11 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfigTest do
     end
 
     test "merging in new values can replace defaults", %{config: config} do
-      config = config |> RC.merge_opts(decoder_format: :foo)
+      config = config |> RC.merge_opts(decoder: DecoderModule)
       assert has_default_opts?(config)
 
       %{opts: opts} = config
-      assert Keyword.get(opts, :decoder_format) == :foo
+      assert Keyword.get(opts, :decoder) == DecoderModule
     end
   end
 

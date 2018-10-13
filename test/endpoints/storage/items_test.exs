@@ -63,18 +63,15 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ItemsTest do
     end
 
     test "accepts a format param", %{opts: opts} do
-      decoder_format = fn %{opts: opts} -> Keyword.get(opts, :decoder_format) end
 
       for format <- [:json, :jl, :xml, :text] do
         request = Items.get(@api_key, "123", [format: format] ++ @params, opts)
         refute match?({:error, _}, request)
-        assert decoder_format.(request) == format
       end
 
       csv_format_params = [format: :csv, csv: [fields: [:field_one, :field_two]]]
       request = Items.get(@api_key, "123", csv_format_params ++ @params, opts)
       refute match?({:error, _}, request)
-      assert decoder_format.(request) == :csv
 
       assert {:error, _} = Items.get(@api_key, "123", [format: :foo] ++ @params, opts)
     end

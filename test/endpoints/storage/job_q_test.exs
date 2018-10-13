@@ -77,8 +77,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQTest do
 
     test "accepts json and jl formats", %{opts: opts} do
       for format <- [:json, :jl] do
-        %{opts: opts} = JobQ.list(@api_key, "123", [format: format], opts)
-        assert Keyword.get(opts, :decoder_format) == format
+        assert %{} = JobQ.list(@api_key, "123", [format: format], opts)
       end
     end
 

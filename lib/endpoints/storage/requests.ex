@@ -19,7 +19,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
         |> QueryParams.to_query()
 
       base_url = [@base_url, composite_id] |> Enum.join("/")
-      opts = opts |> Helpers.set_default_decoder_format(Keyword.get(params, :format))
 
       RequestConfig.new()
       |> RequestConfig.put(:api_key, api_key)
