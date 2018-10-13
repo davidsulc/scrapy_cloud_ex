@@ -7,7 +7,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage do
 
   def meta_params(), do: [:_key, :_ts]
 
-  @valid_formats [:json, :jl, :xml, :csv, :text]
+  @valid_formats [:json, :jl, :xml, :csv, :text, :html]
 
   def validate_format(nil), do: :ok
 
