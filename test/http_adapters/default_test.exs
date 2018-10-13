@@ -5,14 +5,6 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
 
   @adapter ScrapyCloudEx.HttpAdapters.Default
 
-  defp get_request(), do: build_request(:get)
-
-  defp post_request(), do: build_request(:post)
-
-  defp put_request(), do: build_request(:put)
-
-  defp delete_request(), do: build_request(:delete)
-
   defp build_request(verb) when is_atom(verb) do
     RequestConfig.new()
     |> RequestConfig.put(:url, "localhost:8080/#{verb}")
@@ -61,7 +53,7 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
   defp test_included_body(request) do
     response =
       request
-      |> RequestConfig.put(:body, foo: :bar, another: :param)
+      |> RequestConfig.put(:body, [foo: :bar, another: :param])
       |> @adapter.request()
       |> extract_and_decode()
 
@@ -69,67 +61,72 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
     assert response["form"]["another"] == "param"
   end
 
+  setup_all do
+    [:get, :post, :put, :delete]
+    |> Enum.map(&{:"#{&1}_request", build_request(&1)})
+  end
+
   describe "request/1: GET requests" do
-    test "are successful" do
-      get_request() |> test_success()
+    test "are successful", %{get_request: request} do
+      test_success(request)
     end
 
-    test "use HTTP Basic authentication" do
-      get_request() |> test_http_auth()
+    test "use HTTP Basic authentication", %{get_request: request} do
+      test_http_auth(request)
     end
 
-    test "add included headers" do
-      get_request() |> test_included_headers()
+    test "add included headers", %{get_request: request} do
+      test_included_headers(request)
     end
   end
 
   describe "request/1: POST requests" do
-    test "are successful" do
-      post_request() |> test_success()
+    test "are successful", %{post_request: request} do
+      test_success(request)
     end
 
-    test "use HTTP Basic authentication" do
-      post_request() |> test_http_auth()
+    test "use HTTP Basic authentication", %{post_request: request} do
+      test_http_auth(request)
     end
 
-    test "add included headers" do
-      post_request() |> test_included_headers()
+    test "add included headers", %{post_request: request} do
+      test_included_headers(request)
     end
 
-    test "add included body" do
-      post_request() |> test_included_body()
+    test "add included body", %{post_request: request} do
+      test_included_body(request)
     end
   end
 
   describe "request/1: PUT requests" do
-    test "are successful" do
-      put_request() |> test_success()
+    test "are successful", %{put_request: request} do
+      test_success(request)
     end
 
-    test "use HTTP Basic authentication" do
-      put_request() |> test_http_auth()
+    test "use HTTP Basic authentication", %{put_request: request} do
+      test_http_auth(request)
     end
 
-    test "add included headers" do
-      put_request() |> test_included_headers()
+    test "add included headers", %{put_request: request} do
+      test_included_headers(request)
     end
 
-    test "add included body" do
-      put_request() |> test_included_body()
+    test "add included body", %{put_request: request} do
+      test_included_body(request)
     end
   end
 
   describe "request/1: DELETE requests" do
-    test "are successful" do
-      delete_request() |> test_success()
+    test "are successful", %{put_request: request} do
+      test_success(request)
     end
 
-    test "use HTTP Basic authentication" do
-      delete_request() |> test_http_auth()
+    test "use HTTP Basic authentication", %{put_request: request} do
+      test_http_auth(request)
     end
 
-    test "add included headers" do
-      delete_request() |> test_included_headers()
+    test "add included headers", %{put_request: request} do
+      test_included_headers(request)
     end
   end
 end
