@@ -47,7 +47,6 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
          true <- Keyword.get(params, :format) in [nil, :json, :jl],
          format = Keyword.get(params, :format, :json),
          :ok <- params |> Keyword.get(:state) |> validate_state() do
-      opts = opts |> Helpers.set_default_decoder_format(Keyword.get(params, :format))
       params = params |> Keyword.delete(:format)
       query = [{:project, project_id} | params] |> URI.encode_query()
 

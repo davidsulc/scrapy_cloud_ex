@@ -44,8 +44,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ActivityTest do
 
     test "accepts json, jl, and xml formats", %{opts: opts} do
       for format <- [:json, :jl, :xml] do
-        %{opts: opts} = Activity.list(@api_key, "123", [format: format], opts)
-        assert Keyword.get(opts, :decoder_format) == format
+        assert %{} = Activity.list(@api_key, "123", [format: format], opts)
       end
     end
 
@@ -95,8 +94,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ActivityTest do
 
     test "accepts json, jl, and xml formats", %{opts: opts} do
       for format <- [:json, :jl, :xml] do
-        %{opts: opts} = Activity.projects(@api_key, [format: format], opts)
-        assert Keyword.get(opts, :decoder_format) == format
+        assert %{} = Activity.projects(@api_key, [format: format], opts)
       end
     end
 

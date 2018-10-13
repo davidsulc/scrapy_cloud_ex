@@ -8,8 +8,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
     headers: [],
     body: [],
     opts: [
-      decoder: ScrapyCloudEx.Decoders.Default,
-      decoder_format: :json
+      decoder: ScrapyCloudEx.Decoders.Default
     ]
   ]
 

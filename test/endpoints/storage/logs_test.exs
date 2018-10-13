@@ -46,14 +46,11 @@ defmodule ScrapyCloudEx.Endpoints.Storage.LogsTest do
 
     test "accepts json, jl, xml, and csv formats", %{opts: opts} do
       for format <- [:json, :jl, :xml] do
-        %{opts: opts} = Logs.get(@api_key, @id, [format: format], opts)
-        assert Keyword.get(opts, :decoder_format) == format
+        assert %{} = Logs.get(@api_key, @id, [format: format], opts)
       end
 
-      %{opts: opts} =
-        Logs.get(@api_key, @id, [format: :csv, csv: [fields: ~w(level message)]], opts)
-
-      assert Keyword.get(opts, :decoder_format) == :csv
+      params = [format: :csv, csv: [fields: ~w(level message)]]
+      assert %{} = Logs.get(@api_key, @id, params, opts)
     end
 
     test "forwards the given options", %{opts: opts} do

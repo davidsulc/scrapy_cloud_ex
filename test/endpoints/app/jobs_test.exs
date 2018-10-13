@@ -127,9 +127,8 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
 
     test "adapts the endpoint url to the requested format", %{opts: opts} do
       check_extension = fn format ->
-        %{url: url, opts: opts} = Jobs.list(@api_key, @project_id, [format: format], opts)
+        %{url: url} = Jobs.list(@api_key, @project_id, [format: format], opts)
         assert String.contains?(url, "/list.#{format}")
-        assert Keyword.get(opts, :decoder_format) == format
       end
 
       check_extension.(:json)
