@@ -52,7 +52,7 @@ defmodule ScrapyCloudEx.HttpAdapters.Default do
     body
     |> decoder_fun.(format)
     |> case do
-      {:error, %{data: message}} -> {:error, message}
+      {:error, _} = error -> error
       {:ok, _} = result -> result
     end
   end
