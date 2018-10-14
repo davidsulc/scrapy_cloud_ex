@@ -6,6 +6,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   @base_url "https://app.scrapinghub.com/api/comments"
 
+  @spec get(String.t, String.t, Keyword.t) :: ScrapyCloudEx.result
   def get(api_key, composite_id, opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
@@ -16,6 +17,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     end
   end
 
+  @spec put(String.t, String.t, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
   def put(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
@@ -27,6 +29,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     end
   end
 
+  @spec post(String.t, String.t, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
   def post(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
@@ -38,6 +41,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     end
   end
 
+  @spec delete(String.t, String.t, Keyword.t) :: ScrapyCloudEx.result
   def delete(api_key, composite_id, opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
@@ -48,6 +52,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     end
   end
 
+  @spec stats(String.t, String.t | integer, Keyword.t) :: ScrapyCloudEx.result
   def stats(api_key, project_id, opts \\ [])
       when is_api_key(api_key)
       when is_binary(project_id)
@@ -59,6 +64,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     |> Helpers.make_request()
   end
 
+  @spec basic_comment_request(String.t, String.t, Keyword.t, Keyword.t, atom) :: RequestConfig.t | ScrapyCloudEx.tagged_error
   defp basic_comment_request(api_key, composite_id, params, opts, method) do
     with :ok <- Helpers.validate_params(params, [:text]),
          :ok <- check_constraints(method, composite_id, params) do
@@ -73,12 +79,15 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     end
   end
 
+  @spec check_constraints(atom, String.t, Keyword.t) :: :ok | ScrapyCloudEx.tagged_error
   defp check_constraints(method, composite_id, params)
        when is_atom(method)
        when is_binary(composite_id) or is_integer(composite_id)
        when is_list(params) do
     do_check_constraints(method, section_count(composite_id), Keyword.has_key?(params, :text))
   end
+
+  @spec do_check_constraints(atom, integer, boolean) :: :ok | ScrapyCloudEx.tagged_error
 
   # comments/:project_id/:spider_id/:job_id
   defp do_check_constraints(:get, 3, _), do: :ok
@@ -117,11 +126,15 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     |> Helpers.invalid_param_error(:id)
   end
 
+  @spec required_text_param_not_provided() :: ScrapyCloudEx.tagged_error
   defp required_text_param_not_provided() do
     "required `text` param not provided" |> Helpers.invalid_param_error(:text)
   end
 
+  @spec merge_sections([String.t]) :: String.t
   defp merge_sections(sections), do: sections |> Enum.join("/")
+
+  @spec section_count(String.t) :: integer
 
   defp section_count(composite) when is_integer(composite), do: 1
 
