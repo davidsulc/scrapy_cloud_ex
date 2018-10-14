@@ -24,6 +24,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     pagination: []
   ]
 
+  @spec from_keywords(Keyword.t) :: t
   def from_keywords(params) when is_list(params) do
     sanitized_params =
       params
@@ -44,6 +45,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     end
   end
 
+  @spec warn_if_no_pagination(t, String.t) :: t
   def warn_if_no_pagination(%__MODULE__{} = params, function_name) do
     if !has_pagination?(params) do
       Logger.warn("#{function_name} called without pagination params or index")
@@ -51,6 +53,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
 
     params
   end
+
+  @spec to_query(t) :: String.t | ScrapyCloudEx.tagged_error
 
   def to_query(%__MODULE__{error: nil} = params) do
     params
@@ -63,6 +67,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
 
   def to_query(%__MODULE__{error: error}), do: {:error, error}
 
+  @spec has_pagination?(t) :: boolean
+
   defp has_pagination?(%__MODULE__{pagination: pagination_params}) do
     case Keyword.get(pagination_params, :index) do
       [] -> Keyword.delete(pagination_params, :index) != []
@@ -71,6 +77,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
   end
 
   defp has_pagination?(%__MODULE__{}), do: false
+
+  @spec to_keyword_list(tuple) :: Keyword.t
 
   defp to_keyword_list({group, params}) when group in [:pagination, :csv] do
     params
@@ -88,6 +96,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
 
   defp to_keyword_list({_, _}), do: []
 
+  @spec sanitize(Keyword.t) :: Keyword.t
   defp sanitize(params) when is_list(params) do
     if Keyword.keyword?(params) do
       params
@@ -97,6 +106,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
       params
     end
   end
+
+  @spec sanitize_param({atom, any}) :: {atom, any}
 
   defp sanitize_param({:include_headers, false}), do: {:include_headers, 0}
   defp sanitize_param({:include_headers, true}), do: {:include_headers, 1}
@@ -110,14 +121,17 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
 
   defp sanitize_param({_, _} = pair), do: pair
 
+  @spec configure_pagination(Keyword.t) :: Keyword.t
   defp configure_pagination(params) do
     params |> configure_params(:pagination, Storage.pagination_params())
   end
 
+  @spec configure_csv(Keyword.t) :: Keyword.t
   defp configure_csv(params) do
     params |> configure_params(:csv, Storage.csv_params())
   end
 
+  @spec configure_params(Keyword.t, atom, [atom, ...]) :: Keyword.t
   defp configure_params(params, scope_name, expected_scoped_params) do
     unscoped = params |> get_params(expected_scoped_params)
     scoped = Keyword.get(params, scope_name, [])
@@ -131,12 +145,14 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     |> Keyword.put(scope_name, scoped_params)
   end
 
+  @spec get_params(Keyword.t, [atom]) :: Keyword.t
   defp get_params(params, keys) do
     keys
     |> Enum.map(&{&1, Keyword.get(params, &1)})
     |> Enum.reject(fn {_, v} -> v == nil end)
   end
 
+  @spec warn_on_unscoped_params(Keyword.t, Keyword.t, atom) :: any
   defp warn_on_unscoped_params(scoped, unscoped, scope_name) do
     if length(unscoped) > 0 do
       Logger.warn(
@@ -155,10 +171,13 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     end
   end
 
+  @spec intersection(list, list) :: list
   defp intersection(a, b) when is_list(a) and is_list(b) do
     items_only_in_a = a -- b
     a -- items_only_in_a
   end
+
+  @spec warn_on_inconsistent_format(t) :: t
 
   defp warn_on_inconsistent_format(%{format: format, csv: [_ | _]} = params)
        when format not in [:csv, nil] do
@@ -173,12 +192,15 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
 
   defp warn_on_inconsistent_format(params), do: params
 
+  @spec set_defaults(t) :: t
+
   defp set_defaults(%{format: nil} = params) do
     %{params | format: @default_format}
   end
 
   defp set_defaults(%{} = params), do: params
 
+  @spec validate_params(t) :: t
   defp validate_params(params) do
     params
     |> validate_format()
@@ -186,6 +208,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     |> validate_nodata()
     |> validate_pagination()
   end
+
+  @spec validate_optional_positive_integer_form(nil, atom) :: :ok | ScrapyCloudEx.tagged_error
 
   defp validate_optional_positive_integer_form(nil, _tag), do: :ok
 
@@ -205,6 +229,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     value |> expected_integer_form(tag)
   end
 
+  @spec validate_format(t) :: t
+
   defp validate_format(%{format: :csv} = params) do
     params
     |> validate_csv_params()
@@ -218,6 +244,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     end
   end
 
+  @spec validate_csv_params(t) :: t
   defp validate_csv_params(%{csv: csv} = params) do
     case Helpers.validate_params(csv, Storage.csv_params()) do
       :ok ->
@@ -228,6 +255,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     end
   end
 
+  @spec check_fields_param_provided(t) :: t
   defp check_fields_param_provided(%{csv: csv} = params) do
     if Keyword.has_key?(csv, :fields) do
       params
@@ -239,6 +267,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
       %{params | error: error}
     end
   end
+
+  @spec validate_meta(t) :: t
 
   defp validate_meta(%{meta: nil} = params), do: params
 
@@ -253,13 +283,17 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     %{params | error: "expected a list" |> Helpers.invalid_param_error(:meta)}
   end
 
+  @spec validate_nodata(t) :: t
+
   defp validate_nodata(%{nodata: nil} = params), do: params
+
   defp validate_nodata(%{nodata: nodata} = params) when nodata in [0, 1], do: params
 
   defp validate_nodata(params) do
     %{params | error: "expected a boolean value" |> Helpers.invalid_param_error(:nodata)}
   end
 
+  @spec validate_pagination(t) :: t
   defp validate_pagination(params) do
     params
     |> validate_pagination_params()
@@ -270,6 +304,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     |> validate_pagination_index()
   end
 
+  @spec validate_pagination_params(t) :: t
   defp validate_pagination_params(%{pagination: pagination} = params) do
     case Helpers.validate_params(pagination, Storage.pagination_params()) do
       :ok ->
@@ -280,6 +315,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     end
   end
 
+  @spec validate_pagination_count(t) :: t
   defp validate_pagination_count(%{pagination: pagination} = params) do
     case validate_optional_positive_integer_form(Keyword.get(pagination, :count), :count) do
       :ok ->
@@ -290,11 +326,14 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     end
   end
 
+  @spec validate_pagination_start(t) :: t
   defp validate_pagination_start(params), do: params |> validate_pagination_offset(:start)
 
+  @spec validate_pagination_startafter(t) :: t
   defp validate_pagination_startafter(params),
     do: params |> validate_pagination_offset(:startafter)
 
+  @spec validate_pagination_offset(t, atom) :: t
   defp validate_pagination_offset(%{pagination: pagination} = params, offset_name) do
     with nil <- Keyword.get(pagination, offset_name) do
       params
@@ -310,6 +349,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     end
   end
 
+  @spec process_pagination_index(t) :: t
   defp process_pagination_index(%{pagination: pagination} = params) do
     # the :index key could be given multiple times, so we collect all values into an array
     # which we need to flatten, because it could already have been given as a list
@@ -321,6 +361,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     %{params | pagination: pagination |> Keyword.put(:index, index)}
   end
 
+  @spec validate_pagination_index(t) :: t
   defp validate_pagination_index(%{pagination: pagination} = params) do
     pagination
     |> Keyword.get(:index)
@@ -334,6 +375,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     end
   end
 
+  @spec reduce_indexes_to_first_error(Keyword.t) :: :ok | ScrapyCloudEx.tagged_error
   defp reduce_indexes_to_first_error(indexes) do
     reducer = fn i, acc ->
       case validate_optional_positive_integer_form(i, :index) do
@@ -344,6 +386,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
 
     indexes |> Enum.reduce_while(:ok, reducer)
   end
+
+  @spec validate_full_form_id(String.t, atom) :: :ok | ScrapyCloudEx.tagged_error
 
   defp validate_full_form_id(id, tag) when not is_binary(id),
     do: "expected a string" |> Helpers.invalid_param_error(tag)
@@ -357,6 +401,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     end
   end
 
+  @spec expected_integer_form(any, atom) :: ScrapyCloudEx.tagged_error
   defp expected_integer_form(value, tag) do
     "expected an integer (possibly represented as a string), was given #{inspect(value)}"
     |> Helpers.invalid_param_error(tag)
