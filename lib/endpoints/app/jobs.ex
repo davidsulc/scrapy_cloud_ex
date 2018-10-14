@@ -154,7 +154,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     end
   end
 
-  @spec format_job_settings(any, encoder_fun | nil) :: {:ok, any} | ScrapyCloudEx.tagged_error
+  @spec format_job_settings(any, encoder_fun | nil) :: ScrapyCloudEx.result
 
   defp format_job_settings(nil, _encoder), do: {:ok, []}
 

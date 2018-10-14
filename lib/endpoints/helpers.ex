@@ -7,7 +7,7 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
   alias ScrapyCloudEx.HttpAdapters.Default, as: DefaultAdapter
 
   @typep param :: {atom, any}
-  @typep invalid_param_error :: {:invalid_param, ScrapyCloudEx.tagged_error}
+  @typep invalid_param_error :: {:invalid_param, ScrapyCloudEx.tagged_error_info}
 
   # parameter naming in the API is a bit inconsistent where multi-words variables are concerned
   # (e.g. include_headers vs lineend) and often doesn't conform to the Elixir convention of
@@ -32,7 +32,7 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
     end
   end
 
-  @spec invalid_param_error(String.t | ScrapyCloudEx.tagged_error, atom) :: invalid_param_error
+  @spec invalid_param_error(String.t | ScrapyCloudEx.tagged_error_info, atom) :: invalid_param_error
   def invalid_param_error(error, tag) when is_atom(tag) or is_list(tag),
     do: {:invalid_param, {tag, error}}
 

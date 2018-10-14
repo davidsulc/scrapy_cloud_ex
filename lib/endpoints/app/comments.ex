@@ -64,7 +64,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     |> Helpers.make_request()
   end
 
-  @spec basic_comment_request(String.t, String.t, Keyword.t, Keyword.t, atom) :: RequestConfig.t | ScrapyCloudEx.tagged_error
+  @spec basic_comment_request(String.t, String.t, Keyword.t, Keyword.t, atom) :: RequestConfig.t | ScrapyCloudEx.tagged_error_info
   defp basic_comment_request(api_key, composite_id, params, opts, method) do
     with :ok <- Helpers.validate_params(params, [:text]),
          :ok <- check_constraints(method, composite_id, params) do
@@ -79,7 +79,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     end
   end
 
-  @spec check_constraints(atom, String.t, Keyword.t) :: :ok | ScrapyCloudEx.tagged_error
+  @spec check_constraints(atom, String.t, Keyword.t) :: :ok | ScrapyCloudEx.tagged_error_info
   defp check_constraints(method, composite_id, params)
        when is_atom(method)
        when is_binary(composite_id) or is_integer(composite_id)
@@ -87,7 +87,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     do_check_constraints(method, section_count(composite_id), Keyword.has_key?(params, :text))
   end
 
-  @spec do_check_constraints(atom, integer, boolean) :: :ok | ScrapyCloudEx.tagged_error
+  @spec do_check_constraints(atom, integer, boolean) :: :ok | ScrapyCloudEx.tagged_error_info
 
   # comments/:project_id/:spider_id/:job_id
   defp do_check_constraints(:get, 3, _), do: :ok
@@ -126,7 +126,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     |> Helpers.invalid_param_error(:id)
   end
 
-  @spec required_text_param_not_provided() :: ScrapyCloudEx.tagged_error
+  @spec required_text_param_not_provided() :: ScrapyCloudEx.tagged_error_info
   defp required_text_param_not_provided() do
     "required `text` param not provided" |> Helpers.invalid_param_error(:text)
   end
