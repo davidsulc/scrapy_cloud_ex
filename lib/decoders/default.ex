@@ -5,7 +5,7 @@ defmodule ScrapyCloudEx.Decoders.Default do
 
   @impl Decoder
 
-  @spec decode(String.t, atom) :: {:ok, any} | {:error, any}
+  @spec decode(String.t, atom) :: {:ok, any} | ScrapyCloudEx.tagged_error
 
   def decode(body, :json), do: Jason.decode(body)
 
