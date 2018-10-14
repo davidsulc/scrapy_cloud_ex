@@ -26,7 +26,7 @@ defmodule ScrapyCloudEx.HttpAdapters.Default do
   @spec handle_response(Response.t, Keyword.t) :: {:ok, any} | {:error, HttpAdapter.error_map}
   def handle_response(%Response{status: status, headers: headers, body: body}, opts) do
     format = Helpers.get_format(headers)
-    Logger.debug("decode format set to #{format}")
+    Logger.debug(fn -> "decode format set to #{format}" end)
     decoder_fun = opts |> Keyword.fetch!(:decoder) |> Helpers.get_decoder_fun()
 
     body
