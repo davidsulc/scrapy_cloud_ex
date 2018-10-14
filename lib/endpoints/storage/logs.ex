@@ -7,6 +7,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Logs do
 
   @base_url "https://storage.scrapinghub.com/logs"
 
+  @spec get(String.t, String.t, Keyword.t, Keyword.t) :: {:ok, any} | {:error, ScrapyCloudEx.tagged_error}
   def get(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
