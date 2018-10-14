@@ -185,11 +185,11 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     |> validate_pagination()
   end
 
-  defp validate_optional_integer_form(nil, _tag), do: :ok
+  defp validate_optional_positive_integer_form(nil, _tag), do: :ok
 
-  defp validate_optional_integer_form(value, _tag) when is_integer(value), do: :ok
+  defp validate_optional_positive_integer_form(value, _tag) when is_integer(value) and value > 0, do: :ok
 
-  defp validate_optional_integer_form(value, tag) when is_binary(value) do
+  defp validate_optional_positive_integer_form(value, tag) when is_binary(value) do
     if String.match?(value, ~r/^\d+$/) do
       :ok
     else
@@ -198,7 +198,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     end
   end
 
-  defp validate_optional_integer_form(value, tag) do
+  defp validate_optional_positive_integer_form(value, tag) do
     value |> expected_integer_form(tag)
   end
 
@@ -278,7 +278,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
   end
 
   defp validate_pagination_count(%{pagination: pagination} = params) do
-    case validate_optional_integer_form(Keyword.get(pagination, :count), :count) do
+    case validate_optional_positive_integer_form(Keyword.get(pagination, :count), :count) do
       :ok ->
         params
 
@@ -333,7 +333,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
 
   defp reduce_indexes_to_first_error(indexes) do
     reducer = fn i, acc ->
-      case validate_optional_integer_form(i, :index) do
+      case validate_optional_positive_integer_form(i, :index) do
         :ok -> {:cont, acc}
         {:invalid_param, _} = error -> {:halt, error}
       end

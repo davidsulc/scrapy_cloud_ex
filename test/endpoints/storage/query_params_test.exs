@@ -154,9 +154,43 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParamsTest do
     end
   end
 
+  describe "from_keywords/1 validations: pagination" do
+    defp paginate(params), do: [pagination: params]
 
-      assert QueryParams.from_keywords(nodata: 2) |> invalid_param?(:nodata)
-      assert QueryParams.from_keywords(nodata: :foo) |> invalid_param?(:nodata)
+    test "is validated" do
+      valid_params = [count: 3, index: 4, start: "1/2/3/4", startafter: "1/2/3/4"]
+      QueryParams.from_keywords(valid_params |> paginate()) |> assert_no_error()
+
+      QueryParams.from_keywords([{:foo, :bar} | valid_params] |> paginate()) |> assert_invalid_param(pagination: :foo)
+    end
+
+    test "count is a positive int" do
+      QueryParams.from_keywords([count: 3] |> paginate()) |> assert_no_error()
+
+      QueryParams.from_keywords([count: :foo] |> paginate()) |> assert_invalid_param(pagination: :count)
+      QueryParams.from_keywords([count: -1] |> paginate()) |> assert_invalid_param(pagination: :count)
+    end
+
+    test "index is a positive int" do
+      QueryParams.from_keywords([index: 3] |> paginate()) |> assert_no_error()
+
+      QueryParams.from_keywords([index: :foo] |> paginate()) |> assert_invalid_param(pagination: :index)
+      QueryParams.from_keywords([index: -1] |> paginate()) |> assert_invalid_param(pagination: :index)
+    end
+
+    test "accepts multiple index values" do
+      %{pagination: pagination} = QueryParams.from_keywords([index: 3, index: 4] |> paginate())
+      assert Keyword.get(pagination, :index) == [3, 4]
+    end
+
+    test "start and startafter must be full form id (4 sections)" do
+      for param <- [:start, :startafter] do
+        QueryParams.from_keywords([{param, "1/2/3/4"}] |> paginate()) |> assert_no_error()
+
+        QueryParams.from_keywords([{param, "1/2/3"}] |> paginate()) |> assert_invalid_param(pagination: param)
+        QueryParams.from_keywords([{param, 12}] |> paginate()) |> assert_invalid_param(pagination: param)
+        QueryParams.from_keywords([{param, :foo}] |> paginate()) |> assert_invalid_param(pagination: param)
+      end
     end
   end
 
