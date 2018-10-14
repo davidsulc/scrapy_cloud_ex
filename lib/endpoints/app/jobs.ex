@@ -4,9 +4,12 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   alias ScrapyCloudEx.Endpoints.{App, Helpers}
   alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
+  @typep encoder_fun :: (any -> {:ok, any} | {:error, any})
+
   @base_url "https://app.scrapinghub.com/api"
   @valid_states ~w(pending running finished deleted)
 
+  @spec run(String.t, String.t | integer, String.t, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
   def run(api_key, project_id, spider_name, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -35,6 +38,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     end
   end
 
+  @spec list(String.t, String.t | integer, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
   def list(api_key, project_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -68,6 +72,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     end
   end
 
+  @spec update(String.t, String.t | integer, [String.t], Keyword.t, Keyword.t) :: ScrapyCloudEx.result
   def update(api_key, project_id, job_or_jobs, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -86,6 +91,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     end
   end
 
+  @spec delete(String.t, String.t | integer, [String.t], Keyword.t) :: ScrapyCloudEx.result
   def delete(api_key, project_id, job_or_jobs, opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -96,6 +102,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     |> Helpers.make_request()
   end
 
+  @spec stop(String.t, String.t | integer, [String.t], Keyword.t) :: ScrapyCloudEx.result
   def stop(api_key, project_id, job_or_jobs, opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -106,6 +113,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     |> Helpers.make_request()
   end
 
+  @spec prepare_basic_post_request(String.t, String.t | integer, [String.t], Keyword.t) :: RequestConfig.t
   defp prepare_basic_post_request(api_key, project_id, job_or_jobs, opts) do
     body =
       job_or_jobs
@@ -119,12 +127,14 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     |> RequestConfig.merge_opts(opts)
   end
 
+  @spec format_jobs([String.t]) :: Keyword.t
   defp format_jobs(job_or_jobs) do
     job_or_jobs
     |> List.wrap()
     |> Enum.map(&{:job, &1})
   end
 
+  @spec get_encoder(Keyword.t) :: encoder_fun | nil
   defp get_encoder(opts) do
     opts
     |> Keyword.get(:encoder)
@@ -134,6 +144,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     end
   end
 
+  @spec get_default_encoder(Keyword.t) :: encoder_fun | nil
   defp get_default_encoder(opts) do
     with true <- Keyword.get(opts, :encoder_fallback, true),
          true <- function_exported?(Jason, :encode, 2) do
@@ -142,6 +153,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       _ -> nil
     end
   end
+
+  @spec format_job_settings(any, encoder_fun | nil) :: ScrapyCloudEx.result
 
   defp format_job_settings(nil, _encoder), do: {:ok, []}
 
@@ -152,7 +165,6 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     |> Helpers.invalid_param_error(:job_settings)
   end
 
-  # TODO: document that encoder must return {:ok, encoded_json} on success
   defp format_job_settings(settings, encoder) when is_map(settings), do: encoder.(settings)
 
   defp format_job_settings(_settings, _encoder) do
@@ -160,13 +172,18 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     |> Helpers.invalid_param_error(:job_settings)
   end
 
+  @spec maybe_add_job_settings(Keyword.t, any) :: Keyword.t
+
   defp maybe_add_job_settings(list, []), do: list
 
   defp maybe_add_job_settings(list, settings) do
     list |> Keyword.put(:job_settings, settings)
   end
 
+  @spec validate_state(any) :: :ok | ScrapyCloudEx.tagged_error
+
   defp validate_state(nil), do: :ok
+
   defp validate_state(state) when state in @valid_states, do: :ok
 
   defp validate_state(state),

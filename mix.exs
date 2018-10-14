@@ -24,7 +24,8 @@ defmodule ScrapyCloudEx.MixProject do
     [
       {:hackney, "~> 1.14", only: [:dev, :test]},
       {:jason, "~> 1.1", only: [:dev, :test]},
-      {:httparrot, "~> 1.0", only: :test}
+      {:httparrot, "~> 1.0", only: :test},
+      {:dialyxir, "~> 1.0.0-rc.3", only: [:dev], runtime: false}
     ]
   end
 

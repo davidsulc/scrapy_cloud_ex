@@ -1,4 +1,6 @@
 defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
+  @type t :: %__MODULE__{}
+
   @http_methods [:get, :post, :put, :delete]
 
   defstruct [
@@ -12,11 +14,15 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
     ]
   ]
 
+  @spec new() :: t
   def new(), do: %__MODULE__{}
 
+  @spec merge_opts(t, Keyword.t) :: t
   def merge_opts(%__MODULE__{opts: opts} = struct, new_opts) when is_list(new_opts) do
     %{struct | opts: Keyword.merge(opts, new_opts)}
   end
+
+  @spec put(t, atom | any, any) :: t
 
   def put(%__MODULE__{} = config, key, value) when key in [:api_key, :url] and is_binary(value) do
     config |> Map.put(key, value)
@@ -53,9 +59,8 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
     raise ArgumentError, message: "key must be one of #{inspect(valid_keys)}"
   end
 
+  @spec is_tuple_list?(any) :: boolean
   defp is_tuple_list?([]), do: true
-
   defp is_tuple_list?([{_, _} | t]), do: is_tuple_list?(t)
-
   defp is_tuple_list?(_), do: false
 end

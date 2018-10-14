@@ -1,6 +1,7 @@
 defmodule ScrapyCloudEx.Decoder do
   @type format :: :json | :jl | :xml | :csv | :text
+  @type decoder_function :: (String.t, atom -> any)
 
   @callback decode(body :: String.t(), format :: format) ::
-              {:ok, any} | {:error, {:decoder_error, any}}
+              {:ok, any} | ScrapyCloudEx.tagged_error
 end
