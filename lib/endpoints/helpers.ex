@@ -37,7 +37,7 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
     do: {:invalid_param, {tag, error}}
 
   def make_request(%RequestConfig{opts: opts} = config) do
-    Logger.debug(fn -> "making request: #{inspect(config, pretty: true)}" end)
+    Logger.debug("making request: #{inspect(config, pretty: true)}")
     http_client = get_http_client(opts)
 
     case http_client.request(config) do
@@ -45,7 +45,7 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
         error
 
       {:ok, response} ->
-        Logger.debug(fn -> "received response: #{inspect(response, pretty: true)}" end)
+        Logger.debug("received response: #{inspect(response, pretty: true)}")
         http_client.handle_response(response, opts)
     end
   end
