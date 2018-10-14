@@ -138,7 +138,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
   defp warn_on_unscoped_params(scoped, unscoped, scope_name) do
     if length(unscoped) > 0 do
       Logger.warn(
-        "pagination values `#{inspect(unscoped)}` should be provided within the `#{scope_name}` parameter"
+        "values `#{inspect(unscoped)}` should be provided within the `#{scope_name}` parameter"
       )
 
       common_params = intersection(Keyword.keys(unscoped), Keyword.keys(scoped))
