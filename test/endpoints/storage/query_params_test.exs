@@ -160,49 +160,68 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParamsTest do
 
     test "is validated" do
       valid_params = [count: 3, index: 4, start: "1/2/3/4", startafter: "1/2/3/4"]
-      QueryParams.from_keywords(valid_params |> paginate()) |> assert_no_error()
 
-      QueryParams.from_keywords([{:foo, :bar} | valid_params] |> paginate())
+      valid_params
+      |> paginate()
+      |> QueryParams.from_keywords()
+      |> assert_no_error()
+
+      [{:foo, :bar} | valid_params]
+      |> paginate()
+      |> QueryParams.from_keywords()
       |> assert_invalid_param(pagination: :foo)
     end
 
     test "count is a positive int" do
-      QueryParams.from_keywords([count: 3] |> paginate()) |> assert_no_error()
+      [count: 3]
+      |> paginate()
+      |> QueryParams.from_keywords()
+      |> assert_no_error()
 
-      QueryParams.from_keywords([count: :foo] |> paginate())
-      |> assert_invalid_param(pagination: :count)
-
-      QueryParams.from_keywords([count: -1] |> paginate())
-      |> assert_invalid_param(pagination: :count)
+      for count <- [:foo, -1] do
+        [count: count]
+        |> paginate()
+        |> QueryParams.from_keywords()
+        |> assert_invalid_param(pagination: :count)
+      end
     end
 
     test "index is a positive int" do
-      QueryParams.from_keywords([index: 3] |> paginate()) |> assert_no_error()
+      [index: 3]
+      |> paginate()
+      |> QueryParams.from_keywords()
+      |> assert_no_error()
 
-      QueryParams.from_keywords([index: :foo] |> paginate())
-      |> assert_invalid_param(pagination: :index)
-
-      QueryParams.from_keywords([index: -1] |> paginate())
-      |> assert_invalid_param(pagination: :index)
+      for index <- [:foo, -1] do
+        [index: index]
+        |> paginate()
+        |> QueryParams.from_keywords()
+        |> assert_invalid_param(pagination: :index)
+      end
     end
 
     test "accepts multiple index values" do
-      %{pagination: pagination} = QueryParams.from_keywords([index: 3, index: 4] |> paginate())
+      %{pagination: pagination} =
+        [index: 3, index: 4]
+        |> paginate()
+        |> QueryParams.from_keywords()
+
       assert Keyword.get(pagination, :index) == [3, 4]
     end
 
     test "start and startafter must be full form id (4 sections)" do
       for param <- [:start, :startafter] do
-        QueryParams.from_keywords([{param, "1/2/3/4"}] |> paginate()) |> assert_no_error()
+        [{param, "1/2/3/4"}]
+        |> paginate()
+        |> QueryParams.from_keywords()
+        |> assert_no_error()
 
-        QueryParams.from_keywords([{param, "1/2/3"}] |> paginate())
-        |> assert_invalid_param(pagination: param)
-
-        QueryParams.from_keywords([{param, 12}] |> paginate())
-        |> assert_invalid_param(pagination: param)
-
-        QueryParams.from_keywords([{param, :foo}] |> paginate())
-        |> assert_invalid_param(pagination: param)
+        for value <- ["1/2/3", 12, :foo] do
+          [{param, value}]
+          |> paginate()
+          |> QueryParams.from_keywords()
+          |> assert_invalid_param(pagination: param)
+        end
       end
     end
   end

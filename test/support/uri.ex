@@ -17,7 +17,7 @@ defmodule Test.Support.URI do
 
     reduce_while_equivalent = fn key, _acc ->
       given_values = get_values_as_strings(params, key)
-      query_values = Map.get(query_map, "#{key}") |> List.wrap()
+      query_values = query_map |> Map.get("#{key}") |> List.wrap()
 
       if given_values -- query_values == [] && query_values -- given_values == [] do
         {:cont, :ok}

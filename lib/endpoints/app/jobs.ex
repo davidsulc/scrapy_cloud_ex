@@ -97,7 +97,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_id(project_id)
       when is_id(job_or_jobs) or is_list(job_or_jobs)
       when is_list(opts) do
-    prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
+    api_key
+    |> prepare_basic_post_request(project_id, job_or_jobs, opts)
     |> RequestConfig.put(:url, "#{@base_url}/jobs/delete.json")
     |> Helpers.make_request()
   end
@@ -108,7 +109,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_id(project_id)
       when is_id(job_or_jobs) or is_list(job_or_jobs)
       when is_list(opts) do
-    prepare_basic_post_request(api_key, project_id, job_or_jobs, opts)
+    api_key
+    |> prepare_basic_post_request(project_id, job_or_jobs, opts)
     |> RequestConfig.put(:url, "#{@base_url}/jobs/stop.json")
     |> Helpers.make_request()
   end

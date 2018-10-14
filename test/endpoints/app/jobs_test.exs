@@ -95,7 +95,8 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
       params = [job_settings: settings]
 
       {:ok, request_settings} =
-        Jobs.run(@api_key, @project_id, @spider_name, params, [{:encoder, nil} | opts])
+        @api_key
+        |> Jobs.run(@project_id, @spider_name, params, [{:encoder, nil} | opts])
         |> Map.from_struct()
         |> get_in([:body, :job_settings])
         |> Jason.decode()
