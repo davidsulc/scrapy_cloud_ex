@@ -1,4 +1,5 @@
 defmodule ScrapyCloudEx.HttpAdapter.Helpers do
+  @spec get_format([{String.t, String.t}]) :: ScrapyCloudEx.Decoder.format
   def get_format([]), do: :text
   def get_format([{"Content-Type", "application/json" <> _} | _]), do: :json
   def get_format([{"Content-Type", "application/x-jsonlines" <> _} | _]), do: :jl
@@ -7,6 +8,8 @@ defmodule ScrapyCloudEx.HttpAdapter.Helpers do
   def get_format([{"Content-Type", "text/html" <> _} | _]), do: :html
   def get_format([{"Content-Type", "text/plain" <> _} | _]), do: :text
   def get_format([_ | t]), do: get_format(t)
+
+  @spec get_decoder_fun(function | atom) :: ScrapyCloudEx.Decoder.decoder_function
 
   def get_decoder_fun(decoder_fun) when is_function(decoder_fun), do: decoder_fun
 

@@ -52,7 +52,7 @@ defmodule ScrapyCloudEx.HttpAdapters.Default do
     end
   end
 
-  @spec decode_body(String.t, function, atom) :: {:ok, any} | ScrapyCloudEx.tagged_error
+  @spec decode_body(String.t, ScrapyCloudEx.Decoder.decoder_function, atom) :: {:ok, any} | ScrapyCloudEx.tagged_error
   defp decode_body(body, decoder_fun, format) do
     body
     |> decoder_fun.(format)
