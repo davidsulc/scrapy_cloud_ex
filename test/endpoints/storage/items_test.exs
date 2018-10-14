@@ -63,7 +63,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ItemsTest do
     end
 
     test "accepts a format param", %{opts: opts} do
-
       for format <- [:json, :jl, :xml, :text] do
         request = Items.get(@api_key, "123", [format: format] ++ @params, opts)
         refute match?({:error, _}, request)

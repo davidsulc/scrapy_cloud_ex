@@ -187,7 +187,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
 
   defp validate_optional_positive_integer_form(nil, _tag), do: :ok
 
-  defp validate_optional_positive_integer_form(value, _tag) when is_integer(value) and value > 0, do: :ok
+  defp validate_optional_positive_integer_form(value, _tag) when is_integer(value) and value > 0,
+    do: :ok
 
   defp validate_optional_positive_integer_form(value, tag) when is_binary(value) do
     if String.match?(value, ~r/^\d+$/) do

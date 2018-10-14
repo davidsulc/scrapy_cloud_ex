@@ -23,7 +23,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParamsTest do
     nodata: 1
   ]
 
-  defp assert_no_error(%QueryParams{} = params), do: assert %QueryParams{error: nil} = params
+  defp assert_no_error(%QueryParams{} = params), do: assert(%QueryParams{error: nil} = params)
 
   defp assert_invalid_param(%QueryParams{} = params, [{k, v} | []]) do
     assert %QueryParams{error: {:invalid_param, {^k, {^v, _}}}} = params
@@ -32,7 +32,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParamsTest do
   defp assert_invalid_param(%QueryParams{} = params, param) do
     assert %QueryParams{error: {:invalid_param, {^param, _}}} = params
   end
-
 
   describe "from_keywords/1" do
     test "creates a QueryParams struct from a keyword list" do
@@ -54,18 +53,19 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParamsTest do
         no_data: true
       ]
 
-      log = capture_log(fn ->
-        qp =
-          params
-          |> QueryParams.from_keywords()
-          |> Map.from_struct()
+      log =
+        capture_log(fn ->
+          qp =
+            params
+            |> QueryParams.from_keywords()
+            |> Map.from_struct()
 
-        assert Map.get(qp, :nodata) == 1
-        assert get_in(qp, [:csv, :lineend]) == "\n"
-        assert get_in(qp, [:csv, :include_headers]) == 1
-        assert get_in(qp, [:pagination, :startafter]) == "1/2/3/4"
-      end)
-      
+          assert Map.get(qp, :nodata) == 1
+          assert get_in(qp, [:csv, :lineend]) == "\n"
+          assert get_in(qp, [:csv, :include_headers]) == 1
+          assert get_in(qp, [:pagination, :startafter]) == "1/2/3/4"
+        end)
+
       assert String.match?(log, ~r/replacing '.*' parameter with/)
     end
 
@@ -73,30 +73,31 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParamsTest do
       params = [
         format: :csv,
         fields: ["field_1", "field_2"],
-        count: 3,
+        count: 3
       ]
 
-      log = capture_log(fn ->
-        qp =
-          params
-          |> QueryParams.from_keywords()
-          |> Map.from_struct()
+      log =
+        capture_log(fn ->
+          qp =
+            params
+            |> QueryParams.from_keywords()
+            |> Map.from_struct()
 
-        assert get_in(qp, [:csv, :fields]) == ["field_1", "field_2"]
-        assert get_in(qp, [:pagination, :count]) == 3
-      end)
-      
+          assert get_in(qp, [:csv, :fields]) == ["field_1", "field_2"]
+          assert get_in(qp, [:pagination, :count]) == 3
+        end)
+
       assert String.match?(log, ~r/values .* should be provided within the .* parameter/)
     end
 
     test "warns if the format is inconsistent" do
       assert capture_log(fn ->
-        QueryParams.from_keywords([format: :json, csv: [fields: ["field_1", "field_2"]]])
-      end) =~ "CSV parameters provided, but requested format is"
+               QueryParams.from_keywords(format: :json, csv: [fields: ["field_1", "field_2"]])
+             end) =~ "CSV parameters provided, but requested format is"
 
       assert capture_log(fn ->
-        QueryParams.from_keywords([format: nil, csv: [fields: ["field_1", "field_2"]]])
-      end) =~ "Setting `format` to :csv since `:csv` parameters were provided"
+               QueryParams.from_keywords(format: nil, csv: [fields: ["field_1", "field_2"]])
+             end) =~ "Setting `format` to :csv since `:csv` parameters were provided"
     end
 
     test "sets the format to json is none is given" do
@@ -161,21 +162,28 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParamsTest do
       valid_params = [count: 3, index: 4, start: "1/2/3/4", startafter: "1/2/3/4"]
       QueryParams.from_keywords(valid_params |> paginate()) |> assert_no_error()
 
-      QueryParams.from_keywords([{:foo, :bar} | valid_params] |> paginate()) |> assert_invalid_param(pagination: :foo)
+      QueryParams.from_keywords([{:foo, :bar} | valid_params] |> paginate())
+      |> assert_invalid_param(pagination: :foo)
     end
 
     test "count is a positive int" do
       QueryParams.from_keywords([count: 3] |> paginate()) |> assert_no_error()
 
-      QueryParams.from_keywords([count: :foo] |> paginate()) |> assert_invalid_param(pagination: :count)
-      QueryParams.from_keywords([count: -1] |> paginate()) |> assert_invalid_param(pagination: :count)
+      QueryParams.from_keywords([count: :foo] |> paginate())
+      |> assert_invalid_param(pagination: :count)
+
+      QueryParams.from_keywords([count: -1] |> paginate())
+      |> assert_invalid_param(pagination: :count)
     end
 
     test "index is a positive int" do
       QueryParams.from_keywords([index: 3] |> paginate()) |> assert_no_error()
 
-      QueryParams.from_keywords([index: :foo] |> paginate()) |> assert_invalid_param(pagination: :index)
-      QueryParams.from_keywords([index: -1] |> paginate()) |> assert_invalid_param(pagination: :index)
+      QueryParams.from_keywords([index: :foo] |> paginate())
+      |> assert_invalid_param(pagination: :index)
+
+      QueryParams.from_keywords([index: -1] |> paginate())
+      |> assert_invalid_param(pagination: :index)
     end
 
     test "accepts multiple index values" do
@@ -187,26 +195,31 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParamsTest do
       for param <- [:start, :startafter] do
         QueryParams.from_keywords([{param, "1/2/3/4"}] |> paginate()) |> assert_no_error()
 
-        QueryParams.from_keywords([{param, "1/2/3"}] |> paginate()) |> assert_invalid_param(pagination: param)
-        QueryParams.from_keywords([{param, 12}] |> paginate()) |> assert_invalid_param(pagination: param)
-        QueryParams.from_keywords([{param, :foo}] |> paginate()) |> assert_invalid_param(pagination: param)
+        QueryParams.from_keywords([{param, "1/2/3"}] |> paginate())
+        |> assert_invalid_param(pagination: param)
+
+        QueryParams.from_keywords([{param, 12}] |> paginate())
+        |> assert_invalid_param(pagination: param)
+
+        QueryParams.from_keywords([{param, :foo}] |> paginate())
+        |> assert_invalid_param(pagination: param)
       end
     end
   end
 
   describe "warn_if_no_pagination/2" do
     test "returns the original QueryParams struct when pagination params present" do
-      params = QueryParams.from_keywords([format: :xml, pagination: [count: 3]])
+      params = QueryParams.from_keywords(format: :xml, pagination: [count: 3])
 
       assert QueryParams.warn_if_no_pagination(params, "") == params
     end
 
     test "warns and returns the original QueryParams struct if no pagination" do
-      params = QueryParams.from_keywords([format: :xml])
+      params = QueryParams.from_keywords(format: :xml)
 
       assert capture_log(fn ->
-        assert QueryParams.warn_if_no_pagination(params, "foo/1") == params
-      end) =~ "foo/1 called without pagination params or index"
+               assert QueryParams.warn_if_no_pagination(params, "foo/1") == params
+             end) =~ "foo/1 called without pagination params or index"
     end
   end
 
@@ -219,21 +232,20 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParamsTest do
         |> URI.query_decoder()
         |> Enum.map(fn {k, v} -> {:"#{k}", v} end)
 
-      expected_results =
-        [
-          {:fields, "field_1,field_2"},
-          {:include_headers, "1"},
-          {:sep, ", "},
-          {:quote, "\""},
-          {:escape, "@"},
-          {:lineend, "\n"},
-          {:format, "csv"},
-          {:meta, "_ts"},
-          {:meta, "_key"},
-          {:nodata, "1"},
-          {:count, "3"},
-          {:start, "1/2/3/4"}
-        ]
+      expected_results = [
+        {:fields, "field_1,field_2"},
+        {:include_headers, "1"},
+        {:sep, ", "},
+        {:quote, "\""},
+        {:escape, "@"},
+        {:lineend, "\n"},
+        {:format, "csv"},
+        {:meta, "_ts"},
+        {:meta, "_key"},
+        {:nodata, "1"},
+        {:count, "3"},
+        {:start, "1/2/3/4"}
+      ]
 
       expected_results
       |> Keyword.keys()
