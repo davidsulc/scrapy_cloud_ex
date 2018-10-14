@@ -8,6 +8,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
 
   @base_url "https://storage.scrapinghub.com/items"
 
+  @spec get(String.t, String.t, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
   def get(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
@@ -33,6 +34,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
     end
   end
 
+  @spec stats(String.t, String.t, Keyword.t) :: ScrapyCloudEx.result
   def stats(api_key, composite_id, opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id)
@@ -44,6 +46,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
     |> Helpers.make_request()
   end
 
+  @spec maps_to_single_item?(String.t) :: boolean
   defp maps_to_single_item?(id) do
     id
     |> String.split("/")
@@ -51,6 +54,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
     |> String.match?(~r"^\d+$")
   end
 
+  @spec warn_if_no_pagination(QueryParams.t, String.t) :: QueryParams.t
   defp warn_if_no_pagination(%QueryParams{} = query_params, id) when is_binary(id) do
     case section_count(id) do
       4 -> if !maps_to_single_item?(id), do: warn_if_no_pagination(query_params)
@@ -61,11 +65,14 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
     query_params
   end
 
+  @spec warn_if_no_pagination(QueryParams.t) :: QueryParams.t
   defp warn_if_no_pagination(%QueryParams{} = query_params) do
     query_params |> QueryParams.warn_if_no_pagination("#{__MODULE__}.get/4")
   end
 
+  @spec section_count(String.t) :: integer
   defp section_count(id), do: id |> String.split("/") |> Enum.reject(&(&1 == "")) |> length()
 
+  @spec merge_sections([String.t]) :: String.t
   defp merge_sections(sections), do: sections |> Enum.join("/")
 end

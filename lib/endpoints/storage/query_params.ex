@@ -3,6 +3,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
 
   require Logger
 
+  @type t :: %__MODULE__{}
+
   @default_format :json
 
   @param_synonyms [
