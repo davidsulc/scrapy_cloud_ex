@@ -1,8 +1,8 @@
 # ScrapyCloudEx
 
-An API wrapper for the ScrapyCloud API provided by ScraphingHub.com and documented at https://doc.scrapinghub.com/scrapy-cloud.html
+An API wrapper for the ScrapyCloud API provided by ScraphingHub.com and documented [here](https://doc.scrapinghub.com/scrapy-cloud.html]
 
-The implementation is only partial at this time: among the endpoints listed at https://doc.scrapinghub.com/scrapy-cloud.html#api-endpoints, the `Collections` and `Frontier` are not accessible through this wrapper (PRs welcome!).
+The implementation is only partial at this time: among the endpoints listed [here](https://doc.scrapinghub.com/scrapy-cloud.html#api-endpoints), the [`Collections`](https://doc.scrapinghub.com/api/collections.html) and [`Frontier`](https://doc.scrapinghub.com/api/frontier.html) are not accessible through this wrapper (PRs welcome!).
 
 ## Installation
 
