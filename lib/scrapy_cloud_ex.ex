@@ -1,4 +1,9 @@
 defmodule ScrapyCloudEx do
+  @moduledoc """
+  An API wrapper for the [ScrypyCloud API](https://doc.scrapinghub.com/scrapy-cloud.html)
+  provided by [ScraphingHub.com](https://scrapinghub.com/)
+  """
+
   @type error_info :: String.t | tagged_error_info
   @type result :: {:ok, any} | tagged_error
   @type tagged_error :: {:error, error_info}

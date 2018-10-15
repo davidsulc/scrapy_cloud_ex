@@ -1,4 +1,12 @@
 defmodule ScrapyCloudEx.Endpoints.Storage.Items do
+  @moduledoc """
+  A wrapper for the Items API endpoint.
+
+  The Items API lets you interact with the items stored in the hubstorage backend for your projects.
+
+  [Original API documentation](https://doc.scrapinghub.com/api/items.html)
+  """
+
   require Logger
   import ScrapyCloudEx.Endpoints.Guards
 
@@ -8,6 +16,11 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
 
   @base_url "https://storage.scrapinghub.com/items"
 
+  @doc """
+  Retrieve items for a project, spider, or job.
+
+
+  """
   @spec get(String.t, String.t, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
   def get(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
