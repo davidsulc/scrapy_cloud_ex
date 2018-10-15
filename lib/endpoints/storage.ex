@@ -1,4 +1,6 @@
 defmodule ScrapyCloudEx.Endpoints.Storage do
+  @moduledoc false
+
   alias ScrapyCloudEx.Endpoints.Helpers
 
   @spec pagination_params() :: [atom, ...]
