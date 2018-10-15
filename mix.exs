@@ -8,7 +8,15 @@ defmodule ScrapyCloudEx.MixProject do
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      elixirc_paths: elixirc_paths(Mix.env())
+      elixirc_paths: elixirc_paths(Mix.env()),
+
+      # Docs
+      name: "ScrapyCloudEx",
+      source_url: "https://github.com/davidsulc/scrapy_cloud_ex",
+      docs: [
+        main: "ScrapyCloudEx",
+        extras: ["README.md"]
+      ]
     ]
   end
 
