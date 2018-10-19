@@ -14,8 +14,8 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
   # snake_casing variables composed of multiple words, so this will allow us to accept both (e.g.)
   # `line_end` and `lineend` and convert them to the name the API expects
   @spec canonicalize_params(Keyword.t, Keyword.t) :: Keyword.t
-  def canonicalize_params(params, synonyms) do
-    params |> Enum.map(&canonicalize_param(&1, synonyms))
+  def canonicalize_params(params, aliases) do
+    params |> Enum.map(&canonicalize_param(&1, aliases))
   end
 
   @spec validate_params(Keyword.t, [atom, ...]) :: :ok | invalid_param_error
@@ -51,8 +51,8 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
   end
 
   @spec canonicalize_param(param, Keyword.t) :: param
-  defp canonicalize_param({k, v} = pair, param_synonyms) do
-    case Keyword.get(param_synonyms, k) do
+  defp canonicalize_param({k, v} = pair, param_aliases) do
+    case Keyword.get(param_aliases, k) do
       nil ->
         pair
 

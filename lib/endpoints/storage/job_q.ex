@@ -8,7 +8,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
 
   @default_format :json
 
-  @param_synonyms [
+  @param_aliases [
     {:start_ts, :startts},
     {:end_ts, :endts}
   ]
@@ -36,7 +36,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
 
   @spec make_request(String.t, String.t | integer, Keyword.t, Keyword.t, [atom, ...], String.t) :: ScrapyCloudEx.result
   defp make_request(api_key, project_id, params, opts, valid_params, endpoint) do
-    params = params |> Helpers.canonicalize_params(@param_synonyms)
+    params = params |> Helpers.canonicalize_params(@param_aliases)
 
     with :ok <- Helpers.validate_params(params, valid_params) do
       base_url = [@base_url, project_id, endpoint] |> Enum.join("/")

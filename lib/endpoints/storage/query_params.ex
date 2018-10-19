@@ -7,7 +7,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
 
   @default_format :json
 
-  @param_synonyms [
+  @param_aliases [
     {:line_end, :lineend},
     {:no_data, :nodata},
     {:start_after, :startafter}
@@ -100,7 +100,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
   defp sanitize(params) when is_list(params) do
     if Keyword.keyword?(params) do
       params
-      |> Helpers.canonicalize_params(@param_synonyms)
+      |> Helpers.canonicalize_params(@param_aliases)
       |> Enum.map(&sanitize_param/1)
     else
       params

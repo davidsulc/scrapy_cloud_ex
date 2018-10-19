@@ -8,7 +8,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
 
   @default_format :json
 
-  @param_synonyms [
+  @param_aliases [
     {:p_count, :pcount}
   ]
 
@@ -43,7 +43,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
     params =
       params
       |> set_default_format()
-      |> Helpers.canonicalize_params(@param_synonyms)
+      |> Helpers.canonicalize_params(@param_aliases)
 
     with :ok <- Helpers.validate_params(params, [:count, :p, :pcount, :meta, :format]),
          meta = Keyword.get(params, :meta, []),
