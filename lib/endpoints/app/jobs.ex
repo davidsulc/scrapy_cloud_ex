@@ -9,6 +9,37 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   @base_url "https://app.scrapinghub.com/api"
   @valid_states ~w(pending running finished deleted)
 
+  @doc """
+  Schedules a job for a given spider.
+
+  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+
+  See docs [here](https://doc.scrapinghub.com/api/jobs.html#run-json).
+
+  The following parameters are supported in the `params` argument:
+
+    * `add_tag` - add the specified tag to the job. May be given multiple times.
+
+    * `job_settings` - job settings to be proxied to the job. This value should be provided
+        as a string representation of a JSON object. If it is provided as a map, an attempt
+        will be made to encode it using `Jason`.
+
+    * `priority` - job priority. Supports values in the `0..4` range (where `4` is highest
+        priority). Defaults to `2`.
+
+    * `units` - Amount of [units](https://support.scrapinghub.com/support/solutions/articles/22000200408-what-is-a-scrapy-cloud-unit-) to use for the job. Supports values in the `1..6` range.
+
+  Any other parameter will be treated as a spider argument.
+
+  ## Example
+
+  ```
+  settings = [job_settings: ~s({ "SETTING1": "value1", "SETTING2": "value2" })]
+  tags = [add_tag: "sometag", add_tag: "othertag"]
+  params = [priority: 3, units: 1, spiderarg1: "example"] ++ tags ++ settings
+  ScrapyCloudEx.Endpoints.App.Jobs.run("API_KEY", "123", "somespider", params)
+  ```
+  """
   @spec run(String.t, String.t | integer, String.t, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
   def run(api_key, project_id, spider_name, params \\ [], opts \\ [])
       when is_api_key(api_key)
@@ -103,6 +134,21 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     |> Helpers.make_request()
   end
 
+  @doc """
+  Stops one or more running jobs.
+
+  The job ids in `job_or_jobs` must have at least 3 sections.
+
+  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+
+  See docs [here](https://doc.scrapinghub.com/api/jobs.html#jobs-stop-json).
+
+  ## Example
+
+  ```
+  ScrapyCloudEx.Endpoints.App.Jobs.stop("API_KEY", "123", ["123/1/1", "123/1/2"])
+  ```
+  """
   @spec stop(String.t, String.t | integer, [String.t], Keyword.t) :: ScrapyCloudEx.result
   def stop(api_key, project_id, job_or_jobs, opts \\ [])
       when is_api_key(api_key)
