@@ -39,9 +39,11 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   ```
   # Retrieve all comments for project 14, spider 13, job 12
   ScrapyCloudEx.Endpoints.App.Comments.get("API_KEY", "14/13/12")
+
   # Retrieve comments for item at index 11 (including comments on its fields)
   # for project 14, spider 13, job 12
   ScrapyCloudEx.Endpoints.App.Comments.get("API_KEY", "14/13/12/11")
+
   # As above, but retrieve only comment for field "logo"
   ScrapyCloudEx.Endpoints.App.Comments.get("API_KEY", "14/13/12/11/logo")
   ```
