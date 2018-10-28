@@ -32,7 +32,8 @@ defmodule ScrapyCloudEx.MixProject do
       {:httparrot, "~> 1.0", only: :test},
       {:dialyxir, "~> 1.0.0-rc.3", only: [:dev], runtime: false},
       {:credo, "~> 0.10.0", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
+      # TODO update once v. > "0.19.1" is available
+      {:ex_doc, git: "https://github.com/elixir-lang/ex_doc.git", ref: "42c1cde9b9569d6e51706ffc55087c905d923c72", only: :dev, runtime: false}
     ]
   end
 
@@ -53,7 +54,21 @@ defmodule ScrapyCloudEx.MixProject do
           ScrapyCloudEx.Endpoints.Storage.JobQ,
           ScrapyCloudEx.Endpoints.Storage.Logs,
           ScrapyCloudEx.Endpoints.Storage.Requests
+        ],
+        "Behaviours": [
+          ScrapyCloudEx.Decoder,
+          ScrapyCloudEx.HttpAdapter
+        ],
+        "Default implementations": [
+          ScrapyCloudEx.Decoders.Default,
+          ScrapyCloudEx.HttpAdapters.Default
         ]
+      ],
+      nest_modules_by_prefix: [
+        ScrapyCloudEx.Decoders,
+        ScrapyCloudEx.HttpAdapters,
+        ScrapyCloudEx.Endpoints.App,
+        ScrapyCloudEx.Endpoints.Storage
       ]
     ]
   end
