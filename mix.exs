@@ -13,10 +13,7 @@ defmodule ScrapyCloudEx.MixProject do
       # Docs
       name: "ScrapyCloudEx",
       source_url: "https://github.com/davidsulc/scrapy_cloud_ex",
-      docs: [
-        main: "ScrapyCloudEx",
-        extras: ["README.md"]
-      ]
+      docs: docs()
     ]
   end
 
@@ -41,4 +38,23 @@ defmodule ScrapyCloudEx.MixProject do
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp docs() do
+    [
+      main: "ScrapyCloudEx",
+      extras: ["README.md"],
+      groups_for_modules: [
+        "Endpoints": [
+          ScrapyCloudEx.Endpoints,
+          ScrapyCloudEx.Endpoints.App.Comments,
+          ScrapyCloudEx.Endpoints.App.Jobs,
+          ScrapyCloudEx.Endpoints.Storage.Activity,
+          ScrapyCloudEx.Endpoints.Storage.Items,
+          ScrapyCloudEx.Endpoints.Storage.JobQ,
+          ScrapyCloudEx.Endpoints.Storage.Logs,
+          ScrapyCloudEx.Endpoints.Storage.Requests
+        ]
+      ]
+    ]
+  end
 end
