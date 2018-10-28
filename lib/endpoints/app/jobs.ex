@@ -94,7 +94,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   See docs [here](https://doc.scrapinghub.com/api/jobs.html#jobs-list-json-jl).
 
-  ## Example
+  ## Examples
 
   ```
   # Retrieve the latest 3 finished jobs for "somespider" spider

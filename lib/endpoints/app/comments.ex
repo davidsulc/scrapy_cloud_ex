@@ -34,7 +34,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   See docs [here](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id) and [here](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (GET method).
 
-  ## Example
+  ## Examples
 
   ```
   # Retrieve all comments for project 14, spider 13, job 12
@@ -96,7 +96,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   See [docs](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (POST method).
 
-  ## Example
+  ## Examples
 
   ```
   ScrapyCloudEx.Endpoints.App.Comments.post("API_KEY", "14/13/12/11", text: "some text")
@@ -124,7 +124,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   See docs regarding deleting [by comment id](DELETE method) or [by item/field identifier](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (DELETE method).
 
-  ## Example
+  ## Examples
 
   ```
   ScrapyCloudEx.Endpoints.App.Comments.delete("API_KEY", 456789)
