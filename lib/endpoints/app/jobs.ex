@@ -161,6 +161,21 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     end
   end
 
+  @doc """
+  Deletes one or more jobs.
+
+  The job ids in `job_or_jobs` must have at least 3 sections.
+
+  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+
+  See docs [here](https://doc.scrapinghub.com/api/jobs.html#jobs-delete-json<Paste>).
+
+  ## Example
+
+  ```
+  ScrapyCloudEx.Endpoints.App.Jobs.delete("API_KEY", "123", ["123/1/1", "123/1/2"])
+  ```
+  """
   @spec delete(String.t(), String.t() | integer, [String.t()], Keyword.t()) ::
           ScrapyCloudEx.result()
   def delete(api_key, project_id, job_or_jobs, opts \\ [])
