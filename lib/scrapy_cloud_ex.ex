@@ -1,6 +1,6 @@
 defmodule ScrapyCloudEx do
   @moduledoc """
-  An API wrapper for the [ScrypyCloud API](https://doc.scrapinghub.com/scrapy-cloud.html)
+  An API wrapper for the [ScrapyCloud API](https://doc.scrapinghub.com/scrapy-cloud.html)
   provided by [ScraphingHub.com](https://scrapinghub.com/)
   """
 
