@@ -1,4 +1,8 @@
 defmodule ScrapyCloudEx.HttpAdapter do
+  @moduledoc """
+  Defines the behaviour used to process the body of API responses.
+  """
+
   alias ScrapyCloudEx.HttpAdapter.{RequestConfig, Response}
 
   @type error_map :: %{status: integer, message: any}

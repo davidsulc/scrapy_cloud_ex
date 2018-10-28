@@ -1,4 +1,6 @@
 defmodule ScrapyCloudEx.HttpAdapter.Response do
+  @moduledoc false
+
   @type t :: %__MODULE__{}
 
   defstruct [

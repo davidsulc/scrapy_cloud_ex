@@ -1,4 +1,8 @@
 defmodule ScrapyCloudEx.HttpAdapters.Default do
+  @moduledoc """
+  A default implementation of the `ScrapyCloudEx.HttpAdapter` behaviour.
+  """
+
   @behaviour ScrapyCloudEx.HttpAdapter
 
   require Logger

@@ -1,6 +1,6 @@
 defmodule ScrapyCloudEx.Decoder do
   @moduledoc """
-  Defines the Decoder behaviour used to process the body of API responses.
+  Defines the behaviour used to process the body of API responses.
   """
 
   @type format :: :json | :jl | :xml | :csv | :text | :html

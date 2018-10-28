@@ -1,4 +1,6 @@
 defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
+  @moduledoc false
+
   @type t :: %__MODULE__{}
 
   @http_methods [:get, :post, :put, :delete]
