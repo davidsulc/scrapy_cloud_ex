@@ -1,4 +1,18 @@
 defmodule ScrapyCloudEx.Endpoints.App.Comments do
+  @moduledoc """
+  Wraps the [comments](https://doc.scrapinghub.com/api/comments.html) endpoint.
+
+  When functions return comment data, each comment will be formatted as a map with the following key-value pairs ([docs](https://doc.scrapinghub.com/api/comments.html#comment-object)):
+
+    * `id` - the comment id
+    * `text` - the comment text
+    * `created` - the created date
+    * `archived` - the archived date (or `nil` if not archived)
+    * `author` - the comment author
+    * `avatar` - the gravatar URL for the author
+    * `editable` - a boolean value indicating whether the comment can be edited
+  """
+
   import ScrapyCloudEx.Endpoints.Guards
 
   alias ScrapyCloudEx.Endpoints.Helpers
@@ -6,6 +20,32 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   @base_url "https://app.scrapinghub.com/api/comments"
 
+  @doc """
+  Retrieves comments for a job, optionally indexed by item or item/field.
+
+  The `composite_id` must have at least 3 sections (i.e. refer to a job).
+  When using an id with 4 sections (i.e. refering to an item), the comments
+  for fields within that item will also be returned.
+
+  The return values will be a map whose keys are strings indicating the item index/field identifier
+  (e.g. `"11"`, `"11/logo"`).
+
+  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+
+  See docs [here](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id) and [here](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (GET method).
+
+  ## Example
+
+  ```
+  # Retrieve all comments for project 14, spider 13, job 12
+  ScrapyCloudEx.Endpoints.App.Comments.get("API_KEY", "14/13/12")
+  # Retrieve comments for item at index 11 (including comments on its fields)
+  # for project 14, spider 13, job 12
+  ScrapyCloudEx.Endpoints.App.Comments.get("API_KEY", "14/13/12/11")
+  # As above, but retrieve only comment for field "logo"
+  ScrapyCloudEx.Endpoints.App.Comments.get("API_KEY", "14/13/12/11/logo")
+  ```
+  """
   @spec get(String.t, String.t, Keyword.t) :: ScrapyCloudEx.result
   def get(api_key, composite_id, opts \\ [])
       when is_api_key(api_key)
@@ -17,18 +57,50 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     end
   end
 
+  @doc """
+  Updates a single comment by id.
+
+  The id is a numerical id, as returned e.g. by `get/3` or `post/4` and NOT a binary
+  index/field identifier (such as `"11/logo"`).
+
+  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+
+  See [docs](https://doc.scrapinghub.com/api/comments.html#comments-comment-id) (PUT method).
+
+  ## Example
+
+  ```
+  ScrapyCloudEx.Endpoints.App.Comments.put("API_KEY", 123456, text: "foo bar")
+  ```
+  """
   @spec put(String.t, String.t, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
-  def put(api_key, composite_id, params \\ [], opts \\ [])
+  def put(api_key, id, params \\ [], opts \\ [])
       when is_api_key(api_key)
-      when is_binary(composite_id) and composite_id != ""
+      when is_binary(id) and id != ""
       when is_list(params)
       when is_list(opts) do
-    case basic_comment_request(api_key, composite_id, params, opts, :put) do
+    case basic_comment_request(api_key, id, params, opts, :put) do
       %RequestConfig{} = request -> request |> Helpers.make_request()
       error -> {:error, error}
     end
   end
 
+  @doc """
+  Creates a single comment.
+
+  The `composite_id` must have at least 4 sections (i.e. refer to an item).
+
+  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+
+  See [docs](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (POST method).
+
+  ## Example
+
+  ```
+  ScrapyCloudEx.Endpoints.App.Comments.post("API_KEY", "14/13/12/11", text: "some text")
+  ScrapyCloudEx.Endpoints.App.Comments.post("API_KEY", "14/13/12/11/logo", text: "some text")
+  ```
+  """
   @spec post(String.t, String.t, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
   def post(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
@@ -41,17 +113,50 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     end
   end
 
-  @spec delete(String.t, String.t, Keyword.t) :: ScrapyCloudEx.result
-  def delete(api_key, composite_id, opts \\ [])
+  @doc """
+  Archives a single comment.
+
+  The `id` must be a comment id, or have at least 4 sections (i.e. refer to an item).
+
+  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+
+  See docs regarding deleting [by comment id](DELETE method) or [by item/field identifier](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (DELETE method).
+
+  ## Example
+
+  ```
+  ScrapyCloudEx.Endpoints.App.Comments.delete("API_KEY", 456789)
+  ScrapyCloudEx.Endpoints.App.Comments.delete("API_KEY", "14/13/12/11")
+  ScrapyCloudEx.Endpoints.App.Comments.delete("API_KEY", "14/13/12/11/logo")
+  ```
+  """
+  @spec delete(String.t, integer | String.t, Keyword.t) :: ScrapyCloudEx.result
+  def delete(api_key, id, opts \\ [])
       when is_api_key(api_key)
-      when is_binary(composite_id) and composite_id != ""
+      when is_integer(id) or (is_binary(id) and id != "")
       when is_list(opts) do
-    case basic_comment_request(api_key, composite_id, [], opts, :delete) do
+    case basic_comment_request(api_key, id, [], opts, :delete) do
       %RequestConfig{} = request -> request |> Helpers.make_request()
       error -> {:error, error}
     end
   end
 
+  @doc """
+  Retrieves the number of items with unarchived comments by job.
+
+  Returns a map containing job ids as keys, and unarchived comment counts as values. Only
+  jobs with unarchived comments are present in the map.
+
+  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+
+  See [docs](https://doc.scrapinghub.com/api/comments.html#comments-project-id-stats).
+
+  ## Example
+
+  ```
+  ScrapyCloudEx.Endpoints.App.Comments.stats("API_KEY", "123")
+  ```
+  """
   @spec stats(String.t, String.t | integer, Keyword.t) :: ScrapyCloudEx.result
   def stats(api_key, project_id, opts \\ [])
       when is_api_key(api_key)
