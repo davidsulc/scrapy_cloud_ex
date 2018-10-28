@@ -3,7 +3,7 @@ defmodule ScrapyCloudEx.Endpoints do
   Documents commonalities between all endpoint-related functions.
 
   ## Options
-  
+
   The last argument provided to most endpoint functions is a keyword list
   of options. These options are made available to the HttpAdapter during the
   API request.

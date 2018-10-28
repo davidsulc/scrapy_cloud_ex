@@ -12,7 +12,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
     {:p_count, :pcount}
   ]
 
-  @spec list(String.t, String.t | integer, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
+  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result()
   def list(api_key, project_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(project_id) and project_id != ""
@@ -35,7 +35,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
     end
   end
 
-  @spec projects(String.t, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
+  @spec projects(String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result()
   def projects(api_key, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_list(params)
@@ -66,7 +66,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
     end
   end
 
-  @spec set_default_format(Keyword.t) :: Keyword.t
+  @spec set_default_format(Keyword.t()) :: Keyword.t()
   defp set_default_format(params) do
     case Keyword.get(params, :format) do
       nil -> Keyword.put(params, :format, @default_format)
@@ -74,7 +74,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
     end
   end
 
-  @spec process_meta_params(Keyword.t) :: Keyword.t
+  @spec process_meta_params(Keyword.t()) :: Keyword.t()
   defp process_meta_params(params) do
     case Keyword.get(params, :meta) do
       nil -> params
