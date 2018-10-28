@@ -7,6 +7,8 @@ defmodule ScrapyCloudEx.HttpAdapter do
 
   @type error_map :: %{status: integer, message: any}
 
-  @callback request(%RequestConfig{}) :: {:ok, Response.t()} | ScrapyCloudEx.tagged_error()
-  @callback handle_response(%Response{}, list) :: {:ok, any} | {:error, error_map}
+  @callback request(request :: RequestConfig.t()) ::
+              {:ok, Response.t()} | ScrapyCloudEx.tagged_error()
+  @callback handle_response(response :: Response.t(), opts :: Keyword.t()) ::
+              {:ok, any} | {:error, error_map}
 end
