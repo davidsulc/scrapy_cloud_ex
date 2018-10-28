@@ -141,7 +141,29 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     end
   end
 
-  @spec update(String.t(), String.t() | integer, [String.t()], Keyword.t(), Keyword.t()) ::
+  @doc """
+  Updates information about jobs.
+
+  The job ids in `job_or_jobs` must have at least 3 sections.
+
+  The following parameters are supported in the `params` argument:
+
+    * `:add_tag` - add specified tag to the job(s). May be given multiple times.
+
+    * `:remove_tag` - remove specified tag to the job(s). May be given multiple times.
+
+  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+
+  See docs [here](https://doc.scrapinghub.com/api/jobs.html#jobs-update-json).
+
+  ## Example
+
+  ```
+  params = [add_tag: "foo", add_tag: "bar", remove_tag: "sometag"]
+  ScrapyCloudEx.Endpoints.App.Jobs.update("API_KEY", "123", ["123/1/1", "123/1/2"], params)
+  ```
+  """
+  @spec update(String.t(), String.t() | integer, String.t() | [String.t()], Keyword.t(), Keyword.t()) ::
           ScrapyCloudEx.result()
   def update(api_key, project_id, job_or_jobs, params \\ [], opts \\ [])
       when is_api_key(api_key)
@@ -176,7 +198,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   ScrapyCloudEx.Endpoints.App.Jobs.delete("API_KEY", "123", ["123/1/1", "123/1/2"])
   ```
   """
-  @spec delete(String.t(), String.t() | integer, [String.t()], Keyword.t()) ::
+  @spec delete(String.t(), String.t() | integer, String.t() | [String.t()], Keyword.t()) ::
           ScrapyCloudEx.result()
   def delete(api_key, project_id, job_or_jobs, opts \\ [])
       when is_api_key(api_key)
