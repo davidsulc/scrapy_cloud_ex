@@ -71,7 +71,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   end
 
   @doc """
-  Retrieve job information for a given project, spider, or specific job.
+  Retrieves job information for a given project, spider, or specific job.
 
   The following parameters are supported in the `params` argument:
 
