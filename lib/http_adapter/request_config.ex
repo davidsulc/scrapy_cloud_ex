@@ -54,6 +54,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
   def ensure_defaults(%__MODULE__{} = config) do
     config
     |> ensure_decoder()
+    |> default_encoding_to_gzip()
   end
 
   @spec tuple_list?(any) :: boolean
@@ -67,6 +68,27 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
       config
     else
       %{config | opts: Keyword.put(config.opts, :decoder, @default_decoder)}
+    end
+  end
+
+  @spec default_encoding_to_gzip(t()) :: t()
+  defp default_encoding_to_gzip(config) do
+    if has_encoding_header?(config.headers) do
+      config
+    else
+      %{config | headers: [{:"Accept-Encoding", "gzip"} | config.headers]}
+    end
+  end
+
+  @spec has_encoding_header?([{String.t(), String.t()}]) :: boolean()
+
+  defp has_encoding_header?([]), do: false
+
+  defp has_encoding_header?([{k, _} | t]) do
+    if k |> Atom.to_string() |> String.downcase() == "accept-encoding" do
+      true
+    else
+      has_encoding_header?(t)
     end
   end
 end

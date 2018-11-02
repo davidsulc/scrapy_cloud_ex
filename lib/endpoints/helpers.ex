@@ -36,8 +36,9 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
   def invalid_param_error(error, tag) when is_atom(tag) or is_list(tag),
     do: {:invalid_param, {tag, error}}
 
-  def make_request(%RequestConfig{opts: opts} = config) do
+  def make_request(%RequestConfig{} = config) do
     config = RequestConfig.ensure_defaults(config)
+    %RequestConfig{opts: opts} = config
     Logger.debug("making request: #{inspect(config, pretty: true)}")
     http_client = get_http_client(opts)
 
