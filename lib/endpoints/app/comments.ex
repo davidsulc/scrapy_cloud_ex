@@ -162,6 +162,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   ```
   ScrapyCloudEx.Endpoints.App.Comments.stats("API_KEY", "123")
+  # {:ok, %{"123/1/4" => 1}}
   ```
   """
   @spec stats(String.t(), String.t() | integer, Keyword.t()) :: ScrapyCloudEx.result(map())

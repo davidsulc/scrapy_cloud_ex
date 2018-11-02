@@ -47,6 +47,21 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Logs do
   ```
   ScrapyCloudEx.Endpoints.Storage.Logs.get("API_KEY", "14/13/12")
   ```
+
+  ## Example return value
+
+  ```
+  {:ok,
+    [
+      %{"level" => 20, "message" => "Log opened.", "time" => 1540744978738},
+      %{
+        "level" => 20,
+        "message" => "[scrapy.log] Scrapy 1.4.0 started",
+        "time" => 1540744978738
+      }, ...
+    ]
+  }
+  ```
   """
   @spec get(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([log_object()])
   def get(api_key, composite_id, params \\ [], opts \\ [])

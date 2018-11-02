@@ -38,10 +38,11 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   tags = [add_tag: "sometag", add_tag: "othertag"]
   params = [priority: 3, units: 1, spiderarg1: "example"] ++ tags ++ settings
   ScrapyCloudEx.Endpoints.App.Jobs.run("API_KEY", "123", "somespider", params)
+  # {:ok, %{"jobid" => "123/1/4", "status" => "ok"}}
   ```
   """
   @spec run(String.t(), String.t() | integer, String.t(), Keyword.t(), Keyword.t()) ::
-          ScrapyCloudEx.result(any)
+          ScrapyCloudEx.result(map())
   def run(api_key, project_id, spider_name, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -107,8 +108,57 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   # Retrieve all jobs with the tag "consumed"
   ScrapyCloudEx.Endpoints.App.Jobs.list("API_KEY", "123", has_tag: "consumed")
   ```
+
+  ## Example return value
+
+  ```
+  {:ok,
+     %{
+       "status" => "ok",
+       "count" => 2,
+       "total" => 2,
+       "jobs" => [
+         %{
+           "close_reason" => "cancelled",
+           "elapsed" => 124138,
+           "errors_count" => 0,
+           "id" => "123/1/3",
+           "items_scraped" => 620,
+           "logs" => 17,
+           "priority" => 2,
+           "responses_received" => 670,
+           "spider" => "somespider",
+           "spider_type" => "manual",
+           "started_time" => "2018-10-03T07:06:07",
+           "state" => "finished",
+           "tags" => ["foo"],
+           "updated_time" => "2018-10-03T07:07:42",
+           "version" => "5ef3139-master"
+         },
+         %{
+           "close_reason" => "cancelled",
+           "elapsed" => 483843779,
+           "errors_count" => 1,
+           "id" => "123/1/2",
+           "items_scraped" => 2783,
+           "logs" => 20,
+           "priority" => 3,
+           "responses_received" => 2888,
+           "spider" => "somespider",
+           "spider_args" => %{"spiderarg1" => "example"},
+           "spider_type" => "manual",
+           "started_time" => "2018-10-23T16:42:54",
+           "state" => "finished",
+           "tags" => ["bar", "foo"],
+           "updated_time" => "2018-10-23T16:45:54",
+           "version" => "5ef3139-master"
+         }
+       ]
+     }
+   }
+  ```
   """
-  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result(any)
+  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result(map())
   def list(api_key, project_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -161,10 +211,11 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   ```
   params = [add_tag: "foo", add_tag: "bar", remove_tag: "sometag"]
   ScrapyCloudEx.Endpoints.App.Jobs.update("API_KEY", "123", ["123/1/1", "123/1/2"], params)
+  # {:ok, %{"count" => 2, "status" => "ok"}}
   ```
   """
   @spec update(String.t(), String.t() | integer, String.t() | [String.t()], Keyword.t(), Keyword.t()) ::
-          ScrapyCloudEx.result(any)
+          ScrapyCloudEx.result(map())
   def update(api_key, project_id, job_or_jobs, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -196,10 +247,11 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   ```
   ScrapyCloudEx.Endpoints.App.Jobs.delete("API_KEY", "123", ["123/1/1", "123/1/2"])
+  # {:ok, %{"count" => 2, "status" => "ok"}}
   ```
   """
   @spec delete(String.t(), String.t() | integer, String.t() | [String.t()], Keyword.t()) ::
-          ScrapyCloudEx.result(any)
+          ScrapyCloudEx.result(map())
   def delete(api_key, project_id, job_or_jobs, opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -224,10 +276,11 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   ```
   ScrapyCloudEx.Endpoints.App.Jobs.stop("API_KEY", "123", ["123/1/1", "123/1/2"])
+  # {:ok, %{"status" => "ok"}}
   ```
   """
   @spec stop(String.t(), String.t() | integer, [String.t()], Keyword.t()) ::
-          ScrapyCloudEx.result(any)
+          ScrapyCloudEx.result(map())
   def stop(api_key, project_id, job_or_jobs, opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)

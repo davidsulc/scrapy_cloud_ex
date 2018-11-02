@@ -14,13 +14,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
   alias ScrapyCloudEx.Endpoints.Storage.QueryParams
   alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
-     %{
-     "event" => "job:comment-archived",
-     "key" => "345675/1/26/3",
-     "old_text" => "test text",
-     "source" => "api",
-     "user" => "davidsulc"
-   }
   @typedoc """
   An event.
 
@@ -31,7 +24,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
 
   Other key-values may be present as relevant to the `"event"` type.
   """
-  @type event :: %{ required(String.t()) => String.t() }
+  @type event_object :: %{ required(String.t()) => String.t() }
 
   @base_url "https://storage.scrapinghub.com/activity"
 
@@ -60,7 +53,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
   ScrapyCloudEx.Endpoints.Storage.Activity.list("API_KEY", "123", count: 10)
   ```
   """
-  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([event()])
+  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([event_object()])
   def list(api_key, project_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(project_id) and project_id != ""
@@ -133,7 +126,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
   ScrapyCloudEx.Endpoints.Storage.Activity.projects("API_KEY", params)
   ```
   """
-  @spec projects(String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([event()])
+  @spec projects(String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([event_object()])
   def projects(api_key, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_list(params)
