@@ -1,16 +1,6 @@
 defmodule ScrapyCloudEx.Endpoints.App.Comments do
   @moduledoc """
   Wraps the [comments](https://doc.scrapinghub.com/api/comments.html) endpoint.
-
-  When functions return comment data, each comment will be formatted as a map with the following key-value pairs ([docs](https://doc.scrapinghub.com/api/comments.html#comment-object)):
-
-    * `id` - the comment id
-    * `text` - the comment text
-    * `created` - the created date
-    * `archived` - the archived date (or `nil` if not archived)
-    * `author` - the comment author
-    * `avatar` - the gravatar URL for the author
-    * `editable` - a boolean value indicating whether the comment can be edited
   """
 
   import ScrapyCloudEx.Endpoints.Guards
@@ -19,6 +9,21 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
   @base_url "https://app.scrapinghub.com/api/comments"
+
+  @typedoc """
+  A comment.
+
+  Map with the following keys:
+
+  * `"id"` - the comment id (`t:integer/0`).
+  * `"text"` - the comment text (`t:String.t/0`).
+  * `"created"` - the created date (`t:String.t/0`).
+  * `"archived"` - the archived date (or `nil` if not archived) (`t:String.t/0`).
+  * `"author"` - the comment author (`t:String.t/0`).
+  * `"avatar"` - the gravatar URL for the author (`t:String.t/0`).
+  * `"editable"` - a boolean value indicating whether the comment can be edited (`t:boolean/0`).
+  """
+  @type comment :: %{ required(String.t()) => integer() | boolean() | String.t() }
 
   @doc """
   Retrieves comments for a job, optionally indexed by item or item/field.
@@ -48,7 +53,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   ScrapyCloudEx.Endpoints.App.Comments.get("API_KEY", "14/13/12/11/logo")
   ```
   """
-  @spec get(String.t(), String.t(), Keyword.t()) :: ScrapyCloudEx.result()
+  @spec get(String.t(), String.t(), Keyword.t()) :: ScrapyCloudEx.result(%{required(String.t()) => [comment()]})
   def get(api_key, composite_id, opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
@@ -75,7 +80,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   ScrapyCloudEx.Endpoints.App.Comments.put("API_KEY", 123456, text: "foo bar")
   ```
   """
-  @spec put(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result()
+  @spec put(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result(comment())
   def put(api_key, id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(id) and id != ""
@@ -103,7 +108,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   ScrapyCloudEx.Endpoints.App.Comments.post("API_KEY", "14/13/12/11/logo", text: "some text")
   ```
   """
-  @spec post(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result()
+  @spec post(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result(comment())
   def post(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
@@ -132,7 +137,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   ScrapyCloudEx.Endpoints.App.Comments.delete("API_KEY", "14/13/12/11/logo")
   ```
   """
-  @spec delete(String.t(), integer | String.t(), Keyword.t()) :: ScrapyCloudEx.result()
+  @spec delete(String.t(), integer | String.t(), Keyword.t()) :: ScrapyCloudEx.result(comment())
   def delete(api_key, id, opts \\ [])
       when is_api_key(api_key)
       when is_integer(id) or (is_binary(id) and id != "")
@@ -159,7 +164,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   ScrapyCloudEx.Endpoints.App.Comments.stats("API_KEY", "123")
   ```
   """
-  @spec stats(String.t(), String.t() | integer, Keyword.t()) :: ScrapyCloudEx.result()
+  @spec stats(String.t(), String.t() | integer, Keyword.t()) :: ScrapyCloudEx.result(map())
   def stats(api_key, project_id, opts \\ [])
       when is_api_key(api_key)
       when is_binary(project_id)

@@ -41,7 +41,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   ```
   """
   @spec run(String.t(), String.t() | integer, String.t(), Keyword.t(), Keyword.t()) ::
-          ScrapyCloudEx.result()
+          ScrapyCloudEx.result(any)
   def run(api_key, project_id, spider_name, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -108,7 +108,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   ScrapyCloudEx.Endpoints.App.Jobs.list("API_KEY", "123", has_tag: "consumed")
   ```
   """
-  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result()
+  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result(any)
   def list(api_key, project_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -164,7 +164,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   ```
   """
   @spec update(String.t(), String.t() | integer, String.t() | [String.t()], Keyword.t(), Keyword.t()) ::
-          ScrapyCloudEx.result()
+          ScrapyCloudEx.result(any)
   def update(api_key, project_id, job_or_jobs, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -199,7 +199,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   ```
   """
   @spec delete(String.t(), String.t() | integer, String.t() | [String.t()], Keyword.t()) ::
-          ScrapyCloudEx.result()
+          ScrapyCloudEx.result(any)
   def delete(api_key, project_id, job_or_jobs, opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -227,7 +227,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   ```
   """
   @spec stop(String.t(), String.t() | integer, [String.t()], Keyword.t()) ::
-          ScrapyCloudEx.result()
+          ScrapyCloudEx.result(any)
   def stop(api_key, project_id, job_or_jobs, opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
@@ -281,7 +281,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     end
   end
 
-  @spec format_job_settings(any, encoder_fun | nil) :: ScrapyCloudEx.result()
+  @spec format_job_settings(any, encoder_fun | nil) :: ScrapyCloudEx.result(any)
 
   defp format_job_settings(nil, _encoder), do: {:ok, []}
 

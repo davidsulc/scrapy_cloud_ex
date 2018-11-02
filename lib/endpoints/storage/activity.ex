@@ -1,6 +1,6 @@
 defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
   @moduledoc """
-  Retrieve project events.
+  Wraps the [activity](https://doc.scrapinghub.com/api/activity.html) endpoint.
 
   Scrapinghub keeps track of certain project events such as when spiders
   are run or new spiders are deployed. This activity log can be accessed
@@ -13,6 +13,25 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
   alias ScrapyCloudEx.Endpoints.Helpers
   alias ScrapyCloudEx.Endpoints.Storage.QueryParams
   alias ScrapyCloudEx.HttpAdapter.RequestConfig
+
+     %{
+     "event" => "job:comment-archived",
+     "key" => "345675/1/26/3",
+     "old_text" => "test text",
+     "source" => "api",
+     "user" => "davidsulc"
+   }
+  @typedoc """
+  An event.
+
+  Map with the following keys:
+
+  * `"event"` - type of event (`t:String.t/0`).
+  * `"user"` - user having triggered the event (`t:String.t/0`).
+
+  Other key-values may be present as relevant to the `"event"` type.
+  """
+  @type event :: %{ required(String.t()) => String.t() }
 
   @base_url "https://storage.scrapinghub.com/activity"
 
@@ -41,7 +60,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
   ScrapyCloudEx.Endpoints.Storage.Activity.list("API_KEY", "123", count: 10)
   ```
   """
-  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result()
+  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([event()])
   def list(api_key, project_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(project_id) and project_id != ""
@@ -110,11 +129,11 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
   ## Example
 
   ```
-  params = [p: "123", p: "456", count: 100, pcount: 15, meta: [:_ts, :_project]]
+  params = [p: "123", p: "456", pcount: 15, pagination: [count: 100], meta: [:_ts, :_project]]
   ScrapyCloudEx.Endpoints.Storage.Activity.projects("API_KEY", params)
   ```
   """
-  @spec projects(String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result()
+  @spec projects(String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([event()])
   def projects(api_key, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_list(params)

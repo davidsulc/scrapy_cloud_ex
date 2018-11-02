@@ -7,7 +7,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
 
   @base_url "https://storage.scrapinghub.com/requests"
 
-  @spec get(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result()
+  @spec get(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result(any)
   def get(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
@@ -33,7 +33,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
     end
   end
 
-  @spec stats(String.t(), String.t(), Keyword.t()) :: ScrapyCloudEx.result()
+  @spec stats(String.t(), String.t(), Keyword.t()) :: ScrapyCloudEx.result(any)
   def stats(api_key, composite_id, opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id)
