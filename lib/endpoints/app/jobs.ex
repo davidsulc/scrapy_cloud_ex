@@ -75,7 +75,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   The following parameters are supported in the `params` argument:
 
-    * `:format` - the format to be used for returning results. Can be `:json` or `:jl`.
+    * `:format` - the format to be used for returning results. Can be `:json` or `:jl`. Defaults to `:json`.
 
     * `:job` - the job id.
 
