@@ -37,6 +37,7 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
     do: {:invalid_param, {tag, error}}
 
   def make_request(%RequestConfig{opts: opts} = config) do
+    config = RequestConfig.ensure_defaults(config)
     Logger.debug("making request: #{inspect(config, pretty: true)}")
     http_client = get_http_client(opts)
 

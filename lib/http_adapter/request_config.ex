@@ -2,6 +2,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
   @type t :: %__MODULE__{}
 
   @http_methods [:get, :post, :put, :delete]
+  @default_decoder ScrapyCloudEx.Decoders.Default
 
   defstruct [
     :api_key,
@@ -10,17 +11,12 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
     headers: [],
     body: [],
     opts: [
-      decoder: ScrapyCloudEx.Decoders.Default
+      decoder: @default_decoder
     ]
   ]
 
   @spec new() :: t
   def new(), do: %__MODULE__{}
-
-  @spec merge_opts(t, Keyword.t) :: t
-  def merge_opts(%__MODULE__{opts: opts} = struct, new_opts) when is_list(new_opts) do
-    %{struct | opts: Keyword.merge(opts, new_opts)}
-  end
 
   @spec put(t, atom | any, any) :: t
 
@@ -40,7 +36,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
     raise ArgumentError, message: "method must be one of #{inspect(@http_methods)}"
   end
 
-  def put(%__MODULE__{} = config, key, value) when key in [:headers, :body] do
+  def put(%__MODULE__{} = config, key, value) when key in [:headers, :body, :opts] do
     if tuple_list?(value) do
       config |> Map.put(key, value)
     else
@@ -49,18 +45,28 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
     end
   end
 
-  # so that default opts don't inadvertently get removed without a replacement value
-  def put(%__MODULE__{}, :opts, _value) do
-    raise ArgumentError, message: "use #{__MODULE__}.merge_opts/2 to add options"
-  end
-
   def put(%__MODULE__{}, _, _) do
     valid_keys = new() |> Map.keys()
     raise ArgumentError, message: "key must be one of #{inspect(valid_keys)}"
+  end
+
+  @spec ensure_defaults(t()) :: t()
+  def ensure_defaults(%__MODULE__{} = config) do
+    config
+    |> ensure_decoder()
   end
 
   @spec tuple_list?(any) :: boolean
   defp tuple_list?([]), do: true
   defp tuple_list?([{_, _} | t]), do: tuple_list?(t)
   defp tuple_list?(_), do: false
+
+  @spec ensure_decoder(t()) :: t()
+  defp ensure_decoder(config) do
+    if Keyword.get(config.opts, :decoder) do
+      config
+    else
+      %{config | opts: Keyword.put(config.opts, :decoder, @default_decoder)}
+    end
+  end
 end

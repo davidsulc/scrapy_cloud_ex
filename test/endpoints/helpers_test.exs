@@ -2,13 +2,13 @@ defmodule ScrapyCloudEx.Endpoints.HelpersTest do
   use ExUnit.Case, async: true
 
   alias ScrapyCloudEx.Endpoints.Helpers
-  alias ScrapyCloudEx.HttpAdapter.RequestConfig
+  alias ScrapyCloudEx.HttpAdapter.{RequestConfig, Response}
 
   defmodule Adapter do
     @behaviour ScrapyCloudEx.HttpAdapter
 
     @impl ScrapyCloudEx.HttpAdapter
-    def request(_), do: {:ok, :ok}
+    def request(_), do: {:ok, %Response{}}
 
     @impl ScrapyCloudEx.HttpAdapter
     def handle_response(_response, opts), do: opts
@@ -18,8 +18,7 @@ defmodule ScrapyCloudEx.Endpoints.HelpersTest do
     request =
       RequestConfig.new()
       |> RequestConfig.put(:url, "localhost:8080/get")
-      |> RequestConfig.merge_opts(foo: :bar)
-      |> RequestConfig.merge_opts(http_adapter: Adapter)
+      |> RequestConfig.put(:opts, [foo: :bar, http_adapter: Adapter])
 
     opts = Helpers.make_request(request)
 

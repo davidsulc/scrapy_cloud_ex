@@ -30,7 +30,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       |> RequestConfig.put(:api_key, api_key)
       |> RequestConfig.put(:method, :post)
       |> RequestConfig.put(:body, body)
-      |> RequestConfig.merge_opts(opts)
+      |> RequestConfig.put(:opts, opts)
       |> RequestConfig.put(:url, "#{@base_url}/run.json")
       |> Helpers.make_request()
     else
@@ -56,7 +56,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
       RequestConfig.new()
       |> RequestConfig.put(:api_key, api_key)
-      |> RequestConfig.merge_opts(opts)
+      |> RequestConfig.put(:opts, opts)
       |> RequestConfig.put(:url, "#{@base_url}/jobs/list.#{format}?#{query}")
       |> Helpers.make_request()
     else
@@ -126,7 +126,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     |> RequestConfig.put(:api_key, api_key)
     |> RequestConfig.put(:method, :post)
     |> RequestConfig.put(:body, body)
-    |> RequestConfig.merge_opts(opts)
+    |> RequestConfig.put(:opts, opts)
   end
 
   @spec format_jobs([String.t]) :: Keyword.t

@@ -59,7 +59,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
       when is_list(opts) do
     RequestConfig.new()
     |> RequestConfig.put(:api_key, api_key)
-    |> RequestConfig.merge_opts(opts)
+    |> RequestConfig.put(:opts, opts)
     |> RequestConfig.put(:url, [@base_url, project_id, "stats"] |> merge_sections())
     |> Helpers.make_request()
   end
@@ -72,7 +72,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
       |> RequestConfig.put(:api_key, api_key)
       |> RequestConfig.put(:method, method)
       |> RequestConfig.put(:body, params)
-      |> RequestConfig.merge_opts(opts)
+      |> RequestConfig.put(:opts, opts)
       |> RequestConfig.put(:url, [@base_url, composite_id] |> Enum.join("/"))
     else
       {:invalid_param, _} = error -> error

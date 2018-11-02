@@ -26,7 +26,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
       |> RequestConfig.put(:api_key, api_key)
       |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
       |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
-      |> RequestConfig.merge_opts(opts)
+      |> RequestConfig.put(:opts, opts)
       |> Helpers.make_request()
     else
       %QueryParams{error: error} -> {:error, error}
@@ -41,7 +41,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
       when is_list(opts) do
     RequestConfig.new()
     |> RequestConfig.put(:api_key, api_key)
-    |> RequestConfig.merge_opts(opts)
+    |> RequestConfig.put(:opts, opts)
     |> RequestConfig.put(:url, [@base_url, composite_id, "stats"] |> merge_sections())
     |> Helpers.make_request()
   end
