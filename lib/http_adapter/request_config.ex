@@ -41,7 +41,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
   end
 
   def put(%__MODULE__{} = config, key, value) when key in [:headers, :body] do
-    if is_tuple_list?(value) do
+    if tuple_list?(value) do
       config |> Map.put(key, value)
     else
       raise ArgumentError,
@@ -59,8 +59,8 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
     raise ArgumentError, message: "key must be one of #{inspect(valid_keys)}"
   end
 
-  @spec is_tuple_list?(any) :: boolean
-  defp is_tuple_list?([]), do: true
-  defp is_tuple_list?([{_, _} | t]), do: is_tuple_list?(t)
-  defp is_tuple_list?(_), do: false
+  @spec tuple_list?(any) :: boolean
+  defp tuple_list?([]), do: true
+  defp tuple_list?([{_, _} | t]), do: tuple_list?(t)
+  defp tuple_list?(_), do: false
 end
