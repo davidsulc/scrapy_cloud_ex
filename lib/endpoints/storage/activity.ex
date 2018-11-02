@@ -1,4 +1,13 @@
 defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
+  @moduledoc """
+  Retrieve project events.
+
+  Scrapinghub keeps track of certain project events such as when spiders
+  are run or new spiders are deployed. This activity log can be accessed
+  in the dashboard by clicking on Activity in the left sidebar, or
+  programmatically through the API in this module.
+  """
+
   import ScrapyCloudEx.Endpoints.Guards
 
   alias ScrapyCloudEx.Endpoints.Helpers
@@ -13,6 +22,25 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
     {:p_count, :pcount}
   ]
 
+  @doc """
+  Retrieves messages for the specified project.
+
+  Results are returned in reverse order.
+
+  The following parameters are supported in the `params` argument:
+
+    * `:count` - maximum number of results to return.
+
+  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+
+  See docs [here](https://doc.scrapinghub.com/api/activity.html#activity-project-id) (GET only).
+
+  ## Example
+
+  ```
+  ScrapyCloudEx.Endpoints.Storage.Activity.list("API_KEY", "123", count: 10)
+  ```
+  """
   @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result()
   def list(api_key, project_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
@@ -49,6 +77,43 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
     end
   end
 
+  @doc """
+  Retrieves messages for multiple projects.
+
+  Results are returned in reverse order.
+
+  The following parameters are supported in the `params` argument:
+
+    * `:format` - the format to be used for returning results. Must be one of
+      `:json`, `:csv`, `:jl`, `:xml`. Defaults to `:json`. See more about formats
+      in `ScrapyCloudEx.Endpoints.Storage`.
+
+    * `:p` - project id. May be given multiple times.
+
+    * `:count` - maximum number of results to return in total.
+
+    * `:pcount` - maximum number of results to return per project.
+
+    * `:meta` - meta parameter to add to each result. Supported values:
+
+      * `:_project` - the project id.
+
+      * `:_ts` - timestamp in milliseconds for when the message was added.
+
+    * `:pagination` - supports the `:count` value. See more about pagination
+      in `ScrapyCloudEx.Endpoints.Storage`.
+
+  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+
+  See docs [here](https://doc.scrapinghub.com/api/activity.html#activity-projects).
+
+  ## Example
+
+  ```
+  params = [p: "123", p: "456", count: 100, pcount: 15, meta: [:_ts, :_project]]
+  ScrapyCloudEx.Endpoints.Storage.Activity.projects("API_KEY", params)
+  ```
+  """
   @spec projects(String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result()
   def projects(api_key, params \\ [], opts \\ [])
       when is_api_key(api_key)
