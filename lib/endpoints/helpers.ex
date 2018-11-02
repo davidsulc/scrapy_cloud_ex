@@ -3,7 +3,7 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
 
   require Logger
 
-  alias ScrapyCloudEx.HttpAdapter.RequestConfig
+  alias ScrapyCloudEx.HttpAdapter.{RequestConfig, Response}
   alias ScrapyCloudEx.HttpAdapters.Default, as: DefaultAdapter
 
   @typep param :: {atom, any}
@@ -45,6 +45,7 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
         error
 
       {:ok, response} ->
+        response = process_response(response)
         Logger.debug("received response: #{inspect(response, pretty: true)}")
         http_client.handle_response(response, opts)
     end
@@ -69,5 +70,21 @@ defmodule ScrapyCloudEx.Endpoints.Helpers do
   @spec get_http_client(Keyword.t) :: atom
   defp get_http_client(opts) do
     opts |> Keyword.get(:http_adapter, DefaultAdapter)
+  end
+
+  @spec process_response(Response.t()) :: Response.t()
+  defp process_response(%Response{} = response), do: maybe_unzip_body(response)
+
+  @spec maybe_unzip_body(Response.t()) :: Response.t()
+  defp maybe_unzip_body(%Response{body: body} = response) do
+    body =
+      if Response.gzipped?(response) do
+        Logger.debug("gunzipping compressed body")
+        :zlib.gunzip(body)
+      else
+        body
+      end
+
+    %{response | body: body}
   end
 end
