@@ -1,7 +1,8 @@
 defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
   import ScrapyCloudEx.Endpoints.Guards
 
-  alias ScrapyCloudEx.Endpoints.{Helpers, Storage}
+  alias ScrapyCloudEx.Endpoints.Helpers
+  alias ScrapyCloudEx.Endpoints.Storage.QueryParams
   alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
   @base_url "https://storage.scrapinghub.com/activity"
@@ -18,20 +19,33 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
       when is_binary(project_id) and project_id != ""
       when is_list(params)
       when is_list(opts) do
-    params = params |> set_default_format()
+		count = Keyword.get(params, :count)
+    params =
+      params
+      |> set_default_format()
+      |> Keyword.delete(:count)
 
-    with :ok <- Helpers.validate_params(params, [:count, :format]) do
-      base_url = [@base_url, project_id] |> Enum.join("/")
-      query_string = URI.encode_query(params)
+    case QueryParams.from_keywords(params) do
+      %QueryParams{error: nil} = query_params ->
+        base_url = [@base_url, project_id] |> Enum.join("/")
+        query_string = QueryParams.to_query(query_params)
 
-      RequestConfig.new()
-      |> RequestConfig.put(:api_key, api_key)
-      |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
-      |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
-      |> RequestConfig.put(:opts, opts)
-      |> Helpers.make_request()
-    else
-      error -> {:error, error}
+        query_string =
+          if count do
+            query_string <> "&count=#{count}"
+          else
+            query_string
+          end
+
+        RequestConfig.new()
+        |> RequestConfig.put(:api_key, api_key)
+        |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
+        |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
+        |> RequestConfig.put(:opts, opts)
+        |> Helpers.make_request()
+
+      %QueryParams{error: error} ->
+        {:error, error}
     end
   end
 
@@ -45,24 +59,26 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
       |> set_default_format()
       |> Helpers.canonicalize_params(@param_aliases)
 
-    with :ok <- Helpers.validate_params(params, [:count, :p, :pcount, :meta, :format]),
-         meta = Keyword.get(params, :meta, []),
-         :ok <- Helpers.validate_params(meta, [:_project | Storage.meta_params()]) do
-      base_url = [@base_url, "projects"] |> Enum.join("/")
+    p_vals = Keyword.get_values(params, :p) |> Enum.map(&{:p, &1})
+    p_count = Keyword.get(params, :pcount)
+    params = Keyword.drop(params, [:p, :pcount])
 
-      query_string =
-        params
-        |> process_meta_params()
-        |> URI.encode_query()
+    case QueryParams.from_keywords(params) do
+      %QueryParams{error: nil} = query_params ->
+        base_url = [@base_url, "projects"] |> Enum.join("/")
+        p_query = URI.encode_query(p_vals)
+        p_count_query = if p_count, do: "pcount=#{p_count}", else: ""
+        query_string = Enum.join([QueryParams.to_query(query_params), p_query, p_count_query], "&") |> IO.inspect()
 
-      RequestConfig.new()
-      |> RequestConfig.put(:api_key, api_key)
-      |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
-      |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
-      |> RequestConfig.put(:opts, opts)
-      |> Helpers.make_request()
-    else
-      error -> {:error, error}
+        RequestConfig.new()
+        |> RequestConfig.put(:api_key, api_key)
+        |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
+        |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
+        |> RequestConfig.put(:opts, opts)
+        |> Helpers.make_request()
+
+      %QueryParams{error: error} ->
+        {:error, error}
     end
   end
 
@@ -71,14 +87,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
     case Keyword.get(params, :format) do
       nil -> Keyword.put(params, :format, @default_format)
       _ -> params
-    end
-  end
-
-  @spec process_meta_params(Keyword.t()) :: Keyword.t()
-  defp process_meta_params(params) do
-    case Keyword.get(params, :meta) do
-      nil -> params
-      values -> Enum.map(values, &{:meta, &1}) ++ Keyword.delete(params, :meta)
     end
   end
 end
