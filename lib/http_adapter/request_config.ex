@@ -1,6 +1,33 @@
 defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
-  @moduledoc false
+  @moduledoc """
+  Struct containing the configuration for an API call.
+  """
 
+  @typedoc """
+  Contains the configuration relevant for an API request:
+
+  * `:api_key` - the API key as can be obtained [here](https://app.scrapinghub.com/account/apikey).
+      This must be provided to the API either by using HTTP Basic authentication (which is the approach
+      used by `ScrapyCloudEx.HttpAdapters.Default`), or within the URL as a query parameter:
+      `https://storage.scrapinghub.com/foo?apikey=APIKEY`.
+      See [docs](https://doc.scrapinghub.com/scrapy-cloud.html#authentication) for more info.
+
+  * `:url` - the API URL to send the request to. May contain query parameters.
+
+  * `:method` - HTTP request method to use. Supported values are: `:get`, `:post`, `:put`, `:delete`.
+
+  * `:headers` - headers to add to the request. By default a `{:"Accept-Encoding", "gzip"}` is always present.
+
+  * `:body` - request body.
+
+  * `:opts` - any options provided to an endpoint method will be provided here. Always contains a `:decoder`
+      value which is either a module implementing the `ScrapyCloudEx.Decoder` behaviour, or a function
+      satisfying the `t:ScrapyCloudEx.Decoder.decoder_function/0` type. Adding values here can be particularly
+      useful to work around certain API quirks, such as the `ScrapyCloudEx.Endpoints.App.Jobs.list/4` endpoint
+      which will return a "text/plain" encoding value when requesting the `:jl` format. By adding (for example)
+      the requested format in the `:opts` parameter of the endpoint call, the implementation of
+      `c:ScrapyCloudEx.HttpAdapter.handle_response/2` can process the body as appropriate.
+  """
   @type t :: %__MODULE__{}
 
   @http_methods [:get, :post, :put, :delete]
@@ -17,9 +44,11 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
     ]
   ]
 
+  @doc false
   @spec new() :: t
   def new(), do: %__MODULE__{}
 
+  @doc false
   @spec put(t, atom | any, any) :: t
 
   def put(%__MODULE__{} = config, key, value) when key in [:api_key, :url] and is_binary(value) do
@@ -52,6 +81,7 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
     raise ArgumentError, message: "key must be one of #{inspect(valid_keys)}"
   end
 
+  @doc false
   @spec ensure_defaults(t()) :: t()
   def ensure_defaults(%__MODULE__{} = config) do
     config

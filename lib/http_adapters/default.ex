@@ -1,6 +1,8 @@
 defmodule ScrapyCloudEx.HttpAdapters.Default do
   @moduledoc """
   A default implementation of the `ScrapyCloudEx.HttpAdapter` behaviour.
+
+  Depends on `:hackney`.
   """
 
   @behaviour ScrapyCloudEx.HttpAdapter

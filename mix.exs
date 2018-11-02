@@ -56,17 +56,20 @@ defmodule ScrapyCloudEx.MixProject do
           ScrapyCloudEx.Endpoints.Storage.Logs,
           ScrapyCloudEx.Endpoints.Storage.Requests
         ],
-        "Behaviours": [
-          ScrapyCloudEx.Decoder,
-          ScrapyCloudEx.HttpAdapter
-        ],
         "Default implementations": [
           ScrapyCloudEx.Decoders.Default,
           ScrapyCloudEx.HttpAdapters.Default
+        ],
+        "Custom implementations": [
+          ScrapyCloudEx.Decoder,
+          ScrapyCloudEx.HttpAdapter,
+          ScrapyCloudEx.HttpAdapter.RequestConfig,
+          ScrapyCloudEx.HttpAdapter.Response
         ]
       ],
       nest_modules_by_prefix: [
         ScrapyCloudEx.Decoders,
+        ScrapyCloudEx.HttpAdapter,
         ScrapyCloudEx.HttpAdapters,
         ScrapyCloudEx.Endpoints.App,
         ScrapyCloudEx.Endpoints.Storage
