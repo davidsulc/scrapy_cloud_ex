@@ -227,7 +227,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
   end
 
   defp validate_optional_positive_integer_form(value, tag) do
-    value |> expected_integer_form(tag)
+    value |> expected_positive_integer_form(tag)
   end
 
   @spec validate_format(t) :: t
@@ -402,9 +402,9 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     end
   end
 
-  @spec expected_integer_form(any, atom) :: ScrapyCloudEx.tagged_error_info()
-  defp expected_integer_form(value, tag) do
-    "expected an integer (possibly represented as a string), was given #{inspect(value)}"
+  @spec expected_positive_integer_form(any, atom) :: ScrapyCloudEx.tagged_error_info()
+  defp expected_positive_integer_form(value, tag) do
+    "expected a positive integer (possibly represented as a string), was given #{inspect(value)}"
     |> Helpers.invalid_param_error(tag)
   end
 end
