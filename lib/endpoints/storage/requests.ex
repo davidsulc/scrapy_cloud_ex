@@ -1,4 +1,10 @@
 defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
+  @moduledoc """
+  Wraps the [Requests](https://doc.scrapinghub.com/api/requests.html) endpoint.
+
+  The requests API allows you to work with request and response data from your crawls.
+  """
+
   import ScrapyCloudEx.Endpoints.Guards
 
   alias ScrapyCloudEx.Endpoints.Helpers

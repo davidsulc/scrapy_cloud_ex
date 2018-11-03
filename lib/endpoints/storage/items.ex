@@ -1,10 +1,8 @@
 defmodule ScrapyCloudEx.Endpoints.Storage.Items do
   @moduledoc """
-  A wrapper for the Items API endpoint.
+  Wraps the [Items](https://doc.scrapinghub.com/api/items.html) endpoint.
 
   The Items API lets you interact with the items stored in the hubstorage backend for your projects.
-
-  [Original API documentation](https://doc.scrapinghub.com/api/items.html)
   """
 
   require Logger

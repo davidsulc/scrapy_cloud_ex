@@ -1,6 +1,6 @@
 defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
   @moduledoc """
-  Wraps the [activity](https://doc.scrapinghub.com/api/activity.html) endpoint.
+  Wraps the [Activity](https://doc.scrapinghub.com/api/activity.html) endpoint.
 
   Scrapinghub keeps track of certain project events such as when spiders
   are run or new spiders are deployed. This activity log can be accessed

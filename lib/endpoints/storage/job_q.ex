@@ -1,4 +1,10 @@
 defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
+  @moduledoc """
+  Wraps the [JobQ](https://doc.scrapinghub.com/api/jobq.html) endpoint.
+
+  The JobQ API allows you to retrieve finished jobs from the queue.
+  """
+
   import ScrapyCloudEx.Endpoints.Guards
 
   alias ScrapyCloudEx.Endpoints.Helpers

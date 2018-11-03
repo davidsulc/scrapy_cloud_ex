@@ -1,6 +1,8 @@
 defmodule ScrapyCloudEx.Endpoints.Storage.Logs do
   @moduledoc """
-  Wraps the [logs](https://doc.scrapinghub.com/api/logs.html) endpoint.
+  Wraps the [Logs](https://doc.scrapinghub.com/api/logs.html) endpoint.
+
+  The logs API lets you work with logs from your crawls.
   """
 
   import ScrapyCloudEx.Endpoints.Guards

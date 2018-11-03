@@ -1,6 +1,9 @@
 defmodule ScrapyCloudEx.Endpoints.App.Comments do
   @moduledoc """
-  Wraps the [comments](https://doc.scrapinghub.com/api/comments.html) endpoint.
+  Wraps the [Comments](https://doc.scrapinghub.com/api/comments.html) endpoint.
+
+  The comments API lets you add comments directly to scraped data, which can later
+  be viewed on the items page.
   """
 
   import ScrapyCloudEx.Endpoints.Guards

@@ -1,4 +1,11 @@
 defmodule ScrapyCloudEx.Endpoints.App.Jobs do
+  @moduledoc """
+  Wraps the [Jobs](https://doc.scrapinghub.com/api/jobs.html) endpoint.
+
+  The jobs API makes it easy to work with your spider’s jobs and lets you schedule,
+  stop, update and delete them.
+  """
+
   import ScrapyCloudEx.Endpoints.Guards
 
   alias ScrapyCloudEx.Endpoints.{App, Helpers}
