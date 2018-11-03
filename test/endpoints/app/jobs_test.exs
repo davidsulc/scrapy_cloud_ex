@@ -179,7 +179,7 @@ defmodule ScrapyCloudEx.Endpoints.App.JobsTest do
           state: "finished",
           has_tag: "has_this",
           lacks_tag: "lacks_this"
-        ] ++ [format: :json, count: 3, offset: 4]
+        ] ++ [format: :json, pagination: [count: 3, offset: 4]]
 
       %{url: url} = Jobs.list(@api_key, @project_id, params, opts)
       refute String.contains?(url, "format")

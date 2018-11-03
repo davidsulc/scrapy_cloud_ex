@@ -19,18 +19,10 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfigTest do
     assert has_default_opts?(config)
   end
 
-  describe "merge_opts/2" do
-    test "merging in new values won't remove defaults", %{config: config} do
-      config = config |> RC.merge_opts(foo: :bar)
+  describe "ensure_defaults/1" do
+    test "sets a default decoder", %{config: config} do
+      config = RC.ensure_defaults(%{config | opts: []})
       assert has_default_opts?(config)
-    end
-
-    test "merging in new values can replace defaults", %{config: config} do
-      config = config |> RC.merge_opts(decoder: DecoderModule)
-      assert has_default_opts?(config)
-
-      %{opts: opts} = config
-      assert Keyword.get(opts, :decoder) == DecoderModule
     end
   end
 
@@ -81,10 +73,13 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfigTest do
       assert %RC{} = RC.put(config, :body, [{"a", "b"}, {"foo", "bar"}])
     end
 
-    test "raises if trying to overwrite :opts", %{config: config} do
-      assert_raise ArgumentError, ~r/merge_opts\/2 to add options$/, fn ->
-        config |> RC.put(:opts, foo: :bar)
+    test ":opts only accepts a list of tuples", %{config: config} do
+      assert_raise ArgumentError, ~r/must be a list of tuples/, fn ->
+        config |> RC.put(:opts, %{a: :b, foo: :bar})
       end
+
+      assert %RC{} = RC.put(config, :opts, a: :b, foo: :bar)
+      assert %RC{} = RC.put(config, :opts, [{"a", "b"}, {"foo", "bar"}])
     end
 
     test "raises for keys that aren't in the RequestConfig struct", %{config: config} do

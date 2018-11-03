@@ -1,4 +1,11 @@
 defmodule ScrapyCloudEx.Endpoints.App.Comments do
+  @moduledoc """
+  Wraps the [Comments](https://doc.scrapinghub.com/api/comments.html) endpoint.
+
+  The comments API lets you add comments directly to scraped data, which can later
+  be viewed on the items page.
+  """
+
   import ScrapyCloudEx.Endpoints.Guards
 
   alias ScrapyCloudEx.Endpoints.Helpers
@@ -6,7 +13,50 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   @base_url "https://app.scrapinghub.com/api/comments"
 
-  @spec get(String.t, String.t, Keyword.t) :: ScrapyCloudEx.result
+  @typedoc """
+  A comment.
+
+  Map with the following keys:
+
+  * `"id"` - the comment id (`t:integer/0`).
+  * `"text"` - the comment text (`t:String.t/0`).
+  * `"created"` - the created date (`t:String.t/0`).
+  * `"archived"` - the archived date (or `nil` if not archived) (`t:String.t/0`).
+  * `"author"` - the comment author (`t:String.t/0`).
+  * `"avatar"` - the gravatar URL for the author (`t:String.t/0`).
+  * `"editable"` - a boolean value indicating whether the comment can be edited (`t:boolean/0`).
+  """
+  @type comment :: %{ required(String.t()) => integer() | boolean() | String.t() }
+
+  @doc """
+  Retrieves comments for a job, optionally indexed by item or item/field.
+
+  The `composite_id` must have at least 3 sections (i.e. refer to a job).
+  When using an id with 4 sections (i.e. refering to an item), the comments
+  for fields within that item will also be returned.
+
+  The return values will be a map whose keys are strings indicating the item index/field identifier
+  (e.g. `"11"`, `"11/logo"`).
+
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
+
+  See docs [here](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id) and [here](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (GET method).
+
+  ## Examples
+
+  ```
+  # Retrieve all comments for project 14, spider 13, job 12
+  ScrapyCloudEx.Endpoints.App.Comments.get("API_KEY", "14/13/12")
+
+  # Retrieve comments for item at index 11 (including comments on its fields)
+  # for project 14, spider 13, job 12
+  ScrapyCloudEx.Endpoints.App.Comments.get("API_KEY", "14/13/12/11")
+
+  # As above, but retrieve only comment for field "logo"
+  ScrapyCloudEx.Endpoints.App.Comments.get("API_KEY", "14/13/12/11/logo")
+  ```
+  """
+  @spec get(String.t(), String.t(), Keyword.t()) :: ScrapyCloudEx.result(%{required(String.t()) => [comment()]})
   def get(api_key, composite_id, opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
@@ -17,19 +67,59 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     end
   end
 
-  @spec put(String.t, String.t, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
-  def put(api_key, composite_id, params \\ [], opts \\ [])
+  @doc """
+  Updates a single comment by id.
+
+  The `id` is a numerical id, as returned e.g. by `get/3` or `post/4` and NOT a binary
+  index/field identifier (such as `"11/logo"`).
+
+  The following parameters are supported in the `params` argument:
+
+    * `:text` - the comment text.
+
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
+
+  See [docs](https://doc.scrapinghub.com/api/comments.html#comments-comment-id) (PUT method).
+
+  ## Example
+
+  ```
+  ScrapyCloudEx.Endpoints.App.Comments.put("API_KEY", 123456, text: "foo bar")
+  ```
+  """
+  @spec put(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result(comment())
+  def put(api_key, id, params \\ [], opts \\ [])
       when is_api_key(api_key)
-      when is_binary(composite_id) and composite_id != ""
+      when is_binary(id) and id != ""
       when is_list(params)
       when is_list(opts) do
-    case basic_comment_request(api_key, composite_id, params, opts, :put) do
+    case basic_comment_request(api_key, id, params, opts, :put) do
       %RequestConfig{} = request -> request |> Helpers.make_request()
       error -> {:error, error}
     end
   end
 
-  @spec post(String.t, String.t, Keyword.t, Keyword.t) :: ScrapyCloudEx.result
+  @doc """
+  Creates a single comment.
+
+  The `composite_id` must have at least 4 sections (i.e. refer to an item).
+
+  The following parameters are supported in the `params` argument:
+
+    * `:text` - the comment text.
+
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
+
+  See [docs](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (POST method).
+
+  ## Examples
+
+  ```
+  ScrapyCloudEx.Endpoints.App.Comments.post("API_KEY", "14/13/12/11", text: "some text")
+  ScrapyCloudEx.Endpoints.App.Comments.post("API_KEY", "14/13/12/11/logo", text: "some text")
+  ```
+  """
+  @spec post(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result(comment())
   def post(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
@@ -41,30 +131,66 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     end
   end
 
-  @spec delete(String.t, String.t, Keyword.t) :: ScrapyCloudEx.result
-  def delete(api_key, composite_id, opts \\ [])
+  @doc """
+  Archives a single comment.
+
+  The `id` must be a comment id, or have at least 4 sections (i.e. refer to an item).
+
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
+
+  See docs regarding deleting [by comment id](https://doc.scrapinghub.com/api/comments.html#comments-comment-id)
+  (DELETE method) or [by item/field identifier](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (DELETE method).
+
+  ## Examples
+
+  ```
+  ScrapyCloudEx.Endpoints.App.Comments.delete("API_KEY", 456789)
+  ScrapyCloudEx.Endpoints.App.Comments.delete("API_KEY", "14/13/12/11")
+  ScrapyCloudEx.Endpoints.App.Comments.delete("API_KEY", "14/13/12/11/logo")
+  ```
+  """
+  @spec delete(String.t(), integer | String.t(), Keyword.t()) :: ScrapyCloudEx.result(comment())
+  def delete(api_key, id, opts \\ [])
       when is_api_key(api_key)
-      when is_binary(composite_id) and composite_id != ""
+      when is_integer(id) or (is_binary(id) and id != "")
       when is_list(opts) do
-    case basic_comment_request(api_key, composite_id, [], opts, :delete) do
+    case basic_comment_request(api_key, id, [], opts, :delete) do
       %RequestConfig{} = request -> request |> Helpers.make_request()
       error -> {:error, error}
     end
   end
 
-  @spec stats(String.t, String.t | integer, Keyword.t) :: ScrapyCloudEx.result
+  @doc """
+  Retrieves the number of items with unarchived comments by job.
+
+  Returns a map containing job ids as keys, and unarchived comment counts as values. Only
+  jobs with unarchived comments are present in the map.
+
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
+
+  See [docs](https://doc.scrapinghub.com/api/comments.html#comments-project-id-stats).
+
+  ## Example
+
+  ```
+  ScrapyCloudEx.Endpoints.App.Comments.stats("API_KEY", "123")
+  # {:ok, %{"123/1/4" => 1}}
+  ```
+  """
+  @spec stats(String.t(), String.t() | integer, Keyword.t()) :: ScrapyCloudEx.result(map())
   def stats(api_key, project_id, opts \\ [])
       when is_api_key(api_key)
       when is_binary(project_id)
       when is_list(opts) do
     RequestConfig.new()
     |> RequestConfig.put(:api_key, api_key)
-    |> RequestConfig.merge_opts(opts)
+    |> RequestConfig.put(:opts, opts)
     |> RequestConfig.put(:url, [@base_url, project_id, "stats"] |> merge_sections())
     |> Helpers.make_request()
   end
 
-  @spec basic_comment_request(String.t, String.t, Keyword.t, Keyword.t, atom) :: RequestConfig.t | ScrapyCloudEx.tagged_error_info
+  @spec basic_comment_request(String.t(), String.t(), Keyword.t(), Keyword.t(), atom) ::
+          RequestConfig.t() | ScrapyCloudEx.tagged_error_info()
   defp basic_comment_request(api_key, composite_id, params, opts, method) do
     with :ok <- Helpers.validate_params(params, [:text]),
          :ok <- check_constraints(method, composite_id, params) do
@@ -72,14 +198,15 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
       |> RequestConfig.put(:api_key, api_key)
       |> RequestConfig.put(:method, method)
       |> RequestConfig.put(:body, params)
-      |> RequestConfig.merge_opts(opts)
+      |> RequestConfig.put(:opts, opts)
       |> RequestConfig.put(:url, [@base_url, composite_id] |> Enum.join("/"))
     else
       {:invalid_param, _} = error -> error
     end
   end
 
-  @spec check_constraints(atom, String.t, Keyword.t) :: :ok | ScrapyCloudEx.tagged_error_info
+  @spec check_constraints(atom, String.t(), Keyword.t()) ::
+          :ok | ScrapyCloudEx.tagged_error_info()
   defp check_constraints(method, composite_id, params)
        when is_atom(method)
        when is_binary(composite_id) or is_integer(composite_id)
@@ -87,7 +214,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     do_check_constraints(method, section_count(composite_id), Keyword.has_key?(params, :text))
   end
 
-  @spec do_check_constraints(atom, integer, boolean) :: :ok | ScrapyCloudEx.tagged_error_info
+  @spec do_check_constraints(atom, integer, boolean) :: :ok | ScrapyCloudEx.tagged_error_info()
 
   # comments/:project_id/:spider_id/:job_id
   defp do_check_constraints(:get, 3, _), do: :ok
@@ -126,15 +253,15 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
     |> Helpers.invalid_param_error(:id)
   end
 
-  @spec required_text_param_not_provided() :: ScrapyCloudEx.tagged_error_info
+  @spec required_text_param_not_provided() :: ScrapyCloudEx.tagged_error_info()
   defp required_text_param_not_provided() do
     "required `text` param not provided" |> Helpers.invalid_param_error(:text)
   end
 
-  @spec merge_sections([String.t]) :: String.t
+  @spec merge_sections([String.t()]) :: String.t()
   defp merge_sections(sections), do: sections |> Enum.join("/")
 
-  @spec section_count(String.t) :: integer
+  @spec section_count(String.t()) :: integer
 
   defp section_count(composite) when is_integer(composite), do: 1
 
