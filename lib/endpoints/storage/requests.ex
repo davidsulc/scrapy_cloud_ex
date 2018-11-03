@@ -104,6 +104,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
   | `totals.input_bytes`  | The total size of all requests in bytes. |
   | `totals.input_values` | The total number of requests.            |
 
+  See docs [here](https://doc.scrapinghub.com/api/requests.html#requests-project-id-spider-id-job-id-stats).
+
   ## Example
 
   ```

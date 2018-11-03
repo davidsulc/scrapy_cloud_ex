@@ -257,7 +257,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
-  See docs [here](https://doc.scrapinghub.com/api/jobs.html#jobs-delete-json<Paste>).
+  See docs [here](https://doc.scrapinghub.com/api/jobs.html#jobs-delete-json).
 
   ## Example
 

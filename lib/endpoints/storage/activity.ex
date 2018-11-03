@@ -46,7 +46,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
-  See docs [here](https://doc.scrapinghub.com/api/activity.html#activity-project-id) (GET only).
+  See docs [here](https://doc.scrapinghub.com/api/activity.html#activity-project-id) (GET method).
 
   ## Example
 

@@ -138,7 +138,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
-  See docs regarding deleting [by comment id](DELETE method) or [by item/field identifier](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (DELETE method).
+  See docs regarding deleting [by comment id](https://doc.scrapinghub.com/api/comments.html#comments-comment-id)
+  (DELETE method) or [by item/field identifier](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (DELETE method).
 
   ## Examples
 

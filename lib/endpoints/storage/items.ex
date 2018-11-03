@@ -47,7 +47,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
-  See docs [here](https://doc.scrapinghub.com/api/items.html#items-project-id-spider-id-job-id-item-no-field-name) (GET only).
+  See docs [here](https://doc.scrapinghub.com/api/items.html#items-project-id-spider-id-job-id-item-no-field-name) (GET method).
 
   ## Examples
 

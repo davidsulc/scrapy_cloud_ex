@@ -53,7 +53,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Logs do
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
-  See docs [here](https://doc.scrapinghub.com/api/logs.html#logs-project-id-spider-id-job-id).
+  See docs [here](https://doc.scrapinghub.com/api/logs.html#logs-project-id-spider-id-job-id) (GET method).
 
   ## Example
 
