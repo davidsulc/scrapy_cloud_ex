@@ -43,7 +43,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
 
   Please always use pagination parameters (`:start`, `:startafter`, and `:count`) to limit amount of
   items in response to prevent timeouts and different performance issues. A warning will be logged if
-  the `composite_id` doesn't refers to more than a single item and no pagination parameters were provided.
+  the `composite_id` refers to more than a single item and no pagination parameters were provided.
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
