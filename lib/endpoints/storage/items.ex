@@ -152,6 +152,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
 
   The `composite_id` must have 3 sections (i.e. refer to a job).
 
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
+
   The response will contain the following information:
 
   | Field                 | Description                              |
@@ -159,8 +161,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
   | `counts[field]`       | The number of times the field occurs.    |
   | `totals.input_bytes`  | The total size of all requests in bytes. |
   | `totals.input_values` | The total number of requests.            |
-
-  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/items.html#items-project-id-spider-id-job-id-stats).
 

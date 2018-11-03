@@ -34,7 +34,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   Any other parameter will be treated as a spider argument.
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/jobs.html#run-json).
 
@@ -98,7 +98,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     * `:lacks_tag` - return jobs that lack specified tag. May be given multiple times, and will
         behave as a logical `AND` operation among the values.
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/jobs.html#jobs-list-json-jl).
 
@@ -209,7 +209,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
     * `:remove_tag` - remove specified tag to the job(s). May be given multiple times.
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/jobs.html#jobs-update-json).
 
@@ -246,7 +246,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   The job ids in `job_or_jobs` must have at least 3 sections.
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/jobs.html#jobs-delete-json<Paste>).
 
@@ -275,7 +275,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   The job ids in `job_or_jobs` must have at least 3 sections.
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/jobs.html#jobs-stop-json).
 

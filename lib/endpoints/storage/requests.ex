@@ -35,6 +35,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
   The `composite_id` may have up to 4 sections: the first 3 refering to project/spider/job
   ids with the last refering to the request number.
 
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
+
   A warning will be logged if the `composite_id` has fewer than 4 sections and no
   [pagination parameters](ScrapyCloudEx.Endpoints.Storage.html#module-pagination) were provided.
 
@@ -80,6 +82,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
   Retrives request stats for a given job.
 
   The `composite_id` must have 3 sections (i.e. refer to a job).
+
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   The response will contain the following information:
 

@@ -38,7 +38,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   The return values will be a map whose keys are strings indicating the item index/field identifier
   (e.g. `"11"`, `"11/logo"`).
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id) and [here](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (GET method).
 
@@ -73,7 +73,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   The id is a numerical id, as returned e.g. by `get/3` or `post/4` and NOT a binary
   index/field identifier (such as `"11/logo"`).
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See [docs](https://doc.scrapinghub.com/api/comments.html#comments-comment-id) (PUT method).
 
@@ -100,7 +100,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   The `composite_id` must have at least 4 sections (i.e. refer to an item).
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See [docs](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (POST method).
 
@@ -128,7 +128,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
 
   The `id` must be a comment id, or have at least 4 sections (i.e. refer to an item).
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs regarding deleting [by comment id](DELETE method) or [by item/field identifier](https://doc.scrapinghub.com/api/comments.html#comments-project-id-spider-id-job-id-item-no-field) (DELETE method).
 
@@ -157,7 +157,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   Returns a map containing job ids as keys, and unarchived comment counts as values. Only
   jobs with unarchived comments are present in the map.
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See [docs](https://doc.scrapinghub.com/api/comments.html#comments-project-id-stats).
 

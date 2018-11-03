@@ -43,7 +43,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
 
     * `:count` - maximum number of results to return.
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/activity.html#activity-project-id) (GET only).
 
@@ -115,7 +115,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
     * `:pagination` - supports the `:count` value. See more about pagination
       in `ScrapyCloudEx.Endpoints.Storage`.
 
-  Refer to the documentation for `ScrapyCloudEx.Endpoints` to learn about the `opts` value.
+  The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/activity.html#activity-projects).
 
