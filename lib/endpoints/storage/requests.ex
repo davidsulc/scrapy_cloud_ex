@@ -29,6 +29,27 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
 
   @base_url "https://storage.scrapinghub.com/requests"
 
+  @doc """
+  Retrieves request data for a given job.
+
+  The `composite_id` may have up to 4 sections: the first 3 refering to project/spider/job
+  ids with the last refering to the request number.
+
+  A warning will be logged if the `composite_id` has fewer than 4 sections and no
+  [pagination parameters](ScrapyCloudEx.Endpoints.Storage.html#module-pagination) were provided.
+
+  See docs [here](https://doc.scrapinghub.com/api/requests.html#requests-project-id-spider-id-job-id-request-no)
+  and [here](https://doc.scrapinghub.com/api/requests.html#requests-project-id-spider-id-job-id).
+
+  ## Example
+
+  ```
+  ScrapyCloudEx.Endpoints.Storage.Requests.get("API_KEY", "14")
+  ScrapyCloudEx.Endpoints.Storage.Requests.get("API_KEY", "14/13")
+  ScrapyCloudEx.Endpoints.Storage.Requests.get("API_KEY", "14/13/12")
+  ScrapyCloudEx.Endpoints.Storage.Requests.get("API_KEY", "14/13/12/3456")
+  ```
+  """
   @spec get(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([request_object()])
   def get(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
@@ -55,19 +76,36 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
     end
   end
 
-  # returns e.g.
-  # %{
-  #  "counts" => %{
-  #    "duration" => 2888,
-  #    "fp" => 2888,
-  #    "method" => 2888,
-  #    "parent" => 2886,
-  #    "rs" => 2888,
-  #    "status" => 2888,
-  #    "url" => 2888
-  #  },
-  #  "totals" => %{"input_bytes" => 374000, "input_values" => 2888}
-  # }
+  @doc """
+  Retrives request stats for a given job.
+
+  The `composite_id` must have 3 sections (i.e. refer to a job).
+
+  The response will contain the following information:
+
+  | Field                 | Description                              |
+  | --------------------- | ---------------------------------------- |
+  | `counts[field]`       | The number of times the field occurs.    |
+  | `totals.input_bytes`  | The total size of all requests in bytes. |
+  | `totals.input_values` | The total number of requests.            |
+
+  ## Example return value
+
+  ```
+  %{
+   "counts" => %{
+     "duration" => 2888,
+     "fp" => 2888,
+     "method" => 2888,
+     "parent" => 2886,
+     "rs" => 2888,
+     "status" => 2888,
+     "url" => 2888
+   },
+   "totals" => %{"input_bytes" => 374000, "input_values" => 2888}
+  }
+  ```
+  """
   @spec stats(String.t(), String.t(), Keyword.t()) :: ScrapyCloudEx.result(map())
   def stats(api_key, composite_id, opts \\ [])
       when is_api_key(api_key)
