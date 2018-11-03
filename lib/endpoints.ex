@@ -10,9 +10,8 @@ defmodule ScrapyCloudEx.Endpoints do
 
   - `:decoder` - specifies how the response body should be processed. Can be
     a module implementing the `ScrapyCloudEx.Decoder` behaviour, or a function
-    returning `{:ok, term()} | {:error, term()}` where `:ok` and `:error`
-    indicate whether decoding the body was successfull. Defaults to
-    `ScrapyCloudEx.Decoders.Default`.
+    conforming to the `t:ScrapyCloudEx.Decode.decoder_function/2` typespec.
+    Defaults to `ScrapyCloudEx.Decoders.Default`.
 
   - `:headers` - list of headers that are added to the `ScrapyCloudEx.HttpAdapter.RequestConfig`
     `headers` attribute provided to the HttpAdapter instance making the API call.

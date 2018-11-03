@@ -1,6 +1,11 @@
 defmodule ScrapyCloudEx.HttpAdapter do
   @moduledoc """
   Defines the behaviour used to process the body of API responses.
+
+  A module implementing this behaviour can be used for making http calls to
+  API endpoints by using the `:http_adapter` key in the
+  [`opts`](ScrapyCloudEx.Endpoints.html#module-options) parameter of every
+  endpoint module.
   """
 
   alias ScrapyCloudEx.HttpAdapter.{RequestConfig, Response}
