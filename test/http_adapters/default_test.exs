@@ -179,7 +179,7 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
     end
 
     test "json response", %{response: response} do
-      # e.g. "API_KEY" |> ScrapyCloudEx.Endpoints.App.Jobs.list("12345", count: 2)
+      # e.g. "API_KEY" |> ScrapyCloudEx.Endpoints.App.Jobs.list("12345", pagination: [count: 2])
       body = """
            {
              "status": "ok",
@@ -230,7 +230,7 @@ defmodule ScrapyCloudEx.HttpAdapters.DefaultTest do
     end
 
     test "jl response", %{response: response} do
-      # e.g. "API_KEY" |> ScrapyCloudEx.Endpoints.App.Jobs.list("12345", count: 2, format: :jl)
+      # e.g. "API_KEY" |> ScrapyCloudEx.Endpoints.App.Jobs.list("12345", pagination: [count: 2], format: :jl)
       body = """
            {"status": "ok"}\n
            {

@@ -186,6 +186,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
         params
         |> Endpoints.scope_params(:pagination, [:count, :offset])
         |> Endpoints.merge_scope(:pagination)
+        |> Keyword.delete(:format)
 
       query = [{:project, project_id} | params] |> URI.encode_query()
 

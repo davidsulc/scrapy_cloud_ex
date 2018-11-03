@@ -87,7 +87,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQTest do
         state: "finished",
         startts: "1397762393489",
         endts: "1397762399000",
-        count: "3",
+        pagination: [count: "3"],
         start: "5",
         stop: "1/2/3",
         key: "5/6/7",

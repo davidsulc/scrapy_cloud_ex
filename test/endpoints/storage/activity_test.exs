@@ -32,7 +32,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ActivityTest do
 
     test "puts params in the query string", %{opts: opts} do
       params = [
-        count: 3,
+        pagination: [count: 3],
         format: :xml
       ]
 
@@ -81,7 +81,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.ActivityTest do
         p: 2,
         p: 3,
         pcount: 10,
-        count: 15,
+        pagination: [count: 15],
         format: :xml,
         meta: [:_ts, :_project]
       ]

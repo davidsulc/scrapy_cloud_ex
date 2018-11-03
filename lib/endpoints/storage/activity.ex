@@ -87,6 +87,9 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
 
       %QueryParams{error: error} ->
         {:error, error}
+
+      error ->
+        {:error, error}
     end
   end
 
@@ -140,7 +143,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
         base_url = [@base_url, "projects"] |> Enum.join("/")
         p_query = URI.encode_query(p_vals)
         p_count_query = if p_count, do: "pcount=#{p_count}", else: ""
-        query_string = Enum.join([QueryParams.to_query(query_params), p_query, p_count_query], "&") |> IO.inspect()
+        query_string = Enum.join([QueryParams.to_query(query_params), p_query, p_count_query], "&")
 
         RequestConfig.new()
         |> RequestConfig.put(:api_key, api_key)
@@ -150,6 +153,9 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
         |> Helpers.make_request()
 
       %QueryParams{error: error} ->
+        {:error, error}
+
+      error ->
         {:error, error}
     end
   end
