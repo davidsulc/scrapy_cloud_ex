@@ -48,7 +48,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
   ## Example
 
   ```
-  ScrapyCloudEx.Endpoints.Storage.JobQ("API_KEY", "14", state: "running", has_tag: "sometag")
+  ScrapyCloudEx.Endpoints.Storage.JobQ.count("API_KEY", "14", state: "running", has_tag: "sometag")
   # {:ok, 4}
   ```
   """

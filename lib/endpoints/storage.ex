@@ -63,6 +63,21 @@ defmodule ScrapyCloudEx.Endpoints.Storage do
   ```
   params = [format: :json, pagination: [count: 100, index: 101]]
   ```
+
+  ## Meta parameters
+
+  You can use the `:meta` parameter to return metadata for the record in addition to its core data.
+  The following values are available:
+
+  * `:_key` - the item key in the format `:project_id/:spider_id/:job_id/:item_no` (`t:String.t/0`).
+  * `:_project` - the project id (`t:integer/0`).
+  * `:_ts` - timestamp in milliseconds for when the item was added (`t:integer/0`).
+
+  ### Example
+
+  ```
+  params = [meta: [:_key, :_ts]]
+  ```
   """
 
   alias ScrapyCloudEx.Endpoints.Helpers
