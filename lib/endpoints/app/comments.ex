@@ -70,8 +70,12 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   @doc """
   Updates a single comment by id.
 
-  The id is a numerical id, as returned e.g. by `get/3` or `post/4` and NOT a binary
+  The `id` is a numerical id, as returned e.g. by `get/3` or `post/4` and NOT a binary
   index/field identifier (such as `"11/logo"`).
+
+  The following parameters are supported in the `params` argument:
+
+    * `:text` - the comment text.
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
@@ -99,6 +103,10 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   Creates a single comment.
 
   The `composite_id` must have at least 4 sections (i.e. refer to an item).
+
+  The following parameters are supported in the `params` argument:
+
+    * `:text` - the comment text.
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 

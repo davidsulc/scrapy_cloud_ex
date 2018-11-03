@@ -35,6 +35,17 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
   The `composite_id` may have up to 4 sections: the first 3 refering to project/spider/job
   ids with the last refering to the request number.
 
+  The following parameters are supported in the `params` argument:
+
+    * `:format` - the [format](ScrapyCloudEx.Endpoints.Storage.html#module-format) to be used
+        for returning results. Can be `:json` or `:jl`. Defaults to `:json`.
+
+    * `:meta` - [meta parameters](ScrapyCloudEx.Endpoints.Storage.html#module-meta-parameters) to show.
+
+    * `:nodata` - if set, no data will be returned other than specified `:meta` keys.
+
+    * `:pagination` - [pagination parameters](ScrapyCloudEx.Endpoints.Storage.html#module-pagination)
+
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   A warning will be logged if the `composite_id` has fewer than 4 sections and no

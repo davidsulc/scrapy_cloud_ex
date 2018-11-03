@@ -42,6 +42,11 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Logs do
 
   The `composite_id` must have at least 3 sections (i.e. refer to a job).
 
+  The following parameters are supported in the `params` argument:
+
+    * `:format` - the [format](ScrapyCloudEx.Endpoints.Storage.html#module-format) to be used
+        for returning results. Can be `:json`, `:xml`, `:csv`, `:text`, or `:jl`. Defaults to `:json`.
+
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/logs.html#logs-project-id-spider-id-job-id).

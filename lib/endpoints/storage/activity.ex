@@ -41,7 +41,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
 
   The following parameters are supported in the `params` argument:
 
-    * `:count` - maximum number of results to return.
+    * `:pagination` - the `:count` [pagination parameter](ScrapyCloudEx.Endpoints.Storage.html#module-pagination)
+      is supported.
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
@@ -106,11 +107,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
 
     * `:pcount` - maximum number of results to return per project.
 
-    * `:meta` - meta parameter to add to each result. Supported values:
-
-      * `:_project` - the project id.
-
-      * `:_ts` - timestamp in milliseconds for when the message was added.
+    * `:meta` - [meta parameters](ScrapyCloudEx.Endpoints.Storage.html#module-meta-parameters)
+        to add to each result. Supported values: `:_project`, `:_ts`.
 
     * `:pagination` - supports the `:count` value. See more about pagination
       in `ScrapyCloudEx.Endpoints.Storage`.
