@@ -24,7 +24,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
 
   Other key-values may be present as relevant to the `"event"` type.
   """
-  @type event_object :: %{ required(String.t()) => String.t() }
+  @type event_object :: %{required(String.t()) => String.t()}
 
   @base_url "https://storage.scrapinghub.com/activity"
 
@@ -54,13 +54,15 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
   ScrapyCloudEx.Endpoints.Storage.Activity.list("API_KEY", "123", count: 10)
   ```
   """
-  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([event_object()])
+  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) ::
+          ScrapyCloudEx.result([event_object()])
   def list(api_key, project_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(project_id) and project_id != ""
       when is_list(params)
       when is_list(opts) do
-		count = Keyword.get(params, :count)
+    count = Keyword.get(params, :count)
+
     params =
       params
       |> set_default_format()
@@ -134,7 +136,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
       |> set_default_format()
       |> Helpers.canonicalize_params(@param_aliases)
 
-    p_vals = Keyword.get_values(params, :p) |> Enum.map(&{:p, &1})
+    p_vals = params |> Keyword.get_values(:p) |> Enum.map(&{:p, &1})
     p_count = Keyword.get(params, :pcount)
     params = Keyword.drop(params, [:p, :pcount])
 
@@ -143,7 +145,9 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
         base_url = [@base_url, "projects"] |> Enum.join("/")
         p_query = URI.encode_query(p_vals)
         p_count_query = if p_count, do: "pcount=#{p_count}", else: ""
-        query_string = Enum.join([QueryParams.to_query(query_params), p_query, p_count_query], "&")
+
+        query_string =
+          Enum.join([QueryParams.to_query(query_params), p_query, p_count_query], "&")
 
         RequestConfig.new()
         |> RequestConfig.put(:api_key, api_key)

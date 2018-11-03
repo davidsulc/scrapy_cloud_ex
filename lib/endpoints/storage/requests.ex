@@ -25,7 +25,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
   * `"parent"` - index of the parent request (`t:integer/0`).
   * `"fp"` - request fingerprint (`t:String.t/0`).
   """
-  @type request_object :: %{ required(String.t()) => integer() | String.t() }
+  @type request_object :: %{required(String.t()) => integer() | String.t()}
 
   @base_url "https://storage.scrapinghub.com/requests"
 
@@ -63,7 +63,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
   ScrapyCloudEx.Endpoints.Storage.Requests.get("API_KEY", "14/13/12/3456")
   ```
   """
-  @spec get(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([request_object()])
+  @spec get(String.t(), String.t(), Keyword.t(), Keyword.t()) ::
+          ScrapyCloudEx.result([request_object()])
   def get(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""

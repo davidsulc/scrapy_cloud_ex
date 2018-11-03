@@ -33,7 +33,11 @@ defmodule ScrapyCloudEx.MixProject do
       {:dialyxir, "~> 1.0.0-rc.3", only: [:dev], runtime: false},
       {:credo, "~> 0.10.0", only: [:dev, :test], runtime: false},
       # TODO update once v. > "0.19.1" is available
-      {:ex_doc, git: "https://github.com/elixir-lang/ex_doc.git", ref: "f006883de3400e5e4fdfbe421b63ef919d3cf7ef", only: :dev, runtime: false}
+      {:ex_doc,
+       git: "https://github.com/elixir-lang/ex_doc.git",
+       ref: "f006883de3400e5e4fdfbe421b63ef919d3cf7ef",
+       only: :dev,
+       runtime: false}
     ]
   end
 
@@ -45,7 +49,7 @@ defmodule ScrapyCloudEx.MixProject do
       main: "ScrapyCloudEx",
       extras: ["README.md"],
       groups_for_modules: [
-        "Endpoints": [
+        Endpoints: [
           ScrapyCloudEx.Endpoints,
           ScrapyCloudEx.Endpoints.App.Comments,
           ScrapyCloudEx.Endpoints.App.Jobs,

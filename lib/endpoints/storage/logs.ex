@@ -35,7 +35,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Logs do
   * `"level"` - the integer log level (`t:log_level/0`).
   * `"time"` - the UNIX timestamp of the message, in milliseconds (`t:integer/0`).
   """
-  @type log_object :: %{ required(String.t()) => integer() | String.t() | log_level() }
+  @type log_object :: %{required(String.t()) => integer() | String.t() | log_level()}
 
   @doc """
   Retrieves logs for a given job.
@@ -61,7 +61,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Logs do
   ScrapyCloudEx.Endpoints.Storage.Logs.get("API_KEY", "14/13/12")
   ```
   """
-  @spec get(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([log_object()])
+  @spec get(String.t(), String.t(), Keyword.t(), Keyword.t()) ::
+          ScrapyCloudEx.result([log_object()])
   def get(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""

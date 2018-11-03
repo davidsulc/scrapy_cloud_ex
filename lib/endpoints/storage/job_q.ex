@@ -141,17 +141,19 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
   ]}
   ```
   """
-  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([map()])
+  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) ::
+          ScrapyCloudEx.result([map()])
   def list(api_key, project_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(project_id) and project_id != ""
       when is_list(params)
       when is_list(opts) do
     valid_params = @valid_params ++ [:format, :count, :start, :stop, :key, :pagination]
+
     params =
       params
       |> set_default_format()
-			|> Endpoints.scope_params(:pagination, [:count])
+      |> Endpoints.scope_params(:pagination, [:count])
       |> Endpoints.merge_scope(:pagination)
 
     make_request(api_key, project_id, params, opts, valid_params, "list")

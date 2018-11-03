@@ -26,7 +26,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   * `"avatar"` - the gravatar URL for the author (`t:String.t/0`).
   * `"editable"` - a boolean value indicating whether the comment can be edited (`t:boolean/0`).
   """
-  @type comment :: %{ required(String.t()) => integer() | boolean() | String.t() }
+  @type comment :: %{required(String.t()) => integer() | boolean() | String.t()}
 
   @doc """
   Retrieves comments for a job, optionally indexed by item or item/field.
@@ -56,7 +56,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Comments do
   ScrapyCloudEx.Endpoints.App.Comments.get("API_KEY", "14/13/12/11/logo")
   ```
   """
-  @spec get(String.t(), String.t(), Keyword.t()) :: ScrapyCloudEx.result(%{required(String.t()) => [comment()]})
+  @spec get(String.t(), String.t(), Keyword.t()) ::
+          ScrapyCloudEx.result(%{required(String.t()) => [comment()]})
   def get(api_key, composite_id, opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""

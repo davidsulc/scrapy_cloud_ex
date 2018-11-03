@@ -1,4 +1,6 @@
 defmodule Test.Support.URI do
+  @moduledoc false
+
   def get_query(url) when is_binary(url) do
     url
     |> URI.parse()

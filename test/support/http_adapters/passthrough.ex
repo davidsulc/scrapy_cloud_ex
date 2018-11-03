@@ -1,4 +1,6 @@
 defmodule Test.Support.HttpAdapters.Passthrough do
+  @moduledoc false
+
   @behaviour ScrapyCloudEx.HttpAdapter
 
   alias ScrapyCloudEx.HttpAdapter.Response

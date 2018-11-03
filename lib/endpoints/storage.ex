@@ -16,7 +16,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage do
   to the `:csv` key:
 
   * `:fields` - required, list of binaries indicating the fields to include,
-		in order from left to right.
+  in order from left to right.
 
   * `:include_headers` - optional, boolean indicating whether to include the
     header names in the first row.

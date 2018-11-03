@@ -170,14 +170,16 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
    }
   ```
   """
-  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result(map())
+  @spec list(String.t(), String.t() | integer, Keyword.t(), Keyword.t()) ::
+          ScrapyCloudEx.result(map())
   def list(api_key, project_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)
       when is_list(params)
       when is_list(opts) do
     with valid_params =
-           [:format, :job, :spider, :state, :has_tag, :lacks_tag, :pagination] ++ App.pagination_params(),
+           [:format, :job, :spider, :state, :has_tag, :lacks_tag, :pagination] ++
+             App.pagination_params(),
          :ok <- Helpers.validate_params(params, valid_params),
          true <- Keyword.get(params, :format) in [nil, :json, :jl],
          format = Keyword.get(params, :format, :json),
@@ -231,8 +233,13 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   # {:ok, %{"count" => 2, "status" => "ok"}}
   ```
   """
-  @spec update(String.t(), String.t() | integer, String.t() | [String.t()], Keyword.t(), Keyword.t()) ::
-          ScrapyCloudEx.result(map())
+  @spec update(
+          String.t(),
+          String.t() | integer,
+          String.t() | [String.t()],
+          Keyword.t(),
+          Keyword.t()
+        ) :: ScrapyCloudEx.result(map())
   def update(api_key, project_id, job_or_jobs, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_id(project_id)

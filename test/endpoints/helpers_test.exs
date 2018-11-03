@@ -18,7 +18,7 @@ defmodule ScrapyCloudEx.Endpoints.HelpersTest do
     request =
       RequestConfig.new()
       |> RequestConfig.put(:url, "localhost:8080/get")
-      |> RequestConfig.put(:opts, [foo: :bar, http_adapter: Adapter])
+      |> RequestConfig.put(:opts, foo: :bar, http_adapter: Adapter)
 
     opts = Helpers.make_request(request)
 

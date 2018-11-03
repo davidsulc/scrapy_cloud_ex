@@ -121,7 +121,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
   ScrapyCloudEx.Endpoints.Storage.Items.get("API_KEY", "53/34/7/0", meta: [:_key], nodata: true)
   ```
   """
-  @spec get(String.t(), String.t(), Keyword.t(), Keyword.t()) :: ScrapyCloudEx.result([item_object()])
+  @spec get(String.t(), String.t(), Keyword.t(), Keyword.t()) ::
+          ScrapyCloudEx.result([item_object()])
   def get(api_key, composite_id, params \\ [], opts \\ [])
       when is_api_key(api_key)
       when is_binary(composite_id) and composite_id != ""
