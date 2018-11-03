@@ -89,6 +89,12 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
   | `totals.input_bytes`  | The total size of all requests in bytes. |
   | `totals.input_values` | The total number of requests.            |
 
+  ## Example
+
+  ```
+  ScrapyCloudEx.Endpoints.Storage.Requests.stats("API_KEY", "14/13/12")
+  ```
+
   ## Example return value
 
   ```
