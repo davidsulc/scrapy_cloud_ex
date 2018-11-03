@@ -47,12 +47,12 @@ defmodule ScrapyCloudEx.Endpoints.Storage do
 
   * `:count` - number of results to provide.
 
-  * `:index` - a non-zero positive offset to retrieve specific records. May be
-    provided multiple times.
-
   * `:start` - skip results before the given one. See a note about format below.
 
   * `:startafter` - return results after the given one. See a note about format below.
+
+  * `:index` - a non-zero positive offset to retrieve specific records. May be
+    provided multiple times.
 
   While the `index` parameter is just a short `<entity_id>` (ex: `[index: 4]`), `start`
   and `startafter` parameters should have the full form with 4 sections

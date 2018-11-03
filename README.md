@@ -33,8 +33,11 @@ end
 To interact with the API endpoints, use the various modules prefixed with `ScrapyCloudEx.Endpoints`.
 
 ```
-iex(1)> ScrapyCloudEx.Endpoints.Storage.Items.get("API_KEY", "53/34/7/0")
+iex(1)> ScrapyCloudEx.Endpoints.Storage.Items.get("API_KEY", "53/34/7", pagination: [count: 10])
 ```
+
+Where `"API_KEY"` is your API key (which you can find [here](https://app.scrapinghub.com/account/apikey))
+and `"53/34/7"` is a job id.
 
 The docs can be found at [https://hexdocs.pm/scrapy_cloud_ex](https://hexdocs.pm/scrapy_cloud_ex).
 
