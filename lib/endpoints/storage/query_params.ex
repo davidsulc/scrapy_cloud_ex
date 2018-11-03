@@ -13,6 +13,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
     {:start_after, :startafter}
   ]
 
+  alias ScrapyCloudEx.Endpoints
   alias ScrapyCloudEx.Endpoints.{Helpers, Storage}
 
   defstruct [
@@ -123,58 +124,12 @@ defmodule ScrapyCloudEx.Endpoints.Storage.QueryParams do
 
   @spec configure_pagination(Keyword.t()) :: Keyword.t()
   defp configure_pagination(params) do
-    params |> configure_params(:pagination, Storage.pagination_params())
+    Endpoints.scope_params(params, :pagination, Storage.pagination_params())
   end
 
   @spec configure_csv(Keyword.t()) :: Keyword.t()
   defp configure_csv(params) do
-    params |> configure_params(:csv, Storage.csv_params())
-  end
-
-  @spec configure_params(Keyword.t(), atom, [atom, ...]) :: Keyword.t()
-  defp configure_params(params, scope_name, expected_scoped_params) do
-    unscoped = params |> get_params(expected_scoped_params)
-    scoped = Keyword.get(params, scope_name, [])
-
-    warn_on_unscoped_params(scoped, unscoped, scope_name)
-
-    scoped_params = unscoped |> Keyword.merge(scoped)
-
-    params
-    |> Enum.reject(fn {k, _} -> Enum.member?(expected_scoped_params, k) end)
-    |> Keyword.put(scope_name, scoped_params)
-  end
-
-  @spec get_params(Keyword.t(), [atom]) :: Keyword.t()
-  defp get_params(params, keys) do
-    keys
-    |> Enum.map(&{&1, Keyword.get(params, &1)})
-    |> Enum.reject(fn {_, v} -> v == nil end)
-  end
-
-  @spec warn_on_unscoped_params(Keyword.t(), Keyword.t(), atom) :: any
-  defp warn_on_unscoped_params(scoped, unscoped, scope_name) do
-    if length(unscoped) > 0 do
-      Logger.warn(
-        "values `#{inspect(unscoped)}` should be provided within the `#{scope_name}` parameter"
-      )
-
-      common_params = intersection(Keyword.keys(unscoped), Keyword.keys(scoped))
-
-      if length(common_params) > 0 do
-        Logger.warn(
-          "top-level #{scope_name} params `#{inspect(common_params)}` will be overridden by values provided in `#{
-            scope_name
-          }` parameter"
-        )
-      end
-    end
-  end
-
-  @spec intersection(list, list) :: list
-  defp intersection(a, b) when is_list(a) and is_list(b) do
-    items_only_in_a = a -- b
-    a -- items_only_in_a
+    Endpoints.scope_params(params, :csv, Storage.csv_params())
   end
 
   @spec warn_on_inconsistent_format(t) :: t

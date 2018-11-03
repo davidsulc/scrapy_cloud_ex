@@ -8,6 +8,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   import ScrapyCloudEx.Endpoints.Guards
 
+  alias ScrapyCloudEx.Endpoints
   alias ScrapyCloudEx.Endpoints.{App, Helpers}
   alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
@@ -85,6 +86,10 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
     * `:format` - the format to be used for returning results. Can be `:json` or `:jl`. Defaults to `:json`.
 
+    * `:pagination` - the pagination params: a keyword list with optional `:count` and `:offset` integer
+      values, where `:count` indicates the desired number of results per page and `:offset` the offset
+      to retrieve specific records.
+
     * `:job` - the job id.
 
     * `:spider` - the spider name.
@@ -112,8 +117,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   # Retrieve all running jobs
   ScrapyCloudEx.Endpoints.App.Jobs.list("API_KEY", "123", state: "running")
 
-  # Retrieve all jobs with the tag "consumed"
-  ScrapyCloudEx.Endpoints.App.Jobs.list("API_KEY", "123", has_tag: "consumed")
+  # Retrieve 10 jobs with the tag "consumed"
+  ScrapyCloudEx.Endpoints.App.Jobs.list("API_KEY", "123", has_tag: "consumed", pagination: [count: 10])
   ```
 
   ## Example return value
@@ -172,12 +177,16 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_list(params)
       when is_list(opts) do
     with valid_params =
-           [:format, :job, :spider, :state, :has_tag, :lacks_tag] ++ App.pagination_params(),
+           [:format, :job, :spider, :state, :has_tag, :lacks_tag, :pagination] ++ App.pagination_params(),
          :ok <- Helpers.validate_params(params, valid_params),
          true <- Keyword.get(params, :format) in [nil, :json, :jl],
          format = Keyword.get(params, :format, :json),
          :ok <- params |> Keyword.get(:state) |> validate_state() do
-      params = params |> Keyword.delete(:format)
+      params =
+        params
+        |> Endpoints.scope_params(:pagination, [:count, :offset])
+        |> Endpoints.merge_scope(:pagination)
+
       query = [{:project, project_id} | params] |> URI.encode_query()
 
       RequestConfig.new()
@@ -373,8 +382,8 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
   defp validate_state(state) when state in @valid_states, do: :ok
 
-  defp validate_state(state),
-    do:
-      "state '#{state}' not among valid states: #{@valid_states |> Enum.join(", ")}"
-      |> Helpers.invalid_param_error(:state)
+  defp validate_state(state) do
+    "state '#{state}' not among valid states: #{@valid_states |> Enum.join(", ")}"
+    |> Helpers.invalid_param_error(:state)
+  end
 end

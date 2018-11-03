@@ -7,6 +7,7 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
 
   import ScrapyCloudEx.Endpoints.Guards
 
+  alias ScrapyCloudEx.Endpoints
   alias ScrapyCloudEx.Endpoints.Helpers
   alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
@@ -68,6 +69,12 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
 
   The following parameters are supported in the `params` argument:
 
+    * `:format` - the [format](ScrapyCloudEx.Endpoints.Storage.html#module-format) to be used for
+      returning results. Can be `:json` or `:jl`. Defaults to `:json`.
+
+    * `:pagination` - the `:count` [pagination parameter](ScrapyCloudEx.Endpoints.Storage.html#module-pagination)
+      is supported.
+
     * `:spider` - the spider name.
 
     * `:state` - return jobs with specified state. Supported values: `"pending"`, `"running"`,
@@ -88,8 +95,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
 
     * `:lacks_tag` - return jobs that lack specified tag. May be given multiple times, and will
         behave as a logical `AND` operation among the values.
-
-  Supports [pagination](ScrapyCloudEx.Endpoints.Storage.html#module-pagination) `count` parameter.
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
@@ -142,8 +147,14 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
       when is_binary(project_id) and project_id != ""
       when is_list(params)
       when is_list(opts) do
-    valid_params = @valid_params ++ [:format, :count, :start, :stop, :key]
-    make_request(api_key, project_id, params |> set_default_format(), opts, valid_params, "list")
+    valid_params = @valid_params ++ [:format, :count, :start, :stop, :key, :pagination]
+    params =
+      params
+      |> set_default_format()
+			|> Endpoints.scope_params(:pagination, [:count])
+      |> Endpoints.merge_scope(:pagination)
+
+    make_request(api_key, project_id, params, opts, valid_params, "list")
   end
 
   @spec make_request(

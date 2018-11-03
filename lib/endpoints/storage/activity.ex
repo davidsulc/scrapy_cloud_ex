@@ -101,14 +101,14 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
       `:json`, `:csv`, `:jl`, `:xml`. Defaults to `:json`. See more about formats
       in `ScrapyCloudEx.Endpoints.Storage`.
 
-    * `:p` - project id. May be given multiple times.
-
-    * `:count` - maximum number of results to return in total.
-
-    * `:pcount` - maximum number of results to return per project.
+    * `:pagination` - [pagination parameters](ScrapyCloudEx.Endpoints.Storage.html#module-pagination).
 
     * `:meta` - [meta parameters](ScrapyCloudEx.Endpoints.Storage.html#module-meta-parameters)
         to add to each result. Supported values: `:_project`, `:_ts`.
+
+    * `:p` - project id. May be given multiple times.
+
+    * `:pcount` - maximum number of results to return per project.
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
