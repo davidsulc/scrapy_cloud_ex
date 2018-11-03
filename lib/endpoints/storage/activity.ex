@@ -110,9 +110,6 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
     * `:meta` - [meta parameters](ScrapyCloudEx.Endpoints.Storage.html#module-meta-parameters)
         to add to each result. Supported values: `:_project`, `:_ts`.
 
-    * `:pagination` - supports the `:count` value. See more about pagination
-      in `ScrapyCloudEx.Endpoints.Storage`.
-
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/activity.html#activity-projects).

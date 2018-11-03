@@ -35,11 +35,11 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Items do
     * `:format` - the [format](ScrapyCloudEx.Endpoints.Storage.html#module-format) to be used
         for returning results. Can be `:json`, `:xml`, `:csv`, or `:jl`. Defaults to `:json`.
 
+    * `:pagination` - [pagination parameters](ScrapyCloudEx.Endpoints.Storage.html#module-pagination).
+
     * `:meta` - [meta parameters](ScrapyCloudEx.Endpoints.Storage.html#module-meta-parameters) to show.
 
     * `:nodata` - if set, no data will be returned other than specified `:meta` keys.
-
-    * `:pagination` - [pagination parameters](ScrapyCloudEx.Endpoints.Storage.html#module-pagination)
 
   Please always use pagination parameters (`:start`, `:startafter`, and `:count`) to limit amount of
   items in response to prevent timeouts and different performance issues. A warning will be logged if

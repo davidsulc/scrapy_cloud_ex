@@ -35,6 +35,8 @@ defmodule ScrapyCloudEx.Endpoints.Storage.JobQ do
 
     * `:endts` - UNIX timestamp at which to end results, in milliseconds.
 
+    * `:count` - limit results by a given number of jobs.
+
     * `:has_tag` - return jobs with specified tag. May be given multiple times, and will behave
         as a logical `OR` operation among the values.
 

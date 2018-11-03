@@ -40,11 +40,11 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Requests do
     * `:format` - the [format](ScrapyCloudEx.Endpoints.Storage.html#module-format) to be used
         for returning results. Can be `:json` or `:jl`. Defaults to `:json`.
 
+    * `:pagination` - [pagination parameters](ScrapyCloudEx.Endpoints.Storage.html#module-pagination).
+
     * `:meta` - [meta parameters](ScrapyCloudEx.Endpoints.Storage.html#module-meta-parameters) to show.
 
     * `:nodata` - if set, no data will be returned other than specified `:meta` keys.
-
-    * `:pagination` - [pagination parameters](ScrapyCloudEx.Endpoints.Storage.html#module-pagination)
 
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 

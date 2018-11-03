@@ -47,6 +47,10 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Logs do
     * `:format` - the [format](ScrapyCloudEx.Endpoints.Storage.html#module-format) to be used
         for returning results. Can be `:json`, `:xml`, `:csv`, `:text`, or `:jl`. Defaults to `:json`.
 
+    * `:pagination` - [pagination parameters](ScrapyCloudEx.Endpoints.Storage.html#module-pagination).
+
+    * `:meta` - [meta parameters](ScrapyCloudEx.Endpoints.Storage.html#module-meta-parameters) to show.
+
   The `opts` value is documented [here](ScrapyCloudEx.Endpoints.html#module-options).
 
   See docs [here](https://doc.scrapinghub.com/api/logs.html#logs-project-id-spider-id-job-id).
