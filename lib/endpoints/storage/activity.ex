@@ -68,25 +68,24 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
       |> set_default_format()
       |> Keyword.delete(:count)
 
-    case QueryParams.from_keywords(params) do
-      %QueryParams{error: nil} = query_params ->
-        base_url = [@base_url, project_id] |> Enum.join("/")
-        query_string = QueryParams.to_query(query_params)
+    with %QueryParams{error: nil} = query_params <- QueryParams.from_keywords(params) do
+      base_url = [@base_url, project_id] |> Enum.join("/")
+      query_string = QueryParams.to_query(query_params)
 
-        query_string =
-          if count do
-            query_string <> "&count=#{count}"
-          else
-            query_string
-          end
+      query_string =
+        if count do
+          query_string <> "&count=#{count}"
+        else
+          query_string
+        end
 
-        RequestConfig.new()
-        |> RequestConfig.put(:api_key, api_key)
-        |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
-        |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
-        |> RequestConfig.put(:opts, opts)
-        |> Helpers.make_request()
-
+      RequestConfig.new()
+      |> RequestConfig.put(:api_key, api_key)
+      |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
+      |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
+      |> RequestConfig.put(:opts, opts)
+      |> Helpers.make_request()
+    else
       %QueryParams{error: error} ->
         {:error, error}
 
@@ -140,22 +139,20 @@ defmodule ScrapyCloudEx.Endpoints.Storage.Activity do
     p_count = Keyword.get(params, :pcount)
     params = Keyword.drop(params, [:p, :pcount])
 
-    case QueryParams.from_keywords(params) do
-      %QueryParams{error: nil} = query_params ->
-        base_url = [@base_url, "projects"] |> Enum.join("/")
-        p_query = URI.encode_query(p_vals)
-        p_count_query = if p_count, do: "pcount=#{p_count}", else: ""
+    with %QueryParams{error: nil} = query_params <- QueryParams.from_keywords(params) do
+      base_url = [@base_url, "projects"] |> Enum.join("/")
+      p_query = URI.encode_query(p_vals)
+      p_count_query = if p_count, do: "pcount=#{p_count}", else: ""
 
-        query_string =
-          Enum.join([QueryParams.to_query(query_params), p_query, p_count_query], "&")
+      query_string = Enum.join([QueryParams.to_query(query_params), p_query, p_count_query], "&")
 
-        RequestConfig.new()
-        |> RequestConfig.put(:api_key, api_key)
-        |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
-        |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
-        |> RequestConfig.put(:opts, opts)
-        |> Helpers.make_request()
-
+      RequestConfig.new()
+      |> RequestConfig.put(:api_key, api_key)
+      |> RequestConfig.put(:url, "#{base_url}?#{query_string}")
+      |> RequestConfig.put(:headers, Keyword.get(opts, :headers, []))
+      |> RequestConfig.put(:opts, opts)
+      |> Helpers.make_request()
+    else
       %QueryParams{error: error} ->
         {:error, error}
 
