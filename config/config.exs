@@ -21,7 +21,7 @@ use Mix.Config
 #     config :logger, level: :info
 #
 
-if Mix.env() == :test, do: config :logger, level: :info
+if Mix.env() == :test, do: config(:logger, level: :info)
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
