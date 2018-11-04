@@ -11,7 +11,6 @@ defmodule ScrapyCloudEx.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
-      preferred_cli_env: [docs: :docs],
       description: description(),
       package: package(),
       docs: docs()
@@ -37,7 +36,7 @@ defmodule ScrapyCloudEx.MixProject do
       {:ex_doc,
        git: "https://github.com/elixir-lang/ex_doc.git",
        ref: "f006883de3400e5e4fdfbe421b63ef919d3cf7ef",
-       only: :docs,
+       only: :dev,
        runtime: false}
     ]
   end
