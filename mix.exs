@@ -47,7 +47,7 @@ defmodule ScrapyCloudEx.MixProject do
 
   defp description() do
     """
-    An API wrapper for Scrapy Cloud API provided by ScrapingHub.com.
+    An API wrapper for the Scrapy Cloud API provided by ScrapingHub.com.
     """
   end
 
