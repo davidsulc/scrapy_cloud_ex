@@ -12,7 +12,13 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
   alias ScrapyCloudEx.Endpoints.{App, Helpers}
   alias ScrapyCloudEx.HttpAdapter.RequestConfig
 
-  @typep encoder_fun :: (any -> {:ok, any} | {:error, any})
+  @typedoc """
+  A function to encode job settings to JSON.
+
+  This function will be given the job settings provided to `run/5` so they can be encoded
+  into a JSON string.
+  """
+  @type encoder_fun :: (term() -> {:ok, String.t()} | {:error, any()})
 
   @base_url "https://app.scrapinghub.com/api"
   @valid_states ~w(pending running finished deleted)
@@ -24,9 +30,10 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
 
     * `:add_tag` - add the specified tag to the job. May be given multiple times.
 
-    * `:job_settings` - job settings to be proxied to the job. This value should be provided
-        as a string representation of a JSON object. If it is provided as a map, an attempt
-        will be made to encode it using `Jason`.
+    * `:job_settings` - job settings to be proxied to the job. This value can be provided
+        as a string representation of a JSON object, or as an Elixir term. If a term is provided,
+        an accompanying encoding function (of type `t:encoder_fun/0`) must be provided with the
+        `:encoder` key within `opts`.
 
     * `:priority` - job priority. Supports values in the `0..4` range (where `4` is highest
         priority). Defaults to `2`.
@@ -58,7 +65,7 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
       when is_list(params)
       when is_list(opts) do
     job_settings = params |> Keyword.get(:job_settings)
-    json_encoder = opts |> get_encoder()
+    json_encoder = Keyword.get(opts, :encoder)
 
     with {:ok, job_settings} <- format_job_settings(job_settings, json_encoder) do
       body =
@@ -338,41 +345,17 @@ defmodule ScrapyCloudEx.Endpoints.App.Jobs do
     |> Enum.map(&{:job, &1})
   end
 
-  @spec get_encoder(Keyword.t()) :: encoder_fun | nil
-  defp get_encoder(opts) do
-    opts
-    |> Keyword.get(:encoder)
-    |> case do
-      nil -> get_default_encoder(opts)
-      encoder -> encoder
-    end
-  end
-
-  @spec get_default_encoder(Keyword.t()) :: encoder_fun | nil
-  defp get_default_encoder(opts) do
-    with true <- Keyword.get(opts, :encoder_fallback, true),
-         true <- function_exported?(Jason, :encode, 2) do
-      &Jason.encode(&1, [])
-    else
-      _ -> nil
-    end
-  end
-
   @spec format_job_settings(any, encoder_fun | nil) :: ScrapyCloudEx.result(any)
 
   defp format_job_settings(nil, _encoder), do: {:ok, []}
 
   defp format_job_settings(settings, _encoder) when is_binary(settings), do: {:ok, settings}
 
-  defp format_job_settings(settings, _encoder = nil) when is_map(settings) do
-    "job_settings must be provided as a string-encoded JSON object, or a JSON encoder must be provided as an option (falling back to Jason unsuccessful)"
-    |> Helpers.invalid_param_error(:job_settings)
-  end
-
-  defp format_job_settings(settings, encoder) when is_map(settings), do: encoder.(settings)
+  defp format_job_settings(settings, encoder) when is_map(settings) and is_function(encoder),
+    do: encoder.(settings)
 
   defp format_job_settings(_settings, _encoder) do
-    "expected job_settings to be a string-encoded JSON object or a map"
+    "expected job_settings to be a string-encoded JSON object or to have an encoder function provided"
     |> Helpers.invalid_param_error(:job_settings)
   end
 
