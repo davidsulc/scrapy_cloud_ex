@@ -28,6 +28,12 @@ def deps do
 end
 ```
 
+For the "It Just Works" experience, simply add the above 3 dependencies to your project.
+
+If you know what you're doing and want to use custom implentations of http clients or response decoders,
+feel free to include only `:scrapy_cloud_ex` as a dependency and refer to the "custom implementations"
+section of the [documentation](https://hexdocs.pm/scrapy_cloud_ex) sidebar.
+
 ## Basic Usage
 
 To interact with the API endpoints, use the various modules prefixed with `ScrapyCloudEx.Endpoints`.
