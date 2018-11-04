@@ -24,6 +24,7 @@ defmodule ScrapyCloudEx.Endpoints do
 
   require Logger
 
+  # warns on unscoped params and puts relevant parameters into scope
   @doc false
   @spec scope_params(Keyword.t(), atom, [atom, ...]) :: Keyword.t()
   def scope_params(params, scope_name, expected_scoped_params) do
