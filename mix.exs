@@ -27,8 +27,8 @@ defmodule ScrapyCloudEx.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:hackney, "~> 1.14", only: [:dev, :test]},
-      {:jason, "~> 1.1", only: [:dev, :test]},
+      {:hackney, "~> 1.14", optional: true},
+      {:jason, "~> 1.1", optional: true},
       {:httparrot, "~> 1.0", only: :test},
       {:dialyxir, "~> 1.0.0-rc.3", only: :dev, runtime: false},
       {:credo, "~> 0.10.0", only: [:dev, :test], runtime: false},
