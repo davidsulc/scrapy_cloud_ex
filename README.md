@@ -5,7 +5,7 @@ An API wrapper for the ScrapyCloud API provided by ScraphingHub.com and document
 The implementation is only partial at this time: among the endpoints listed [here](https://doc.scrapinghub.com/scrapy-cloud.html#api-endpoints), the [`Collections`](https://doc.scrapinghub.com/api/collections.html) and [`Frontier`](https://doc.scrapinghub.com/api/frontier.html) are not accessible through this wrapper (PRs welcome!).
 
 This wrapper handles Http communication and reponse decoding for you (provided you install the dependencies below), but
-will only request the `json` format by default, and will only decoder `json` responses. Other response types are passed
+will only request the `json` format by default, and will only decode `json` responses. Other response types are passed
 through, allowing you to process them if desired. If you prefer to use your own Http adapter or function to decode the
 body, refer to the "custom implementations" section in the documentation.
 
