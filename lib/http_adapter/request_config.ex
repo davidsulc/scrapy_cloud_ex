@@ -20,9 +20,9 @@ defmodule ScrapyCloudEx.HttpAdapter.RequestConfig do
 
   * `:body` - request body.
 
-  * `:opts` - any options provided to an endpoint method will be provided here. Always contains a `:decoder`
+  * `:opts` - any options provided to an endpoint method will be copied here. Always contains a `:decoder`
       value which is either a module implementing the `ScrapyCloudEx.Decoder` behaviour, or a function
-      satisfying the `t:ScrapyCloudEx.Decoder.decoder_function/0` type. Adding values here can be particularly
+      of type `t:ScrapyCloudEx.Decoder.decoder_function/0`. Adding values here can be particularly
       useful to work around certain API quirks, such as the `ScrapyCloudEx.Endpoints.App.Jobs.list/4` endpoint
       which will return a "text/plain" encoding value when requesting the `:jl` format. By adding (for example)
       the requested format in the `:opts` parameter of the endpoint call, the implementation of

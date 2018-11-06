@@ -33,6 +33,9 @@ defmodule ScrapyCloudEx.HttpAdapter do
 
   The `body` attribute of the `response` will always be decompressed, even if
   the API responded with a gzipped reply.
+
+  The `opts` value is a copy of the `opts` attribute from the
+  `t:ScrapyCloudEx.HttpAdapter.RequestConfig.t/0` provided to `c:request/1`.
   """
   @callback handle_response(response :: Response.t(), opts :: Keyword.t()) ::
               {:ok, any} | {:error, error_map}
