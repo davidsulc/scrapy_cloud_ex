@@ -20,7 +20,7 @@ defmodule ScrapyCloudEx.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger | extra_apps(Mix.env())]
     ]
   end
 
@@ -40,6 +40,9 @@ defmodule ScrapyCloudEx.MixProject do
        runtime: false}
     ]
   end
+
+  defp extra_apps(env) when env in [:dev, :test], do: [:hackney, :jason]
+  defp extra_apps(_), do: []
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
