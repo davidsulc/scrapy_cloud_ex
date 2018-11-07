@@ -31,8 +31,7 @@ else
 
     def decode(_, _) do
       raise RuntimeError,
-        message:
-          "Jason is required to use #{__MODULE__}, refer to installation instructions in README"
+        message: "Jason is required to use #{__MODULE__}, refer to instructions in README"
     end
   end
 end

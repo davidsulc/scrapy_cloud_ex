@@ -108,8 +108,7 @@ else
 
     defp raise() do
       raise RuntimeError,
-        message:
-          ":hackney is required to use #{__MODULE__}, refer to installation instructions in README"
+        message: ":hackney is required to use #{__MODULE__}, refer to instructions in README"
     end
   end
 end

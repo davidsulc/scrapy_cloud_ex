@@ -47,6 +47,14 @@ and `"53/34/7"` is a job id.
 
 The docs can be found at [https://hexdocs.pm/scrapy_cloud_ex](https://hexdocs.pm/scrapy_cloud_ex).
 
+## Troubleshooting missing dependencies
+
+The default implementations of the http adapter and decoder require their dependencies to be present (see [installation](#installation) section).
+
+After adding the dependencies for the default implementation you wish to use (and fetching them with `mix deps.get`),
+delete the `_build` directory and recompile. This will ensure that the modules for the default implementation will be
+properly recompiled according to the newly available dependencies.
+
 ## License
 
 Copyright 2018 David Sulc
