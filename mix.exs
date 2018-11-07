@@ -20,15 +20,15 @@ defmodule ScrapyCloudEx.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger | extra_apps(Mix.env())]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:hackney, "~> 1.14", only: [:dev, :test]},
-      {:jason, "~> 1.1", only: [:dev, :test]},
+      {:hackney, "~> 1.14", optional: true},
+      {:jason, "~> 1.1", optional: true},
       {:httparrot, "~> 1.0", only: :test},
       {:dialyxir, "~> 1.0.0-rc.3", only: :dev, runtime: false},
       {:credo, "~> 0.10.0", only: [:dev, :test], runtime: false},
@@ -40,6 +40,9 @@ defmodule ScrapyCloudEx.MixProject do
        runtime: false}
     ]
   end
+
+  defp extra_apps(env) when env in [:dev, :test], do: [:hackney, :jason]
+  defp extra_apps(_), do: []
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
