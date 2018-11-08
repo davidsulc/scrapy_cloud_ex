@@ -4,8 +4,9 @@ defmodule ScrapyCloudEx do
   provided by [ScraphingHub.com](https://scrapinghub.com/)
   """
 
-  @type error_info :: String.t() | tagged_error_info
+  @type error_info :: String.t() | invalid_param_error | tagged_error_info
   @type result(type) :: {:ok, type} | tagged_error
   @type tagged_error :: {:error, error_info}
   @type tagged_error_info :: {atom, error_info}
+  @type invalid_param_error :: {:invalid_param, tagged_error_info}
 end
